@@ -357,6 +357,152 @@ class Modeldata extends CI_Model{
         
         return $res->result_array();
     }
+    
+    function getSuperCountWithOneCondition($field, $value, $firstDate, $lastDate){
+        $where = array(
+            $field => $value,
+        );
+        $res = $this->db->select('*')
+        ->from('tb_tersangka')
+        ->join('tb_kasus','tb_tersangka.id_kasus=tb_kasus.id_kasus','LEFT')
+        ->where($where)
+        ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+        ->count_all_results();
+
+        return $res;
+    }
+    
+    function getSuperBeratBB($kategori, $firstDate, $lastDate){
+        $where = array(
+            'tb_barangbukti.kategori' => $kategori,
+            'tb_barangbukti.isDuplicate' => 0
+        );
+        return $this->db->select('*')
+        ->from('tb_barangbukti')
+        ->join('tb_kasus','tb_barangbukti.id_kasus=tb_kasus.id_kasus','LEFT')
+        ->where($where)
+        ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+        ->get();
+    }
+    
+    function getSuperKSS($firstDate, $lastDate){
+        return $this->db->select('*')
+        ->from("tb_kasus")->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")->count_all_results();
+    }
+    
+    function getSuperTSK($firstDate, $lastDate){
+        return $this->db->select('*')
+        ->from('tb_tersangka')
+        ->join('tb_kasus','tb_tersangka.id_kasus=tb_kasus.id_kasus','LEFT')
+        ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+        ->count_all_results();
+    }
+    
+    function getSuperBBKewarganegaraanJK($kategori, $status, $status_kewarganegaraan, $jenis_kelamin, $firstDate, $lastDate){
+        $where = array(
+            'tb_barangbukti.kategori' => $kategori,
+            'tb_tersangka.status'  => $status,
+            'tb_tersangka.status_kewarganegaraan' => $status_kewarganegaraan,
+            'tb_tersangka.jenis_kelamin' => $jenis_kelamin,
+          );
+        $res = $this->db->select('*')
+        ->from('tb_kasus')
+        ->join('tb_barangbukti','tb_kasus.id_kasus=tb_barangbukti.id_kasus','LEFT')
+        ->join('tb_tersangka','tb_kasus.id_kasus=tb_tersangka.id_kasus','LEFT')
+        ->where($where)
+        ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+        ->group_by("tb_tersangka.id_tersangka")
+        ->get();
+        
+        return $res->result_array();
+    }
+    
+    function getSuperBBJumlahKSS($kategori, $status, $firstDate, $lastDate){
+        $where = array(
+            'tb_barangbukti.kategori'   => $kategori,
+            'tb_tersangka.status'   => $status,
+          );
+        $res = $this->db->select('*')
+        ->from('tb_kasus')
+        ->join('tb_barangbukti','tb_kasus.id_kasus=tb_barangbukti.id_kasus','LEFT')
+        ->join('tb_tersangka','tb_kasus.id_kasus=tb_tersangka.id_kasus','LEFT')
+        ->where($where)
+        ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+        ->group_by("tb_kasus.no_laporanpolisi")
+        ->get();
+
+        return $res->result_array();
+    }
+    
+    function getSuperBBJumlahTSK($kategori, $status, $firstDate, $lastDate){
+        $where = array(
+            'tb_tersangka.status'   => $status,
+            'tb_barangbukti.kategori'   => $kategori,
+          );
+        $res = $this->db->select('*')
+        ->from('tb_kasus')
+        ->join('tb_barangbukti','tb_kasus.id_kasus=tb_barangbukti.id_kasus','LEFT')
+        ->join('tb_tersangka','tb_tersangka.id_tersangka=tb_barangbukti.id_tersangka','LEFT')
+        ->where($where)
+        ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+        ->group_by("tb_tersangka.nama")
+        ->get();
+
+        return $res->result_array();
+    }
+    
+    function getSuperBBSelesaiKSS($kategori, $status, $firstDate, $lastDate){
+        $where = array(
+            'tb_kasus.status_kasus !=' => "",
+            'tb_barangbukti.kategori'   => $kategori,
+            'tb_tersangka.status'   => $status,
+          );
+        $res = $this->db->select('*')
+        ->from('tb_kasus')
+        ->join('tb_barangbukti','tb_kasus.id_kasus=tb_barangbukti.id_kasus','LEFT')
+        ->join('tb_tersangka','tb_kasus.id_kasus=tb_tersangka.id_kasus','LEFT')
+        ->where($where)
+        ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+        ->group_by("tb_kasus.no_laporanpolisi")
+        ->get();
+
+        return $res->result_array();
+    }
+
+    function getSuperBBMatrikInstrumen($kategori, $status, $field, $value, $firstDate, $lastDate){
+        $where = array(
+            'tb_barangbukti.kategori'   => $kategori,
+            'tb_tersangka.status'   => $status,
+            $field => $value,
+          );
+        $res = $this->db->select('*')
+        ->from('tb_kasus')
+        ->join('tb_tersangka','tb_kasus.id_kasus=tb_tersangka.id_kasus','LEFT')
+        ->join('tb_barangbukti','tb_barangbukti.id_tersangka=tb_tersangka.id_tersangka','LEFT')
+        ->where($where)
+        ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+        ->group_by("tb_tersangka.id_tersangka")
+        ->get();
+        
+        return $res->result_array();
+    }
+
+    function getSuperBBJumlahBerat($kategori, $status, $firstDate, $lastDate){
+        $where = array(
+            'tb_barangbukti.kategori'   => $kategori,
+            'tb_tersangka.status'   => $status,
+          );
+        $res = $this->db->select('*')
+        ->from('tb_kasus')
+        ->join('tb_tersangka','tb_kasus.id_kasus=tb_tersangka.id_kasus','LEFT')
+        ->join('tb_barangbukti','tb_barangbukti.id_tersangka=tb_tersangka.id_tersangka','LEFT')
+        ->where($where)
+        ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+        ->get();
+        
+        return $res->result_array();
+    }
+    
 }
 
 

@@ -179,5 +179,31 @@ class Modelpelimpahan extends CI_Model{
         return $this->db->delete('tb_temp_barangbukti', array('id_barangbukti' => $idBarangBukti)); 
     }
     
+    // ADDITIONAL FUNCTIONS FOR SUPER ADMIN
+	public function getSuperPelimpahanDiterima($firstDate, $lastDate){
+        $where = array(
+            'tb_temp_kasus.ket_pelimpahan' => 'diterima',
+          );
+          $res = $this->db->select('*')
+          ->from('tb_temp_kasus')
+          ->where($where)
+          ->where("tb_temp_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+          ->get();
+  
+          return $res->result_array();
+	}
+
+    public function getSuperPelimpahanDilimpahkan($firstDate, $lastDate){
+        $where = array(
+            'tb_kasus.ket_pelimpahan' => 'dilimpahkan',
+          );
+        $res = $this->db->select('*')
+        ->from('tb_kasus')
+        ->where($where)
+        ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+        ->get();
+
+        return $res->result_array();
+	}
 
 }
