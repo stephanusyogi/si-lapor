@@ -29,7 +29,7 @@ class ModelChat extends CI_Model {
                         } else {
                             $fontWeight = "style=''";
                         } 
-                        $lastmsg = strlen($resmsg[$i]['msg']) > 25 ? "<small {$fontWeight}>".substr($resmsg[$i]['msg'],0,25)."...</small>" : "<small {$fontWeight}>".$resmsg[$i]['msg']."</small>";
+                        $lastmsg = strlen($resmsg[$i]['msg']) > 20 ? "<small {$fontWeight}>".substr($resmsg[$i]['msg'],0,20)."...</small>" : "<small {$fontWeight}>".$resmsg[$i]['msg']."</small>";
                     }   
                 }else{
                     $lastmsg = '<small>No Message</small>';

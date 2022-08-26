@@ -15,7 +15,7 @@
   <div class="content-wrapper">
     <!-- Main content -->
     <section class="content">
-      <div class="container-fluid px-4 py-4">
+      <div class="container-fluid px-4">
         <!-- Chat Content-->
         <div class="row clearfix">
             <div class="col-lg-12">
@@ -25,6 +25,14 @@
                             <h4 class="mb-0" style="color:#4b545c;">All Users List</h4>
                         </div>
                         <input class="form-control my-1" type="text" id="ccf_filter_input" onkeyup="filterSuburbs()" placeholder="search user here..." />
+                        <ul class="loby-menu list-unstyled mt-2 mb-0" id="loby" style="height:100%!important;">
+                            <li class="clearfix" id="lobyChat" onclick="openMessageGroup('loby')">
+                                <img src="<?= base_url() ?>assets/images/group.png" alt="">
+                                <div class="about">
+                                    <div class="name">LOBY GROUP</div>
+                                </div>
+                            </li>
+                        </ul>
                         <ul class="users-list list-unstyled chat-list mt-2 mb-0" id="suburbList">
                         </ul>
                     </div>
@@ -74,7 +82,7 @@
     const chatBox = document.getElementById("chatApp");
 
     $(document).ready(function() {
-        setInterval(()=>{
+        
             let xhr = new XMLHttpRequest();
             xhr.open("POST", "chat/getAllUsers", true);
             xhr.onload = () => {
@@ -87,7 +95,7 @@
             }
             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xhr.send("kode_kesatuan=" + kodekesatuanFrom);
-        }, 2000)
+        
        
         // Add & Remove Active Class in Chatbox Div
         document.getElementById("chatApp").onmouseenter = () => {
