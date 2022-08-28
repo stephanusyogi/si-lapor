@@ -12,8 +12,8 @@
     <div class="text-center" style="margin-top: 10px;">
       <img class="profile-user-img img-fluid img-circle" src="<?= base_url(); ?>assets/images/logo_user.png" alt="User profile picture">
     </div>
-    <h3 class="profile-username text-center">SI-LAPOR</h3>
-    <p class="text-muted text-center">Administrator</p>
+    <h3 class="profile-username text-center"><?= $this->session->userdata("login_data_admin")['nama'] ?></h3>
+    <p class="text-muted text-center"><?= $this->session->userdata("login_data_admin")['nama_admin'] ?></p>
     <a href="<?= base_url('logout') ?>" class="btn btn-success btn-block" style="color:white;">Logout</a>
   </aside>
   <!-- /.control-sidebar -->

@@ -15,18 +15,26 @@ class Chat extends CI_Controller {
 
 	// LAPOR KASUS MODUL
 	public function index(){
-        $data['title'] = "Chat App";
-        $data['menuLink'] = "chat";
-        
-        $this->session->set_flashdata('success', 'Please Wait, Data Chat Loading...');
+		$data['title'] = "Chat App";
+		$data['menuLink'] = "chat";
+		
+		$this->session->set_flashdata('success', 'Please Wait, Data Chat Loading...');
 		$this->load->view('include/header',$data);
 		$this->load->view('v_chat',$data);
 		$this->load->view('include/footer',$data);
 	}
     
 	public function getAllUsers(){
-        $kode_kesatuan = str_replace('_','-',$_POST['kode_kesatuan']);
-        $this->Modelchat->get_allusers($kode_kesatuan);
+		$kode_kesatuan = str_replace('_','-',$_POST['kode_kesatuan']);
+		$this->Modelchat->get_allusers($kode_kesatuan);
+	}
+
+	public function getGroup(){
+		$this->Modelchat->getGroup();
+	}
+
+	public function getmessagegroup(){
+		$this->Modelchat->getmessagegroup($this->kode_kesatuan);
 	}
 
 	public function getbyUser(){
@@ -48,17 +56,31 @@ class Chat extends CI_Controller {
 
         $this->Modelchat->insert_message($outgoing_id,$incoming_id, $msg);
 	}
+	
+	public function insertChatGroup(){
+		$outgoing_id = $this->kode_kesatuan;
+		$msg = $_POST['message'];
 
-    public function updateIsRead(){
-		$incoming_id = $_POST['incoming_id'];
-        $outgoing_id = $this->kode_kesatuan;
+		$this->Modelchat->insert_message_group($outgoing_id, $msg);
+	}
 
-        $this->Modelchat->updateStatusRead($incoming_id, $outgoing_id);
-    }
+	public function updateIsRead(){
+	$incoming_id = $_POST['incoming_id'];
+			$outgoing_id = $this->kode_kesatuan;
 
-    public function countMsg(){
-        $this->Modelchat->countMessage($this->kode_kesatuan);
-    }
+			$this->Modelchat->updateStatusRead($incoming_id, $outgoing_id);
+	}
+
+	public function countMsg(){
+			$this->Modelchat->countMessage($this->kode_kesatuan);
+	}
+
+	
+	public function deleteChat(){
+		$iduserchat = $_POST['incoming_id'];
+
+		$this->Modelchat->delete_message($iduserchat);
+	}
 
 }
 

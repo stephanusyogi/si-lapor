@@ -26,12 +26,6 @@
                         </div>
                         <input class="form-control my-1" type="text" id="ccf_filter_input" onkeyup="filterSuburbs()" placeholder="search user here..." />
                         <ul class="loby-menu list-unstyled mt-2 mb-0" id="loby" style="height:100%!important;">
-                            <li class="clearfix" id="lobyChat" onclick="openMessageGroup('loby')">
-                                <img src="<?= base_url() ?>assets/images/group.png" alt="">
-                                <div class="about">
-                                    <div class="name">LOBY GROUP</div>
-                                </div>
-                            </li>
                         </ul>
                         <ul class="users-list list-unstyled chat-list mt-2 mb-0" id="suburbList">
                         </ul>
@@ -78,11 +72,27 @@
     }
 
     const kodekesatuanFrom = "<?= str_replace('-','_',$this->session->userdata('login_data_admin')['kodekesatuan']) ?>";
+    const grouplist = document.querySelector(".loby-menu");
     const usersList = document.querySelector(".users-list");
     const chatBox = document.getElementById("chatApp");
 
     $(document).ready(function() {
-        
+        setInterval(()=>{
+            let xhrGroup = new XMLHttpRequest();
+            xhrGroup.open("POST", "chat/getGroup", true);
+            xhrGroup.onload = () => {
+                if (xhrGroup.readyState === XMLHttpRequest.DONE) {
+                    if (xhrGroup.status === 200) {
+                        let data = xhrGroup.response;
+                        grouplist.innerHTML = data;
+                    }
+                }
+            }
+            xhrGroup.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhrGroup.send();
+        },5000)
+
+        setInterval(()=>{
             let xhr = new XMLHttpRequest();
             xhr.open("POST", "chat/getAllUsers", true);
             xhr.onload = () => {
@@ -95,6 +105,7 @@
             }
             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xhr.send("kode_kesatuan=" + kodekesatuanFrom);
+        },5000)
         
        
         // Add & Remove Active Class in Chatbox Div
@@ -191,21 +202,21 @@
         xhrUser.send("kode_kesatuan=" + kode_kesatuan);
 
         // Get Message
-            let xhrMessage = new XMLHttpRequest();
-            xhrMessage.open("POST", "chat/getmessage", true);
-            xhrMessage.onload = () => {
-                if (xhrMessage.readyState === XMLHttpRequest.DONE) {
-                    if (xhrMessage.status === 200) {
-                        let data = xhrMessage.response;
-                        chatBox.innerHTML = data;
-                        if (!chatBox.classList.contains("active")) {
-                            chatBox.scrollTop = chatBox.scrollHeight;
-                        }
+        let xhrMessage = new XMLHttpRequest();
+        xhrMessage.open("POST", "chat/getmessage", true);
+        xhrMessage.onload = () => {
+            if (xhrMessage.readyState === XMLHttpRequest.DONE) {
+                if (xhrMessage.status === 200) {
+                    let data = xhrMessage.response;
+                    chatBox.innerHTML = data;
+                    if (!chatBox.classList.contains("active")) {
+                        chatBox.scrollTop = chatBox.scrollHeight;
                     }
                 }
             }
-            xhrMessage.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhrMessage.send("incoming_id=" + kode_kesatuan +"&outgoing_id=" +kodekesatuanFrom);
+        }
+        xhrMessage.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhrMessage.send("incoming_id=" + kode_kesatuan +"&outgoing_id=" +kodekesatuanFrom);
         
         function scrollToBottom() {
             chatBox.scrollTop = chatBox.scrollHeight;
@@ -241,5 +252,142 @@
             title: `&nbsp;Pesan dari ${kodekesatuan} sudah dibaca.`
           })
         });
-    }
+    };
+
+    function openMessageGroup() {
+        const kode_kesatuan = "<?= $this->session->userdata('login_data_admin')['kodekesatuan'] ?>";
+        const headerInfoUser = document.querySelector(".headerInfoUser");
+        const chatApp = document.querySelector("#chatApp");
+        const srcImage = "<?= base_url() ?>assets/images/group.png";
+
+        $(this).removeClass("active");
+        $(this).addClass("active");
+
+        $('.headerInfoUser').empty();
+        $('.chatApp').empty();
+        $('.footerChat').empty();
+
+        $('.footerChat').append(`<form action="#" class="typing-area input-group mb-0"><input type="hidden" name="kode_kesatuan" id="kode_kesatuan" value="${kode_kesatuan}"><button id="sendBtn" class="input-group-prepend btn-secondary"><i class="fas fa-paper-plane"></i></button><input name="message" id="input-field" type="text" class="form-control" autocomplete="off" placeholder="Tulis pesan anda disini..."></form>`);
+
+        const form = document.querySelector(".typing-area"),
+            inputField = document.getElementById("input-field"),
+            sendBtn = document.getElementById("sendBtn"),
+            userlist = document.getElementById(`userChat${kode_kesatuan}`);
+
+        // Preventing frorm Refresh Browser
+        form.onsubmit = (e) => {
+            e.preventDefault();
+        }
+        
+        // Waktu ada inputan,button send aktif
+        inputField.focus();
+        inputField.onkeyup = () => {
+            if (inputField.value != "") {
+                sendBtn.classList.add("active");
+            } else {
+                sendBtn.classList.remove("active");
+            }
+        }
+        
+        // Kirim Pesan
+        sendBtn.onclick = () => {
+            let xhr = new XMLHttpRequest();
+            xhr.open("POST", "chat/insertChatGroup", true);
+            xhr.onload = () => {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        inputField.value = "";
+                        scrollToBottom();
+                    }
+                }
+            }
+            let formData = new FormData(form);
+            xhr.send(formData);
+            
+            var xhrnew2 = new XMLHttpRequest();
+            xhrnew2.open("POST", "chat/getmessagegroup", true);
+            xhrnew2.onload = () => {
+                if (xhrnew2.readyState === XMLHttpRequest.DONE) {
+                    if (xhrnew2.status === 200) {
+                        let data = xhrnew2.response;
+                        chatApp.innerHTML = data;
+                        if (!chatBox.classList.contains("active")) {
+                            chatBox.scrollTop = chatBox.scrollHeight;
+                        }
+                    }
+                }
+            }
+            xhrnew2.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhrnew2.send();
+        }
+
+        // Get Information User
+        headerInfoUser.innerHTML = `<div class='row'><div class='col-lg-10'><img class='mt-1' src='${srcImage}' alt='avatar'><div class='chat-about'><h3 class='my-2'>LOBI GROUP COMMUNICATION</h3></div></div></div>`;
+
+        // Get Message
+        let xhrMessage = new XMLHttpRequest();
+        xhrMessage.open("POST", "chat/getmessagegroup", true);
+        xhrMessage.onload = () => {
+            if (xhrMessage.readyState === XMLHttpRequest.DONE) {
+                if (xhrMessage.status === 200) {
+                    let data = xhrMessage.response;
+                    chatBox.innerHTML = data;
+                    if (!chatBox.classList.contains("active")) {
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }
+                }
+            }
+        }
+        xhrMessage.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhrMessage.send();
+        
+        function scrollToBottom() {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    };
+
+    function delChat(iduserchat) {
+        Swal.fire({
+            title: "Hapus Pesan ?",
+            text: "Aksi ini tidak dapat dikembalikan",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Delete!",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var xhrdel = new XMLHttpRequest();
+                xhrdel.open("POST", "chat/deleteChat", true);
+                xhrdel.onload = () => {
+                    if (xhrdel.readyState === XMLHttpRequest.DONE) {
+                        if (xhrdel.status === 200) {
+                            let data = xhrdel.response;
+
+                            var xhrDelete = new XMLHttpRequest();
+                            xhrDelete.open("POST", "chat/getmessagegroup", true);
+                            xhrDelete.onload = () => {
+                                if (xhrDelete.readyState === XMLHttpRequest.DONE) {
+                                    if (xhrDelete.status === 200) {
+                                        let data = xhrDelete.response;
+                                        document.querySelector("#chatApp").innerHTML = data;
+                                        if (!chatBox.classList.contains("active")) {
+                                            chatBox.scrollTop = chatBox.scrollHeight;
+                                        }
+                                    }
+                                }
+                            }
+                            xhrDelete.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                            xhrDelete.send();
+                        }
+                    }
+                }
+                xhrdel.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhrdel.send("incoming_id=" + iduserchat);
+                
+            }
+        });
+    };
+
+
   </script>

@@ -43,6 +43,26 @@ class ModelChat extends CI_Model {
         echo $output;
     }
 
+    function getGroup(){
+        $srcImageGroup = base_url()."assets/images/group.png";
+        $sqllastmsg = "SELECT * FROM tb_chat WHERE tb_chat.isGroup = 1 ORDER BY tb_chat.id DESC LIMIT 1";
+        $querymsg = $this->db->query($sqllastmsg);
+        $resmsg = $querymsg->result_array();
+        $lastmsg = '';
+
+        if (!empty($resmsg)) {
+            for ($i=0; $i < count($resmsg); $i++) {
+                $lastmsg = strlen($resmsg[$i]['msg']) > 20 ? "<small>".substr($resmsg[$i]['msg'],0,20)."...</small>" : "<small>".$resmsg[$i]['msg']."</small>"; 
+            }
+        }else{
+            $lastmsg = '<small>No Message</small>';
+        }
+
+        $outputGroup = '<li class="clearfix" id="lobyChat" onclick="openMessageGroup()"><img src="'.$srcImageGroup.'" alt=""><div class="about"><div class="name">LOBY GROUP</div><div class="kode_kesatuan text-left">'.$lastmsg.'</div></div></li>';
+
+        echo $outputGroup;
+    }
+
     function insert_message($kode_kesatuanFrom ,$kode_kesatuanTo, $message){
         $sql = "INSERT INTO `tb_chat` (incoming_msg_id, outgoing_msg_id, msg) VALUES ('$kode_kesatuanTo', '{$kode_kesatuanFrom}', '$message')";
         $query = $this->db->query($sql);
@@ -84,9 +104,9 @@ class ModelChat extends CI_Model {
         if (!empty($res_msg)) {
             foreach($res_msg as $row){
                 if($row['outgoing_msg_id'] == $incoming_id){
-                    $output .= '<li class="clearfix"><div class="message my-message"> '.$row['msg'].' </div><p class="mb-0 time-left"><small>'.$row['created_at'].'</small></p></li>';
+                    $output .= "<li class='clearfix'><div class='message my-message'> ".$row['msg']." </div><p class='mb-0 time-left'><small>".$row['created_at']."</small></p></li>";
                 }else{
-                    $output .= '<li class="clearfix"><div class="message-data text-right"><img src="'.$srcImage.'" alt="avatar"></div><div class="message other-message float-right"> '.$row['msg'].' </div><p class="mb-0 time-right"><small>'.$row['created_at'].'</small></p></li>';
+                    $output .= "<li class='clearfix'><div class='message-data text-right'><img src='".$srcImage."' alt='avatar'></div><div class='message other-message float-right'><i class='fas fa-chevron-down delDropdownRight' data-toggle='dropdown'></i><div class='dropdown-menu'><a class='dropdown-item' onclick=delChat('{$row['id']}')>Hapus pesan?</a></div> ".$row['msg']." </div><p class='mb-0 time-right'><small>".$row['created_at']."</small></p></li>";
                 }
             }
         } else {
@@ -100,6 +120,39 @@ class ModelChat extends CI_Model {
         $sqlCountRead = "SELECT * FROM tb_chat WHERE incoming_msg_id = '{$kode_kesatuan}' AND isRead = 0";
         $queryCountRead = $this->db->query($sqlCountRead)->result_array();
         echo count($queryCountRead);
+    }
+
+    function getmessagegroup($kode_kesatuan){
+        // Get For Messages
+        $sql2 = "SELECT * FROM tb_chat WHERE tb_chat.isGroup = 1 ORDER BY tb_chat.created_at ASC" ;
+        $query2 = $this->db->query($sql2);
+        $res_msg = $query2->result_array();
+        
+        $output = "";
+        $srcImage = base_url()."assets/images/user.png";
+        if (!empty($res_msg)) {
+            foreach($res_msg as $row){
+                if($row['outgoing_msg_id'] != $kode_kesatuan){
+                    $output .= "<li class='clearfix'><p class='mb-2'><strong>".$row['outgoing_msg_id']."</strong></p><div class='message my-message'> ".$row['msg']." </div><p class='mb-0 time-left'><small>".$row['created_at']."</small></p></li>";
+                }else{
+                    $output .= "<li class='clearfix'><div class='message-data text-right'></div><div class='message other-message float-right'><i class='fas fa-chevron-down delDropdownRight' data-toggle='dropdown'></i><div class='dropdown-menu'><a class='dropdown-item' onclick=delChat('{$row['id']}')>Hapus pesan?</a></div> ".$row['msg']." </div><p class='mb-0 time-right'><small>".$row['created_at']."</small></p></li>";
+                }
+            }
+        } else {
+            $output .= '<div class="text" id="emptyMsg">No messages are available. Once you send message they will appear here.</div>';
+        }
+
+        echo $output;
+    }
+
+    function insert_message_group($kode_kesatuanFrom, $message){
+        $sqlInsertGroup = "INSERT INTO `tb_chat` (outgoing_msg_id, msg, isRead, isGroup) VALUES ('{$kode_kesatuanFrom}', '$message', 1, 1)";
+        $queryInsertGroup = $this->db->query($sqlInsertGroup);
+        return $queryInsertGroup;
+    }
+
+    function delete_message($idChat){
+        return $this->db->delete('tb_chat', array('id' => $idChat)); 
     }
 }
 ?>

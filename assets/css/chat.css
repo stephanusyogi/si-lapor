@@ -178,7 +178,7 @@
 .chat-history .chatApp{
     overflow-y: auto;
     overflow-x: hidden;
-    height: 350px;
+    height: 450px;
 }
 
 .chat .chat-history ul {
@@ -225,6 +225,23 @@
     border-bottom-color: #fff;
     border-width: 10px;
     margin-left: -10px
+}
+
+.dropdown-item{
+    cursor:pointer;
+}
+
+.delDropdownRight{
+    font-size: 12px;
+    color: lightgray;
+    position: absolute;
+    left: 10px;
+    top: 5px;
+}
+
+.delDropdownRight:hover{
+    color: gray;
+    cursor: pointer;
 }
 
 .chat .chat-history .my-message {
