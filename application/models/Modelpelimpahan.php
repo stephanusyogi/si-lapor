@@ -180,6 +180,15 @@ class Modelpelimpahan extends CI_Model{
     }
     
     // ADDITIONAL FUNCTIONS FOR SUPER ADMIN
+    public function getSuperPelimpahan($firstDate, $lastDate){
+        $res = $this->db->select('*')
+        ->from('tb_temp_kasus')
+        ->where("tb_temp_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+        ->get();
+
+        return $res->result_array();
+	}
+
 	public function getSuperPelimpahanDiterima($firstDate, $lastDate){
         $where = array(
             'tb_temp_kasus.ket_pelimpahan' => 'diterima',

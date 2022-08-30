@@ -52,7 +52,20 @@
             <div class="col-md-8">
               <div id="formDateSettings">
                 <div class="formDate d-flex">
-                    <div class="form-group">
+                    <?php
+                    if ($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER') { ?>
+                      <div class="form-group">
+                        <label for="">Pilih Kesatuan</label>
+                        <select name="kesatuan" class="form-control" required>
+                          <option selected disabled>Pilih Kesatuan...</option>
+                          <option value="all">All</option>
+                          <?php foreach ($kesatuan as $keyKesatuan) { ?>
+                            <option value="<?= $keyKesatuan['kode_kesatuan'] ?>"><?= $keyKesatuan['nama'] ?></option>
+                          <?php } ?>
+                        </select>
+                      </div>
+                    <?php } ?>
+                    <div class="form-group mx-2">
                       <label>Pilih Tanggal Awal</label>
                       <div class="input-group date" id="tanggalAwalHarian" data-target-input="nearest">
                         <input type="text" name="tanggalAwal" class="form-control datetimepicker-input" data-target="#tanggalAwalHarian" placeholder="Pilih Tanggal Awal" required autocomplete="off"/>
@@ -70,7 +83,7 @@
                     </div>
                   </div>
                 </div>
-                <button type="submit" id="submitDate" class="btn btn-info btn-sm"><span><i class="fas fa-download"></i></span> Download File</button>
+                <button type="submit" id="submitDate" class="btn btn-info btn-sm" onclick="ClearFields();"><span><i class="fas fa-download"></i></span> Download File</button>
               </div>
             </div>
           </div>
@@ -91,4 +104,9 @@
         format: 'YYYY-MM-DD'
     });
   });
+
+  function ClearFields() {
+    document.getElementsByClassName("input-group-append").value = "";
+  }
   </script>
+  

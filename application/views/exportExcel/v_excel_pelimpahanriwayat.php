@@ -46,7 +46,7 @@
                     <td><?= $rowLPditerima['no_laporanpolisi'] ?></td>
                     <td><?= $rowLPditerima['kodekesatuan_pelimpahanDari']?></td>
                     <td><?= $rowLPditerima['nama_polsek']?></td>
-                    <td><?= date('l jS \of F Y', strtotime($rowLPditerima['created_at']))?></td>
+                    <td><?= dateIndonesia(date('N j/n/Y', strtotime($rowLPditerima["created_at"]))) ?></td>
                 </tr>
                 <?php $no++; } ?>
             <?php }else{?>
@@ -86,7 +86,7 @@
                     <td><?= $rowLPdilimpahkan['no_laporanpolisi'] ?></td>
                     <td><?= $rowLPdilimpahkan['kodekesatuan_pelimpahanKe']?></td>
                     <td><?= $rowLPdilimpahkan['namaPolsekPelimpahan']?></td>
-                    <td><?= date('l jS \of F Y', strtotime($rowLPdilimpahkan['created_at']))?></td>
+                    <td><?= dateIndonesia(date('N j/n/Y', strtotime($rowLPdilimpahkan["created_at"])))?></td>
                 </tr>
                 <?php $no++; } ?>
             <?php }else{?>
@@ -97,3 +97,42 @@
         </tbody>
     </table>
 </div>
+
+<?php
+	function dateIndonesia($waktu_lengkap){
+		$nama_hari = array(
+			1 => 'Senin',
+			2 => 'Selasa',
+			3 => 'Rabu',
+			4 => 'Kamis',
+			5 => 'Jumat',
+			6 => 'Sabtu',
+			7 => 'Minggu',
+		);
+		$nama_bulan = array(
+			1 =>  'Januari',
+			2 =>  'Februari',
+			3 =>  'Maret',
+			4 =>  'April',
+			5 =>  'Mei',
+			6 =>  'Juni',
+			7 =>  'Juli',
+			8 =>  'Agustus',
+			9 =>  'September',
+			10 =>  'Oktober',
+			11 =>  'November',
+			12 =>  'Desember',
+		);
+
+		$pisah_waktu = explode(" ",$waktu_lengkap);
+		$hari = $pisah_waktu[0];
+		$tanggal = $pisah_waktu[1];
+
+		$hari_baru = $nama_hari[$hari];
+
+		$pisah_tanggal = explode("/",$tanggal);
+		$tanggal_baru = $pisah_tanggal[0]." ".$nama_bulan[$pisah_tanggal[1]]." ".$pisah_tanggal[2];
+
+		return $hari_baru.", ".$tanggal_baru;
+	}
+  ?>

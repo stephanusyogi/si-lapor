@@ -2,9 +2,14 @@
  
 class Modeldata extends CI_Model{
     function getKesatuan($kode_kesatuan){
+        $where = array(
+            'tb_kesatuan.username !=' => 'superadmin_resersenarkoba',
+            'tb_kesatuan.nama !=' => 'PRINCIPAL',
+        );
         $this->db->select('*')
         ->from('tb_kesatuan')
-        ->where('kode_kesatuan !=', $kode_kesatuan);
+        ->where('tb_kesatuan.kode_kesatuan !=', $kode_kesatuan)
+        ->where($where);
         $query = $this->db->get();     
         return $query->result_array();  
     }
@@ -326,6 +331,7 @@ class Modeldata extends CI_Model{
         ->from('tb_kasus')
         ->where($where)
         ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+        ->order_by('tb_kasus.kode_kesatuan')
         ->get();
         
         return $res->result_array();
@@ -339,6 +345,7 @@ class Modeldata extends CI_Model{
         ->from('tb_kasus')
         ->where($where)
         ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+        ->order_by('tb_kasus.kode_kesatuan')
         ->get();
         
         return $res->result_array();
@@ -384,7 +391,7 @@ class Modeldata extends CI_Model{
         ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
         ->get();
     }
-    
+
     function getSuperKSS($firstDate, $lastDate){
         return $this->db->select('*')
         ->from("tb_kasus")->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")->count_all_results();
@@ -397,6 +404,8 @@ class Modeldata extends CI_Model{
         ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
         ->count_all_results();
     }
+    
+    // Matrik BB Super
     
     function getSuperBBKewarganegaraanJK($kategori, $status, $status_kewarganegaraan, $jenis_kelamin, $firstDate, $lastDate){
         $where = array(
@@ -502,7 +511,7 @@ class Modeldata extends CI_Model{
         
         return $res->result_array();
     }
-    
+
 }
 
 

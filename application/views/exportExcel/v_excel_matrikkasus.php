@@ -16,12 +16,18 @@
     }
 </style>
 
+<!-- DATA -->
+<?php 
+    $CI =& get_instance();
+    $CI->load->model('Modelkesatuan');
+?>
 <div class="container">
     
 <table class="table table-bordered table-striped ">
     <thead class="text-center">
         <tr>
             <th rowspan="3">NO</th>
+            <th rowspan="3">KESATUAN</th>
             <th rowspan="3">KSS</th>
             <th rowspan="3">TSK</th>
             <td colspan="5">STATUS TSK</td>
@@ -108,78 +114,88 @@
         </tr>
     </thead>
     <tbody>
+    <?php 
+        $no = 1;
+        foreach ($dataMatrik as $keyKesatuan => $item) {
+    ?>
         <tr>
             <!-- No -->
-            <td class="text-center">1.</td>
+            <td class="text-center"><?= $no ?>.</td>
+            <!-- KESATUAN -->
+            <td><?php 
+            $kesatuan = $CI->Modelkesatuan->getKesatuanByKode($keyKesatuan);
+            echo $kesatuan[0]['nama'];?>
+            </td>
             <!-- Kasus -->
-            <td><?= $dataMatrik['KSS'] ?></td>
+            <td><?= $item['KSS'] ?></td>
             <!-- Tersangka -->
-            <td><?= $dataMatrik['TSK'] ?></td>
+            <td><?= $item['TSK'] ?></td>
             <!-- Status Tersangka -->
-            <td><?= $dataMatrik['StatusTSK']['Penanam'] ?></td>
-            <td><?= $dataMatrik['StatusTSK']['Produksi'] ?></td>
-            <td><?= $dataMatrik['StatusTSK']['Bandar'] ?></td>
-            <td><?= $dataMatrik['StatusTSK']['Pengedar'] ?></td>
-            <td><?= $dataMatrik['StatusTSK']['Pengguna'] ?></td>
+            <td><?= $item['StatusTSK']['Penanam'] ?></td>
+            <td><?= $item['StatusTSK']['Produksi'] ?></td>
+            <td><?= $item['StatusTSK']['Bandar'] ?></td>
+            <td><?= $item['StatusTSK']['Pengedar'] ?></td>
+            <td><?= $item['StatusTSK']['Pengguna'] ?></td>
             <!-- Kewarganegaraan & Jenis Kelamin -->
-            <td><?= $dataMatrik['KEWARGANEGARAAN']['WNI']['LK'] ?></td>
-            <td><?= $dataMatrik['KEWARGANEGARAAN']['WNI']['PR'] ?></td>
-            <td><?= $dataMatrik['KEWARGANEGARAAN']['WNA']['LK'] ?></td>
-            <td><?= $dataMatrik['KEWARGANEGARAAN']['WNA']['PR'] ?></td>
+            <td><?= $item['KEWARGANEGARAAN']['WNI']['LK'] ?></td>
+            <td><?= $item['KEWARGANEGARAAN']['WNI']['PR'] ?></td>
+            <td><?= $item['KEWARGANEGARAAN']['WNA']['LK'] ?></td>
+            <td><?= $item['KEWARGANEGARAAN']['WNA']['PR'] ?></td>
             <!-- Usia -->
-            <td><?= $dataMatrik['USIA']['<14'] ?></td>
-            <td><?= $dataMatrik['USIA']['15-18'] ?></td>
-            <td><?= $dataMatrik['USIA']['19-24'] ?></td>
-            <td><?= $dataMatrik['USIA']['25-64'] ?></td>
-            <td><?= $dataMatrik['USIA']['<65'] ?></td>
+            <td><?= $item['USIA']['<14'] ?></td>
+            <td><?= $item['USIA']['15-18'] ?></td>
+            <td><?= $item['USIA']['19-24'] ?></td>
+            <td><?= $item['USIA']['25-64'] ?></td>
+            <td><?= $item['USIA']['<65'] ?></td>
             <!-- Pendidikan -->
-            <td><?= $dataMatrik['PENDIDIKAN']['Tidak Sekolah'] ?></td>
-            <td><?= $dataMatrik['PENDIDIKAN']['SD'] ?></td>
-            <td><?= $dataMatrik['PENDIDIKAN']['SMP'] ?></td>
-            <td><?= $dataMatrik['PENDIDIKAN']['SMA'] ?></td>
-            <td><?= $dataMatrik['PENDIDIKAN']['PT'] ?></td>
-            <td><?= $dataMatrik['PENDIDIKAN']['Belum Diketahui'] ?></td>
+            <td><?= $item['PENDIDIKAN']['Tidak Sekolah'] ?></td>
+            <td><?= $item['PENDIDIKAN']['SD'] ?></td>
+            <td><?= $item['PENDIDIKAN']['SMP'] ?></td>
+            <td><?= $item['PENDIDIKAN']['SMA'] ?></td>
+            <td><?= $item['PENDIDIKAN']['PT'] ?></td>
+            <td><?= $item['PENDIDIKAN']['Belum Diketahui'] ?></td>
             <!-- Pekerjaan -->
-            <td><?= $dataMatrik['PEKERJAAAN']['Pelajar'] ?></td>
-            <td><?= $dataMatrik['PEKERJAAAN']['Mahasiswa'] ?></td>
-            <td><?= $dataMatrik['PEKERJAAAN']['Swasta'] ?></td>
-            <td><?= $dataMatrik['PEKERJAAAN']['Buruh/Karyawan'] ?></td>
-            <td><?= $dataMatrik['PEKERJAAAN']['Petani/Nelayan'] ?></td>
-            <td><?= $dataMatrik['PEKERJAAAN']['Pedagang'] ?></td>
-            <td><?= $dataMatrik['PEKERJAAAN']['Wiraswasta/Pengusaha'] ?></td>
-            <td><?= $dataMatrik['PEKERJAAAN']['Sopir/TukangOjek'] ?></td>
-            <td><?= $dataMatrik['PEKERJAAAN']['Ikut Orang Tua'] ?></td>
-            <td><?= $dataMatrik['PEKERJAAAN']['Ibu Rumah Tangga'] ?></td>
-            <td><?= $dataMatrik['PEKERJAAAN']['Tidak Kerja'] ?></td>
-            <td><?= $dataMatrik['PEKERJAAAN']['Notaris'] ?></td>
-            <td><?= $dataMatrik['PEKERJAAAN']['TNI'] ?></td>
-            <td><?= $dataMatrik['PEKERJAAAN']['POLRI'] ?></td>
-            <td><?= $dataMatrik['PEKERJAAAN']['PNS'] ?></td>
-            <td><?= $dataMatrik['PEKERJAAAN']['PEMBANTU'] ?></td>
-            <td><?= $dataMatrik['PEKERJAAAN']['NAPI'] ?></td>
+            <td><?= $item['PEKERJAAAN']['Pelajar'] ?></td>
+            <td><?= $item['PEKERJAAAN']['Mahasiswa'] ?></td>
+            <td><?= $item['PEKERJAAAN']['Swasta'] ?></td>
+            <td><?= $item['PEKERJAAAN']['Buruh/Karyawan'] ?></td>
+            <td><?= $item['PEKERJAAAN']['Petani/Nelayan'] ?></td>
+            <td><?= $item['PEKERJAAAN']['Pedagang'] ?></td>
+            <td><?= $item['PEKERJAAAN']['Wiraswasta/Pengusaha'] ?></td>
+            <td><?= $item['PEKERJAAAN']['Sopir/TukangOjek'] ?></td>
+            <td><?= $item['PEKERJAAAN']['Ikut Orang Tua'] ?></td>
+            <td><?= $item['PEKERJAAAN']['Ibu Rumah Tangga'] ?></td>
+            <td><?= $item['PEKERJAAAN']['Tidak Kerja'] ?></td>
+            <td><?= $item['PEKERJAAAN']['Notaris'] ?></td>
+            <td><?= $item['PEKERJAAAN']['TNI'] ?></td>
+            <td><?= $item['PEKERJAAAN']['POLRI'] ?></td>
+            <td><?= $item['PEKERJAAAN']['PNS'] ?></td>
+            <td><?= $item['PEKERJAAAN']['PEMBANTU'] ?></td>
+            <td><?= $item['PEKERJAAAN']['NAPI'] ?></td>
             <!-- TKP -->
-            <td><?= $dataMatrik['TKP']['Hotel/Villa/Kos'] ?></td>
-            <td><?= $dataMatrik['TKP']['Ruko/Gedung/Mall/Pabrik'] ?></td>
-            <td><?= $dataMatrik['TKP']['Tempat Umum'] ?></td>
-            <td><?= $dataMatrik['TKP']['Pemukiman/Pondok'] ?></td>
-            <td><?= $dataMatrik['TKP']['Diskotik/Tempat Karaoke'] ?></td>
-            <td><?= $dataMatrik['TKP']['Terminal/Bandara/Pelabuhan'] ?></td>
-            <td><?= $dataMatrik['TKP']['Rumah Tahanan'] ?></td>
+            <td><?= $item['TKP']['Hotel/Villa/Kos'] ?></td>
+            <td><?= $item['TKP']['Ruko/Gedung/Mall/Pabrik'] ?></td>
+            <td><?= $item['TKP']['Tempat Umum'] ?></td>
+            <td><?= $item['TKP']['Pemukiman/Pondok'] ?></td>
+            <td><?= $item['TKP']['Diskotik/Tempat Karaoke'] ?></td>
+            <td><?= $item['TKP']['Terminal/Bandara/Pelabuhan'] ?></td>
+            <td><?= $item['TKP']['Rumah Tahanan'] ?></td>
             <!-- Barang Bukti -->
-            <td><?= $dataMatrik['BARANGBUKTI']['Ganja'] ?></td>
-            <td><?= $dataMatrik['BARANGBUKTI']['Tembakau Gorilla'] ?></td>
-            <td><?= $dataMatrik['BARANGBUKTI']['Hashish'] ?></td>
-            <td><?= $dataMatrik['BARANGBUKTI']['Opium'] ?></td>
-            <td><?= $dataMatrik['BARANGBUKTI']['Morphin'] ?></td>
-            <td><?= $dataMatrik['BARANGBUKTI']['Heroin/Putaw'] ?></td>
-            <td><?= $dataMatrik['BARANGBUKTI']['Kokain'] ?></td>
-            <td><?= $dataMatrik['BARANGBUKTI']['Exstacy/Carnophen'] ?></td>
-            <td><?= $dataMatrik['BARANGBUKTI']['Sabu'] ?></td>
-            <td><?= $dataMatrik['BARANGBUKTI']['GOL IV'] ?></td>
-            <td><?= $dataMatrik['BARANGBUKTI']['Daftar G'] ?></td>
-            <td><?= $dataMatrik['BARANGBUKTI']['Kosmetik'] ?></td>
-            <td><?= $dataMatrik['BARANGBUKTI']['Jamu'] ?></td>
+            <td><?= $item['BARANGBUKTI']['Ganja'] ?></td>
+            <td><?= $item['BARANGBUKTI']['Tembakau Gorilla'] ?></td>
+            <td><?= $item['BARANGBUKTI']['Hashish'] ?></td>
+            <td><?= $item['BARANGBUKTI']['Opium'] ?></td>
+            <td><?= $item['BARANGBUKTI']['Morphin'] ?></td>
+            <td><?= $item['BARANGBUKTI']['Heroin/Putaw'] ?></td>
+            <td><?= $item['BARANGBUKTI']['Kokain'] ?></td>
+            <td><?= $item['BARANGBUKTI']['Exstacy/Carnophen'] ?></td>
+            <td><?= $item['BARANGBUKTI']['Sabu'] ?></td>
+            <td><?= $item['BARANGBUKTI']['GOL IV'] ?></td>
+            <td><?= $item['BARANGBUKTI']['Daftar G'] ?></td>
+            <td><?= $item['BARANGBUKTI']['Kosmetik'] ?></td>
+            <td><?= $item['BARANGBUKTI']['Jamu'] ?></td>
         </tr>
+    <?php $no++; } ?>
     </tbody>
 </table>
 </div>

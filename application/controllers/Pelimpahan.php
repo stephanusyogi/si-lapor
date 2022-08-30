@@ -3,15 +3,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Pelimpahan extends CI_Controller {
 	
-    protected $session_status;
+  protected $session_status;
 	protected $kode_kesatuan;
 	function __construct(){
 		parent::__construct();		
-        $this->session_status = $this->session->userdata('isLoggedIn_admin');
+    $this->session_status = $this->session->userdata('isLoggedIn_admin');
 		$this->kode_kesatuan = $this->session->userdata('login_data_admin')['kodekesatuan'];
 
 		if (!$this->session_status) {
-            $this->session->set_flashdata('error', 'Your Session Has Expired!');
+      $this->session->set_flashdata('error', 'Your Session Has Expired!');
 			return redirect(base_url() . 'login');
 		}
 		
@@ -22,21 +22,30 @@ class Pelimpahan extends CI_Controller {
 	}
     
 	public function viewKasusPelimpahan(){
-		
 		if ($this->kode_kesatuan == 'ADMINSUPER') {
-			$this->session->set_flashdata('error', 'Forbidden Accsess!');
-			redirect(base_url('404_override'));
+
+			$date = $this->rangeMonth(date("Y-m-d"));
+			$dateNow = $this->dateIndonesia(date('N j/n/Y', strtotime($date['start']))).' - '.$this->dateIndonesia(date('N j/n/Y', strtotime($date['end'])));
+			$res = $this->Modelpelimpahan->getSuperPelimpahan($date['start'], $date['end']);
+	
+			$data['title'] = "Data Kasus Pelimpahan";
+			$data['menuLink'] = "kasus-pelimpahan";
+			$data['dataKasus'] = $res;
+			$data['dateNow'] = $dateNow;
+
+		}else{
+
+			$date = $this->rangeMonth(date("Y-m-d"));
+			$dateNow = $this->dateIndonesia(date('N j/n/Y', strtotime($date['start']))).' - '.$this->dateIndonesia(date('N j/n/Y', strtotime($date['end'])));
+			$res = $this->Modelpelimpahan->getKasusPelimpahanById($this->kode_kesatuan, $date['start'], $date['end']);
+	
+			$data['title'] = "Data Kasus Pelimpahan";
+			$data['menuLink'] = "kasus-pelimpahan";
+			$data['dataKasus'] = $res;
+			$data['dateNow'] = $dateNow;
+
 		}
-
-		$date = $this->rangeMonth(date("Y-m-d"));
-		$dateNow = date('l jS \of F Y', strtotime($date['start'])).' - '.date('l jS \of F Y', strtotime($date['end']));
-		$res = $this->Modelpelimpahan->getKasusPelimpahanById($this->kode_kesatuan, $date['start'], $date['end']);
-
-        $data['title'] = "Data Kasus Pelimpahan";
-        $data['menuLink'] = "kasus-pelimpahan";
-		$data['dataKasus'] = $res;
-		$data['dateNow'] = $dateNow;
-
+	
 		$this->load->view('include/header',$data);
 		$this->load->view('v_pelimpahan_masterkasus',$data);
 		$this->load->view('include/footer',$data);
@@ -52,24 +61,38 @@ class Pelimpahan extends CI_Controller {
 			$firstDate = $tanggalAwal;
 			$lastDate = $tanggalAwal;
 
-			$dateNow = date('l jS \of F Y', strtotime($firstDate));
+			$dateNow = $this->dateIndonesia(date('N j/n/Y', strtotime($firstDate)));
 		} else {
 			$firstDate = $tanggalAwal;
 			$lastDate = $tanggalAkhir;
 
-			$dateNow = date('l jS \of F Y', strtotime($firstDate)).' - '.date('l jS \of F Y', strtotime($lastDate));	
+			$dateNow = $this->dateIndonesia(date('N j/n/Y', strtotime($firstDate))).' - '.$this->dateIndonesia(date('N j/n/Y', strtotime($lastDate)));	
 		}
 
-		$res = $this->Modelpelimpahan->getKasusPelimpahanById($this->kode_kesatuan, $firstDate, $lastDate);
+		if ($this->kode_kesatuan == 'ADMINSUPER') {
+			
+			$res = $this->Modelpelimpahan->getSuperPelimpahan($firstDate, $lastDate);
+	
+			$data['title'] = "Data Kasus Pelimpahan";
+			$data['menuLink'] = "kasus-pelimpahan";
+			$data['dataKasus'] = $res;
+			$data['dateNow'] = $dateNow;
 
-        $data['title'] = "Data Kasus Pelimpahan";
-        $data['menuLink'] = "kasus-pelimpahan";
-		$data['dataKasus'] = $res;
-		$data['dateNow'] = $dateNow;
+		} else {
+			
+			$res = $this->Modelpelimpahan->getKasusPelimpahanById($this->kode_kesatuan, $firstDate, $lastDate);
 
+			$data['title'] = "Data Kasus Pelimpahan";
+			$data['menuLink'] = "kasus-pelimpahan";
+			$data['dataKasus'] = $res;
+			$data['dateNow'] = $dateNow;
+
+		}
+		
 		$this->load->view('include/header',$data);
 		$this->load->view('v_pelimpahan_masterkasus',$data);
 		$this->load->view('include/footer',$data);
+
 	}
 
 	public function viewKasusPelimpahanById($idKasus){
@@ -102,10 +125,10 @@ class Pelimpahan extends CI_Controller {
 		}
 
 		$date = $this->rangeMonth(date("Y-m-d"));
-		$dateNow = date('l jS \of F Y', strtotime($date['start'])).' - '.date('l jS \of F Y', strtotime($date['end']));
+		$dateNow = $this->dateIndonesia(date('N j/n/Y', strtotime($date['start']))).' - '.$this->dateIndonesia(date('N j/n/Y', strtotime($date['end'])));
 
-        $data['title'] = "Riwayat LP Kasus Pelimpahan";
-        $data['menuLink'] = "riwayat-pelimpahan";
+		$data['title'] = "Riwayat LP Kasus Pelimpahan";
+		$data['menuLink'] = "riwayat-pelimpahan";
 		$data['LPditerima'] = $this->Modelpelimpahan->getPelimpahanDiterima($this->kode_kesatuan, $date['start'], $date['end']);
 		$data['LPdilimpahkan'] = $this->Modelpelimpahan->getPelimpahanDilimpahkan($this->kode_kesatuan, $date['start'], $date['end']);
 		$data['dateNow'] = $dateNow;
@@ -126,16 +149,16 @@ class Pelimpahan extends CI_Controller {
 			$firstDate = $tanggalAwal;
 			$lastDate = $tanggalAwal;
 
-			$dateNow = date('l jS \of F Y', strtotime($firstDate));
+			$dateNow = $this->dateIndonesia(date('N j/n/Y', strtotime($firstDate)));
 		} else {
 			$firstDate = $tanggalAwal;
 			$lastDate = $tanggalAkhir;
 
-			$dateNow = date('l jS \of F Y', strtotime($firstDate)).' - '.date('l jS \of F Y', strtotime($lastDate));	
+			$dateNow = $this->dateIndonesia(date('N j/n/Y', strtotime($firstDate))).' - '.$this->dateIndonesia(date('N j/n/Y', strtotime($lastDate)));	
 		}
 
-        $data['title'] = "Riwayat LP Kasus Pelimpahan";
-        $data['menuLink'] = "riwayat-pelimpahan";
+		$data['title'] = "Riwayat LP Kasus Pelimpahan";
+		$data['menuLink'] = "riwayat-pelimpahan";
 		$data['LPditerima'] = $this->Modelpelimpahan->getPelimpahanDiterima($this->kode_kesatuan, $firstDate, $lastDate);
 		$data['LPdilimpahkan'] = $this->Modelpelimpahan->getPelimpahanDilimpahkan($this->kode_kesatuan, $firstDate, $lastDate);
 		$data['dateNow'] = $dateNow;
@@ -494,5 +517,42 @@ class Pelimpahan extends CI_Controller {
 		"start" => date ('Y-m-d', strtotime ('first day of this month', $dt)),
 		"end" => date ('Y-m-d', strtotime ('last day of this month', $dt))
 		);
+	}
+	
+	function dateIndonesia($waktu_lengkap){
+		$nama_hari = array(
+			1 => 'Senin',
+			2 => 'Selasa',
+			3 => 'Rabu',
+			4 => 'Kamis',
+			5 => 'Jumat',
+			6 => 'Sabtu',
+			7 => 'Minggu',
+		);
+		$nama_bulan = array(
+			1 =>  'Januari',
+			2 =>  'Februari',
+			3 =>  'Maret',
+			4 =>  'April',
+			5 =>  'Mei',
+			6 =>  'Juni',
+			7 =>  'Juli',
+			8 =>  'Agustus',
+			9 =>  'September',
+			10 =>  'Oktober',
+			11 =>  'November',
+			12 =>  'Desember',
+		);
+
+		$pisah_waktu = explode(" ",$waktu_lengkap);
+		$hari = $pisah_waktu[0];
+		$tanggal = $pisah_waktu[1];
+
+		$hari_baru = $nama_hari[$hari];
+
+		$pisah_tanggal = explode("/",$tanggal);
+		$tanggal_baru = $pisah_tanggal[0]." ".$nama_bulan[$pisah_tanggal[1]]." ".$pisah_tanggal[2];
+
+		return $hari_baru.", ".$tanggal_baru;
 	}
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="in">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -31,6 +31,8 @@
   <!-- jQuery UI 1.11.4 -->
   <script src="<?= base_url("assets/adminlte/") ?>plugins/jquery-ui/jquery-ui.min.js"></script>
 </head>
+
+<!-- Alert Error -->
 <?php
   $error = $this->session->flashdata('error');
   if ($error) {
@@ -52,8 +54,9 @@
         });
     </script>
   <?php }
-  ?>
+?>
 
+<!-- Alert Success -->
 <?php
   $success = $this->session->flashdata('success');
   if ($success) {
@@ -78,7 +81,8 @@
   // DATA
     $CI =& get_instance();
     $CI->load->model('Modelchat');
-  ?>
+?>
+
 <style>
   .content-wrapper > .content{
     padding: 4rem 0.5rem!important;
@@ -180,14 +184,16 @@
             </a>
           </li>
           <li class="nav-header">DATA MANAGEMENT</li>
-          <li class="nav-item">
-            <a href="<?= site_url("lapor-ungkap-kasus") ?>" class="nav-link">
-              <i class="nav-icon fas fa-bullhorn"></i>
-              <p>
-                LAPOR KASUS
-              </p>
-            </a>
-          </li>
+          <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] != 'ADMINSUPER'){ ?>
+            <li class="nav-item">
+              <a href="<?= site_url("lapor-ungkap-kasus") ?>" class="nav-link">
+                <i class="nav-icon fas fa-bullhorn"></i>
+                <p>
+                  LAPOR KASUS
+                </p>
+              </a>
+            </li>
+          <?php } ?>
           <li class="nav-item">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-chalkboard-teacher"></i>
@@ -227,15 +233,17 @@
           <li class="nav-item">
             <a href="<?= base_url("kasus-pelimpahan") ?>" class="nav-link">
               <i class="fas fa-folder-open nav-icon"></i>
-              <p>PELIMPAHAN MASTER</p>
+              <p><?= ($this->session->userdata('login_data_admin')['kodekesatuan'] != 'ADMINSUPER') ? 'PELIMPAHAN MASTER' : 'DAFTAR PELIMPAHAN' ?></p>
             </a>
           </li>
-          <li class="nav-item">
-            <a href="<?= base_url("riwayat-pelimpahan") ?>" class="nav-link">
-              <i class="fas fa-book nav-icon"></i>
-              <p>RIWAYAT PELIMPAHAN</p>
-            </a>
-          </li>
+          <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] != 'ADMINSUPER'){ ?>
+            <li class="nav-item">
+              <a href="<?= base_url("riwayat-pelimpahan") ?>" class="nav-link">
+                <i class="fas fa-book nav-icon"></i>
+                <p>RIWAYAT PELIMPAHAN</p>
+              </a>
+            </li>
+          <?php } ?>
           <li class="nav-header">COMMUNICATION</li>
           <li class="nav-item">
             <a href="<?= base_url('chat') ?>" class="nav-link">
@@ -254,14 +262,14 @@
           <li class="nav-item">
             <a href="<?= base_url() ?>upload-file" class="nav-link">
               <i class="fas fa-folder nav-icon"></i>
-              <p>UPLOAD FILES</p>
+              <p><?= ($this->session->userdata('login_data_admin')['kodekesatuan'] != 'ADMINSUPER') ? 'UPLOAD FILES' : 'FILE JAJARAN' ?></p>
             </a>
           </li>
           <li class="nav-header">OTHERS</li>
           <li class="nav-item">
             <a href="<?= base_url() ?>data-admin" class="nav-link">
               <i class="fas fa-users nav-icon"></i>
-              <p>DATA ADMIN</p>
+              <p><?= ($this->session->userdata('login_data_admin')['kodekesatuan'] != 'ADMINSUPER') ? 'DATA ADMIN' : 'MANAGEMENT ADMIN' ?></p>
             </a>
           </li>
         </ul>
@@ -274,7 +282,7 @@
   <script>
       setInterval(() => {
         let xhrCount = new XMLHttpRequest();
-        xhrCount.open("POST", "chat/countMsg", true);
+        xhrCount.open("POST", "<?= base_url() ?>chat/countMsg", true);
         xhrCount.onload = () => {
             if (xhrCount.readyState === XMLHttpRequest.DONE) {
                 if (xhrCount.status === 200) {

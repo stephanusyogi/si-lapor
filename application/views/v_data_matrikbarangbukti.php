@@ -9,6 +9,13 @@
       list-style-type: none;
     }
   </style>
+  
+  <!-- DATA -->
+  <?php 
+      $CI =& get_instance();
+      $CI->load->model('Modeldata');
+      $CI->load->model('Modelkesatuan');
+  ?>
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper" onload="alertMatrik()">
     <!-- Main content -->
@@ -25,42 +32,77 @@
         </div>
         <h2>Matrik Barang Bukti <strong><?= $this->session->userdata('login_data_admin')['nama'] ?></strong></h2>
         <p>Periode : <?= $dateNow ?></p>
+        <?php if (!empty($kesatuanChoosen)) { 
+          $choosenKesatuan = $CI->Modelkesatuan->getKesatuanByKode($kesatuanChoosen);
+          ?>
+          <p>Kesatuan :&nbsp;<?= $choosenKesatuan[0]['nama'] ?></p>
+        <?php } ?>
         <hr>
         <div class="row">
           <div class="col-md-10">
-            <!-- View by Date -->
-            <form action="<?= base_url() ?>data/viewMatrikBarangBuktiByDate" method="post">
-              <div class="section-date row">
-                <div class="col-md-8">
-                  <div id="formDateSettings">
-                    <div class="formDate d-flex">
-                        <div class="form-group">
-                          <label>Pilih Tanggal Awal</label>
-                          <div class="input-group date" id="tanggalAwalHarian" data-target-input="nearest">
-                            <input type="text" name="tanggalAwal" class="form-control datetimepicker-input" data-target="#tanggalAwalHarian" placeholder="Pilih Tanggal Awal" required autocomplete="off"/>
-                            <div class="input-group-append" data-target="#tanggalAwalHarian" data-toggle="datetimepicker">
-                              <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="form-group mx-2">
-                          <label>Pilih Tanggal Akhir</label>
-                          <div class="input-group date" id="tanggalAkhirHarian" data-target-input="nearest">
-                            <input type="text" name="tanggalAkhir" class="form-control datetimepicker-input" data-target="#tanggalAkhirHarian" placeholder="Pilih Tanggal Akhir" autocomplete="off"/>
-                            <div class="input-group-append" data-target="#tanggalAkhirHarian" data-toggle="datetimepicker"><div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <button type="submit" id="submitDate" class="btn btn-info btn-sm">Sort by Date</button>
-                  </div>
-                </div>
-              </div>
-            </form>
+            <a class="btn btn-primary btn-sm mt-1 mx-1" data-toggle="modal" data-target="#sortModal"><span><i class="fas fa-filter"></i> </span>Sort</a>
           </div>
           <div class="col-md-2 text-right">
               <a class="btn btn-success btn-sm mt-1" href="<?= base_url('export-opsi/matrikBB') ?>"><span><i class="fas fa-print"></i> </span>Export</a>
           </div>
+        </div>
+        <!-- Modal Sort Date -->
+        <div class="modal fade" id="sortModal" tabindex="-1" role="dialog" aria-labelledby="sortModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="sortModalLabel">Sort by Date</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                      <form action="<?= base_url() ?>data/viewMatrikBarangBuktiByDate" method="post">
+                          <div class="section-date row">
+                            <div class="col-md-12">
+                              <div id="formDateSettings">
+                                <div class="formDate row">
+                                  <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER'){ ?>
+                                    <?php $kesatuan = $CI->Modeldata->getKesatuan($this->session->userdata('login_data_admin')['kodekesatuan']); ?>
+                                      <div class="form-group col-md-4">
+                                        <label for="kode_kesatuan">Pilih kesatuan / jajaran :</label>
+                                        <select name="kode_kesatuan" class="form-control" data-live-search="true" required>
+                                          <option value="all">All</option>
+                                          <?php foreach ($kesatuan as $keyKesatuan) { ?>
+                                            <option value="<?= $keyKesatuan['kode_kesatuan'] ?>"><?= $keyKesatuan['nama'] ?></option>
+                                          <?php } ?>
+                                        </select>
+                                      </div>
+                                    <?php } ?>
+                                    <div class="form-group col-md-4">
+                                      <label>Pilih Tanggal Awal</label>
+                                      <div class="input-group date" id="tanggalAwalHarian" data-target-input="nearest">
+                                        <input type="text" name="tanggalAwal" class="form-control datetimepicker-input" data-target="#tanggalAwalHarian" placeholder="Pilih Tanggal Awal" required autocomplete="off"/>
+                                        <div class="input-group-append" data-target="#tanggalAwalHarian" data-toggle="datetimepicker">
+                                          <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                      <label>Pilih Tanggal Akhir</label>
+                                      <div class="input-group date" id="tanggalAkhirHarian" data-target-input="nearest">
+                                        <input type="text" name="tanggalAkhir" class="form-control datetimepicker-input" data-target="#tanggalAkhirHarian" placeholder="Pilih Tanggal Akhir" autocomplete="off"/>
+                                        <div class="input-group-append" data-target="#tanggalAkhirHarian" data-toggle="datetimepicker"><div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="modal-footer" style="height:10rem;align-items:end;">
+                              <button type="submit" id="submitDate" class="btn btn-success">Terapkan</button>
+                              <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                          </div>
+                      </form>
+                    </div>
+                </div>
+            </div>
         </div>
         <table class="table table-responsive table-bordered table-striped mt-2" style="width:100%;font-size:0.8rem;">
             <thead class="text-center">

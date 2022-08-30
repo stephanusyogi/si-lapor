@@ -3,11 +3,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Chat extends CI_Controller {
 	
-    protected $session_status;
+  protected $session_status;
 	protected $kode_kesatuan;
 	function __construct(){
 		parent::__construct();		
-        $this->session_status = $this->session->userdata('isLoggedIn_admin');
+    $this->session_status = $this->session->userdata('isLoggedIn_admin');
 		$this->kode_kesatuan = $this->session->userdata('login_data_admin')['kodekesatuan'];
 		
 		$this->load->model('Modelchat');
@@ -75,7 +75,6 @@ class Chat extends CI_Controller {
 			$this->Modelchat->countMessage($this->kode_kesatuan);
 	}
 
-	
 	public function deleteChat(){
 		$iduserchat = $_POST['incoming_id'];
 

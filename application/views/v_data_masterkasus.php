@@ -20,6 +20,7 @@
     $CI->load->model('Modelbarangbukti');
     $CI->load->model('Modeltersangka');
     $CI->load->model('Modeladmin');
+    $CI->load->model('Modelkesatuan');
   ?>
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -39,45 +40,66 @@
       <hr class="my-2">
       <div class="row">
         <div class="col-md-10">
-          <!-- View by Date -->
-          <form action="<?= base_url() ?>data/viewMasterKasusByDate" method="post">
-            <div class="section-date row">
-              <div class="col-md-8">
-                <div id="formDateSettings">
-                  <div class="formDate d-flex">
-                      <div class="form-group">
-                        <label>Pilih Tanggal Awal</label>
-                        <div class="input-group date" id="tanggalAwalHarian" data-target-input="nearest">
-                          <input type="text" name="tanggalAwal" class="form-control datetimepicker-input" data-target="#tanggalAwalHarian" placeholder="Pilih Tanggal Awal" required autocomplete="off"/>
-                          <div class="input-group-append" data-target="#tanggalAwalHarian" data-toggle="datetimepicker">
-                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="form-group mx-2">
-                        <label>Pilih Tanggal Akhir</label>
-                        <div class="input-group date" id="tanggalAkhirHarian" data-target-input="nearest">
-                          <input type="text" name="tanggalAkhir" class="form-control datetimepicker-input" data-target="#tanggalAkhirHarian" placeholder="Pilih Tanggal Akhir" autocomplete="off"/>
-                          <div class="input-group-append" data-target="#tanggalAkhirHarian" data-toggle="datetimepicker"><div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <button type="submit" id="submitDate" class="btn btn-info btn-sm">Sort by Date</button>
-                </div>
-              </div>
-            </div>
-          </form>
+          <a class="btn btn-primary btn-sm mt-1 mx-1" data-toggle="modal" data-target="#sortModal"><span><i class="fas fa-filter"></i> </span>Sort by Date</a>
         </div>
         <div class="col-md-2 text-right">
           <a class="btn btn-success btn-sm mt-1" href="<?= base_url('export-opsi/kasusMaster') ?>"><span><i class="fas fa-print"></i> </span>Export</a>
         </div>
+      </div>
+      <!-- Modal Sort Date -->
+      <div class="modal fade" id="sortModal" tabindex="-1" role="dialog" aria-labelledby="sortModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="sortModalLabel">Sort by Date</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body">
+                    <form action="<?= base_url() ?>data/viewMasterKasusByDate" method="post">
+                        <div class="section-date row">
+                          <div class="col-md-12">
+                            <div id="formDateSettings">
+                              <div class="formDate d-flex">
+                                  <div class="form-group">
+                                    <label>Pilih Tanggal Awal</label>
+                                    <div class="input-group date" id="tanggalAwalHarian" data-target-input="nearest">
+                                      <input type="text" name="tanggalAwal" class="form-control datetimepicker-input" data-target="#tanggalAwalHarian" placeholder="Pilih Tanggal Awal" required autocomplete="off"/>
+                                      <div class="input-group-append" data-target="#tanggalAwalHarian" data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="form-group mx-2">
+                                    <label>Pilih Tanggal Akhir</label>
+                                    <div class="input-group date" id="tanggalAkhirHarian" data-target-input="nearest">
+                                      <input type="text" name="tanggalAkhir" class="form-control datetimepicker-input" data-target="#tanggalAkhirHarian" placeholder="Pilih Tanggal Akhir" autocomplete="off"/>
+                                      <div class="input-group-append" data-target="#tanggalAkhirHarian" data-toggle="datetimepicker"><div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="modal-footer" style="height:10rem;align-items:end;">
+                            <button type="submit" id="submitDate" class="btn btn-success">Terapkan</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                        </div>
+                    </form>
+                  </div>
+              </div>
+          </div>
       </div>
       <hr class="my-2">
         <table id="table-master-kasus" class="table table-responsive datatable table-bordered table-striped " style="width:100%">
             <thead>
                 <tr class="text-center">
                   <th>No</th>
+                  <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER'): ?>
+                  <th>Kesatuan</th>
+                  <?php endif; ?>
                   <th>Action</th>   
                   <th>No Laporan Polisi</th>
                   <th>Created Date</th>
@@ -108,6 +130,12 @@
                   ?>
                 <tr>
                     <td class="text-center"><?= ($display) ? $no : "" ?></td>
+                    <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER'){ ?>
+                    <td class="textcenter">
+                      <?php $dataKesatuan =  $CI->Modelkesatuan->getKesatuanByKode($row_kasus['kode_kesatuan']);?>
+                      <?= ($display) ? $dataKesatuan[0]["nama"]  :  "" ?>
+                    </td>
+                    <?php }else{ ?>
                     <td class="text-center" style="font-size:24px;">
                       <?php if($display): ?>
                         <div data-toggle="tooltip" data-placement="top" title="Update Laporan Kasus">
@@ -129,8 +157,9 @@
                         <?php endif; ?>
                       <?php endif; ?>
                     </td>
+                    <?php } ?>
                     <td><?= $display ? $row_kasus["no_laporanpolisi"] : ""; ?></td>
-                    <td><?= $display ? date('l jS \of F Y', strtotime($row_kasus["created_at"])) : ""; ?></td>
+                    <td><?= $display ? dateIndonesia(date('N j/n/Y', strtotime($row_kasus["created_at"]))) : ""; ?></td>
                     <td>
                       <?= ($display) ? $row_kasus["deskripsi_waktudantkp"]  :  "" ?>
                     </td>
@@ -342,4 +371,43 @@
     });
   });
   </script>
+
+  <?php 
+	function dateIndonesia($waktu_lengkap){
+		$nama_hari = array(
+			1 => 'Senin',
+			2 => 'Selasa',
+			3 => 'Rabu',
+			4 => 'Kamis',
+			5 => 'Jumat',
+			6 => 'Sabtu',
+			7 => 'Minggu',
+		);
+		$nama_bulan = array(
+			1 =>  'Januari',
+			2 =>  'Februari',
+			3 =>  'Maret',
+			4 =>  'April',
+			5 =>  'Mei',
+			6 =>  'Juni',
+			7 =>  'Juli',
+			8 =>  'Agustus',
+			9 =>  'September',
+			10 =>  'Oktober',
+			11 =>  'November',
+			12 =>  'Desember',
+		);
+
+		$pisah_waktu = explode(" ",$waktu_lengkap);
+		$hari = $pisah_waktu[0];
+		$tanggal = $pisah_waktu[1];
+
+		$hari_baru = $nama_hari[$hari];
+
+		$pisah_tanggal = explode("/",$tanggal);
+		$tanggal_baru = $pisah_tanggal[0]." ".$nama_bulan[$pisah_tanggal[1]]." ".$pisah_tanggal[2];
+
+		return $hari_baru.", ".$tanggal_baru;
+	}
+  ?>
   

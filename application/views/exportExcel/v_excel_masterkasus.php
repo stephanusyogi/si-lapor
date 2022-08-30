@@ -64,7 +64,7 @@
                 <tr>
                     <td class="text-center"><?= ($display) ? $no : "" ?></td>
                     <td><?= $display ? $row_kasus["no_laporanpolisi"] : ""; ?></td>
-                    <td><?= $display ? date('l jS \of F Y', strtotime($row_kasus["created_at"])) : ""; ?></td>
+                    <td><?= $display ? dateIndonesia(date('N j/n/Y', strtotime($row_kasus["created_at"]))) : ""; ?></td>
                     <td>
                       <?= ($display) ? $row_kasus["deskripsi_waktudantkp"]  :  "" ?>
                     </td>
@@ -150,3 +150,43 @@
             </tbody>
         </table>
 </div>
+
+  <?php 
+  
+	function dateIndonesia($waktu_lengkap){
+		$nama_hari = array(
+			1 => 'Senin',
+			2 => 'Selasa',
+			3 => 'Rabu',
+			4 => 'Kamis',
+			5 => 'Jumat',
+			6 => 'Sabtu',
+			7 => 'Minggu',
+		);
+		$nama_bulan = array(
+			1 =>  'Januari',
+			2 =>  'Februari',
+			3 =>  'Maret',
+			4 =>  'April',
+			5 =>  'Mei',
+			6 =>  'Juni',
+			7 =>  'Juli',
+			8 =>  'Agustus',
+			9 =>  'September',
+			10 =>  'Oktober',
+			11 =>  'November',
+			12 =>  'Desember',
+		);
+
+		$pisah_waktu = explode(" ",$waktu_lengkap);
+		$hari = $pisah_waktu[0];
+		$tanggal = $pisah_waktu[1];
+
+		$hari_baru = $nama_hari[$hari];
+
+		$pisah_tanggal = explode("/",$tanggal);
+		$tanggal_baru = $pisah_tanggal[0]." ".$nama_bulan[$pisah_tanggal[1]]." ".$pisah_tanggal[2];
+
+		return $hari_baru.", ".$tanggal_baru;
+	}
+  ?>

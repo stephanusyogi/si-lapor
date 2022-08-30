@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Dashboard extends CI_Controller {
 	
-    protected $session_status;
+  protected $session_status;
 	protected $kode_kesatuan;
 	function __construct(){
 		parent::__construct();		
@@ -40,10 +40,6 @@ class Dashboard extends CI_Controller {
 			$data['menuLink'] = "dashboard";
 			$data['dataDashboard'] = $dataDashboard;
 
-			$this->load->view('superadmin/include/header', $data);
-			$this->load->view('superadmin/v_dashboard', $data);
-			$this->load->view('superadmin/include/footer', $data);
-
 		} else {
 
 			// TSK NOTIFICATION
@@ -71,11 +67,11 @@ class Dashboard extends CI_Controller {
 			$data['displayTSK'] = $displayTSK;
 			$data['displayBB'] = $displayBB;
 
-			$this->load->view('include/header', $data);
-			$this->load->view('v_dashboard', $data);
-			$this->load->view('include/footer', $data);
+		}		
 
-		}
+		$this->load->view('include/header', $data);
+		$this->load->view('v_dashboard', $data);
+		$this->load->view('include/footer', $data);
 	}
 
 	public function checkTersangkaEmpty(){

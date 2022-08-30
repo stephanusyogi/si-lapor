@@ -1,7 +1,7 @@
 <?php 
-    $namaKesatuan = $this->session->userdata('login_data_admin')['nama'];
-    header("Content-type: application/vnd-ms-excel");
-    header("Content-Disposition: attachment; filename=Laporan Selesai Perkara ({$namaKesatuan}) - Periode {$dateNow}.xls");
+    // $namaKesatuan = $this->session->userdata('login_data_admin')['nama'];
+    // header("Content-type: application/vnd-ms-excel");
+    // header("Content-Disposition: attachment; filename=Laporan Selesai Perkara ({$namaKesatuan}) - Periode {$dateNow}.xls");
 ?>
 
 <style>
@@ -24,6 +24,7 @@
     $CI =& get_instance();
     $CI->load->model('Modelbarangbukti');
     $CI->load->model('Modeltersangka');
+    $CI->load->model('Modelkesatuan');
 ?>
 
 <div class="container">
@@ -32,6 +33,9 @@
         <thead>
             <tr class="text-center">
                 <th>No</th>
+                <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER'){ ?>
+                    <th>Kesatuan</th>
+                <?php } ?>
                 <th>No Laporan Polisi</th>
                 <th>Status</th>
             </tr>
@@ -44,6 +48,12 @@
             ?>
             <tr>
                 <td class="text-center"><?= $no ?></td>
+                <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER'){ ?>
+                    <td><?php
+                        $result = $CI->Modelkesatuan->getKesatuanByKode($rowCC["kode_kesatuan"]);
+                        echo $result[0]['nama']; ?>
+                    </td>
+                <?php } ?>
                 <td><?= $rowCC["no_laporanpolisi"]; ?></td>
                 <td>
                     <?php if(empty($rowCC["status_kasus"])){ ?>
@@ -72,6 +82,9 @@
         <thead>
             <tr class="text-center">
                 <th>No</th>
+                <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER'){ ?>
+                    <th>Kesatuan</th>
+                <?php } ?>
                 <th>No Laporan Polisi</th>
                 <th>Status</th>
             </tr>
@@ -84,6 +97,12 @@
             ?>
             <tr>
                 <td class="text-center"><?= $no ?></td>
+                <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER'){ ?>
+                    <td><?php
+                        $result = $CI->Modelkesatuan->getKesatuanByKode($rowCT["kode_kesatuan"]);
+                        echo $result[0]['nama']; ?>
+                    </td>
+                <?php } ?>
                 <td><?= $rowCT["no_laporanpolisi"]; ?></td>
                 <td>
                     <?php if(empty($rowCT["status_kasus"])){ ?>

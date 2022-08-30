@@ -79,7 +79,7 @@
     $(document).ready(function() {
         setInterval(()=>{
             let xhrGroup = new XMLHttpRequest();
-            xhrGroup.open("POST", "chat/getGroup", true);
+            xhrGroup.open("POST", "<?= base_url() ?>chat/getGroup", true);
             xhrGroup.onload = () => {
                 if (xhrGroup.readyState === XMLHttpRequest.DONE) {
                     if (xhrGroup.status === 200) {
@@ -94,7 +94,7 @@
 
         setInterval(()=>{
             let xhr = new XMLHttpRequest();
-            xhr.open("POST", "chat/getAllUsers", true);
+            xhr.open("POST", "<?= base_url() ?>chat/getAllUsers", true);
             xhr.onload = () => {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
                     if (xhr.status === 200) {
@@ -189,7 +189,7 @@
 
         // Get Information User
         let xhrUser = new XMLHttpRequest();
-        xhrUser.open("POST", "chat/getbyUser", true);
+        xhrUser.open("POST", "<?= base_url() ?>chat/getbyUser", true);
         xhrUser.onload = () => {
             if (xhrUser.readyState === XMLHttpRequest.DONE) {
                 if (xhrUser.status === 200) {
@@ -203,7 +203,7 @@
 
         // Get Message
         let xhrMessage = new XMLHttpRequest();
-        xhrMessage.open("POST", "chat/getmessage", true);
+        xhrMessage.open("POST", "<?= base_url() ?>chat/getmessage", true);
         xhrMessage.onload = () => {
             if (xhrMessage.readyState === XMLHttpRequest.DONE) {
                 if (xhrMessage.status === 200) {
@@ -226,7 +226,7 @@
     function updateIsRead(kodekesatuan){
         // Update isRead
         var xhrIsRead = new XMLHttpRequest();
-        xhrIsRead.open("POST", "chat/updateIsRead", true);
+        xhrIsRead.open("POST", "<?= base_url() ?>chat/updateIsRead", true);
         xhrIsRead.onload = () => {
             if (xhrIsRead.readyState === XMLHttpRequest.DONE) {
                 if (xhrIsRead.status === 200) {
@@ -292,7 +292,7 @@
         // Kirim Pesan
         sendBtn.onclick = () => {
             let xhr = new XMLHttpRequest();
-            xhr.open("POST", "chat/insertChatGroup", true);
+            xhr.open("POST", "<?= base_url() ?>chat/insertChatGroup", true);
             xhr.onload = () => {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
                     if (xhr.status === 200) {
@@ -305,7 +305,7 @@
             xhr.send(formData);
             
             var xhrnew2 = new XMLHttpRequest();
-            xhrnew2.open("POST", "chat/getmessagegroup", true);
+            xhrnew2.open("POST", "<?= base_url() ?>chat/getmessagegroup", true);
             xhrnew2.onload = () => {
                 if (xhrnew2.readyState === XMLHttpRequest.DONE) {
                     if (xhrnew2.status === 200) {
@@ -326,7 +326,7 @@
 
         // Get Message
         let xhrMessage = new XMLHttpRequest();
-        xhrMessage.open("POST", "chat/getmessagegroup", true);
+        xhrMessage.open("POST", "<?= base_url() ?>chat/getmessagegroup", true);
         xhrMessage.onload = () => {
             if (xhrMessage.readyState === XMLHttpRequest.DONE) {
                 if (xhrMessage.status === 200) {
@@ -358,14 +358,14 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 var xhrdel = new XMLHttpRequest();
-                xhrdel.open("POST", "chat/deleteChat", true);
+                xhrdel.open("POST", "<?= base_url() ?>chat/deleteChat", true);
                 xhrdel.onload = () => {
                     if (xhrdel.readyState === XMLHttpRequest.DONE) {
                         if (xhrdel.status === 200) {
                             let data = xhrdel.response;
 
                             var xhrDelete = new XMLHttpRequest();
-                            xhrDelete.open("POST", "chat/getmessagegroup", true);
+                            xhrDelete.open("POST", "<?= base_url() ?>chat/getmessagegroup", true);
                             xhrDelete.onload = () => {
                                 if (xhrDelete.readyState === XMLHttpRequest.DONE) {
                                     if (xhrDelete.status === 200) {
