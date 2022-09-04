@@ -25,7 +25,7 @@ class Chat extends CI_Controller {
 	}
     
 	public function getAllUsers(){
-		$kode_kesatuan = str_replace('_','-',$_POST['kode_kesatuan']);
+		$kode_kesatuan = ($this->kode_kesatuan == 'ADMINSUPER') ? $_POST['kode_kesatuan'] : str_replace('_','-',$_POST['kode_kesatuan']);
 		$this->Modelchat->get_allusers($kode_kesatuan);
 	}
 
@@ -39,22 +39,22 @@ class Chat extends CI_Controller {
 
 	public function getbyUser(){
 		$incoming_id = $_POST['kode_kesatuan'];
-        $this->Modelchat->get_infouser($incoming_id);
+    $this->Modelchat->get_infouser($incoming_id);
 	}
 
 	public function getmessage(){
-		$incoming_id = str_replace('_','-',$_POST['incoming_id']);
-        $outgoing_id = str_replace('_','-',$_POST['outgoing_id']);
+		$incoming_id = ($_POST['incoming_id'] == 'ADMINSUPER') ? $_POST['incoming_id'] : str_replace('_','-',$_POST['incoming_id']);
+    $outgoing_id = ($this->kode_kesatuan == 'ADMINSUPER') ? $_POST['outgoing_id'] : str_replace('_','-',$_POST['outgoing_id']);
 
-        $this->Modelchat->get_message($incoming_id, $outgoing_id);
+    $this->Modelchat->get_message($incoming_id, $outgoing_id);
 	}
 
 	public function insertChat(){
-		$incoming_id = str_replace('_','-',$_POST['kode_kesatuan']);
-        $outgoing_id = $this->kode_kesatuan;
-        $msg = $_POST['message'];
+		$incoming_id = ($_POST['kode_kesatuan'] == 'ADMINSUPER') ? $_POST['kode_kesatuan'] : str_replace('_','-',$_POST['kode_kesatuan']);
+		$outgoing_id = $this->kode_kesatuan;
+		$msg = $_POST['message'];
 
-        $this->Modelchat->insert_message($outgoing_id,$incoming_id, $msg);
+    $this->Modelchat->insert_message($outgoing_id,$incoming_id, $msg);
 	}
 	
 	public function insertChatGroup(){
@@ -65,10 +65,10 @@ class Chat extends CI_Controller {
 	}
 
 	public function updateIsRead(){
-	$incoming_id = $_POST['incoming_id'];
-			$outgoing_id = $this->kode_kesatuan;
+		$incoming_id = $_POST['incoming_id'];
+		$outgoing_id = $this->kode_kesatuan;
 
-			$this->Modelchat->updateStatusRead($incoming_id, $outgoing_id);
+		$this->Modelchat->updateStatusRead($incoming_id, $outgoing_id);
 	}
 
 	public function countMsg(){

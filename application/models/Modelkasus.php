@@ -4,15 +4,23 @@ class Modelkasus extends CI_Model{
 
 // MODEL FUNCTIONS ADMIN
 function getKasusDashboard($kode_kesatuan){
-    return $this->db->where('kode_kesatuan',$kode_kesatuan)
+    $where = array(
+        'kode_kesatuan' => $kode_kesatuan,
+        'isLocked' => 1,
+    );
+    return $this->db->where($where)
     ->from("tb_kasus")->count_all_results();
 }
 
 function getTersangkaDashboard($kode_kesatuan){
+    $where = array(
+        'tb_kasus.kode_kesatuan'=>$kode_kesatuan,
+        'isLocked' => 1,
+    );
     return $this->db->select('*')
     ->from('tb_tersangka')
     ->join('tb_kasus','tb_tersangka.id_kasus=tb_kasus.id_kasus','LEFT')
-    ->where('tb_kasus.kode_kesatuan',$kode_kesatuan)
+    ->where($where)
     ->count_all_results();
 }
 
@@ -20,6 +28,7 @@ function getKasusSelesaiDashboard($kode_kesatuan){
     $where = array(
         'kode_kesatuan' => $kode_kesatuan,
         'status_kasus !=' => "",
+        'isLocked' => 1,
       );
     $res = $this->db->where($where)
     ->from("tb_kasus")->get();
@@ -64,5 +73,40 @@ function getKasusMenonjol($kode_kesatuan){
     return $this->db->where($where)
     ->from("tb_kasus")->count_all_results();
 }
+
+function getSuperKasusDashboard(){
+    return $this->db->select('*')
+    ->from("tb_kasus")->where("isLocked", 1)->count_all_results();
+}
+
+function getSuperTersangkaDashboard(){
+    return $this->db->select('*')
+    ->from('tb_tersangka')
+    ->join('tb_kasus','tb_tersangka.id_kasus=tb_kasus.id_kasus','LEFT')
+    ->where("tb_kasus.isLocked", 1)
+    ->count_all_results();
+}
+
+function getSuperKasusSelesaiDashboard(){
+    $where = array(
+        'status_kasus !=' => "",
+        'isLocked' => 1,
+      );
+    $res = $this->db->where($where)
+    ->from("tb_kasus")->get();
+
+    return $res->result_array();
+}
+
+function getSuperKasusMenonjol(){
+    $where = array(
+        'tb_kasus.isKasusMenonjol' => 1,
+        'tb_kasus.isLocked' => 1,
+    );
+    return $this->db->where($where)
+    ->from("tb_kasus")->count_all_results();
+}
+
+
 
 }

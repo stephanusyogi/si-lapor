@@ -14,13 +14,13 @@ class Data extends CI_Controller {
       $this->session->set_flashdata('error', 'Your Session Has Expired!');
 			return redirect(base_url() . 'login');
 		}
-		
 
 		$this->load->model('Modelkasus');
 		$this->load->model('Modeldata');
 		$this->load->model('Modeltersangka');
 		$this->load->model('Modelbarangbukti');
 		$this->load->model('Modelkesatuan');
+		$this->load->model('Modelpermohonan');
 	}
 
 
@@ -30,7 +30,7 @@ class Data extends CI_Controller {
 		
 		if ($this->kode_kesatuan == 'ADMINSUPER') {
 
-			$date = $this->rangeMonth(date("Y-m-d"));
+			$date = $this->rangeMonth(date("Y-m-d", strtotime("-1 month")), date("Y-m-d", strtotime("+1 month")));
 			$res = $this->Modeldata->getSuperKasus($date['start'], $date['end']);
 			$dateNow = $this->dateIndonesia(date('N j/n/Y', strtotime($date['start']))).' - '.$this->dateIndonesia(date('N j/n/Y', strtotime($date['end'])));
 	
@@ -40,7 +40,7 @@ class Data extends CI_Controller {
 			$data['dateNow'] = $dateNow;
 
 		}else{
-			$date = $this->rangeMonth(date("Y-m-d"));
+			$date = $this->rangeMonth(date("Y-m-d", strtotime("-1 month")), date("Y-m-d", strtotime("+1 month")));
 			$res = $this->Modeldata->getKasusByKodeKesatuan($this->kode_kesatuan, $date['start'], $date['end']);
 			$kesatuan = $this->Modeldata->getKesatuan($this->kode_kesatuan);
 			$dateNow = $this->dateIndonesia(date('N j/n/Y', strtotime($date['start']))) .' - '.$this->dateIndonesia(date('N j/n/Y', strtotime($date['end'])));
@@ -131,13 +131,45 @@ class Data extends CI_Controller {
 		$this->session->set_flashdata('success', 'Informasi kasus berhasil dihapus dari database!');
 		redirect(base_url("master-kasus"));
 	}
+	
+	public function updateAdmin($idKasus){
+		$nrp = $this->input->post('nrp');
+		$this->Modeldata->updateAdminKasus($nrp, $idKasus);
+		$this->session->set_flashdata('success', 'Admin kasus berhasil diupdate ke database!');
+		redirect(base_url("master-kasus"));
+	}
+	
+	public function lockLP($idKasus){
+		$this->Modeldata->lockLP($idKasus);
+
+		// Check Permohonan
+		$res = $this->Modelpermohonan->checkPermohonan($idKasus);
+		if (!empty($res)) {
+			$this->Modelpermohonan->delPermohonanByIdKasus($idKasus);
+		}
+
+		$this->session->set_flashdata('success', 'Data kasus berhasil dikunci ke matrik!');
+		redirect(base_url("master-kasus"));
+	}
+	
+	public function addPermohonan($idKasus){
+		$alasan_permohonan = $this->input->post('alasan_permohonan');
+		$dataPermohonan = array(
+			"kode_kesatuan" => $this->kode_kesatuan,
+			"id_kasus" => $idKasus,
+			"alasan_permohonan" => $alasan_permohonan,
+		);
+		$this->Modelpermohonan->addPermohonan($dataPermohonan);
+		$this->session->set_flashdata('success', 'Permohonan perubahan kasus berhasil diupdate ke database!');
+		redirect(base_url("daftar-permohonan-edit"));
+	}
 
 
 
 
 	// MATRIK KASUS MODUL	
   public function viewMatrikKasus(){
-		$date = $this->rangeMonth(date("Y-m-d"));
+		$date = $this->rangeMonth(date("Y-m-d", strtotime("-1 month")), date("Y-m-d", strtotime("+1 month")));
 		$dateNow = $this->dateIndonesia(date('N j/n/Y', strtotime($date['start']))).' - '.$this->dateIndonesia(date('N j/n/Y', strtotime($date['end'])));
 
 		if ($this->kode_kesatuan == 'ADMINSUPER') {
@@ -476,7 +508,7 @@ class Data extends CI_Controller {
 
 	// MATRIK BARANG BUKTI MODUL
   public function viewMatrikBarangBukti(){
-		$date = $this->rangeMonth(date("Y-m-d"));
+		$date = $this->rangeMonth(date("Y-m-d", strtotime("-1 month")), date("Y-m-d", strtotime("+1 month")));
 		$dateNow = $this->dateIndonesia(date('N j/n/Y', strtotime($date['start']))).' - '.$this->dateIndonesia(date('N j/n/Y', strtotime($date['end'])));
 
 		$kategoriBB = array("Ganja","Tembakau Gorilla","Hashish","Opium","Morphin","Heroin/Putaw","Kokain","Exstacy/Carnophen","Sabu","GOL IV","Daftar G","Kosmetik","Jamu");
@@ -790,7 +822,7 @@ class Data extends CI_Controller {
 	// SELRA MODUL
   public function viewSelra(){
 
-		$date = $this->rangeMonth(date("Y-m-d"));
+		$date = $this->rangeMonth(date("Y-m-d", strtotime("-1 month")), date("Y-m-d", strtotime("+1 month")));
 		$dateNow = $this->dateIndonesia(date('N j/n/Y', strtotime($date['start']))).' - '.$this->dateIndonesia(date('N j/n/Y', strtotime($date['end'])));
 
 		if ($this->kode_kesatuan == 'ADMINSUPER') {
@@ -802,7 +834,7 @@ class Data extends CI_Controller {
 				),
 				"CT" => array(
 					"Kasus" => count($this->Modeldata->getSuperSelraCT($date['start'], $date['end'])),
-					"Tersangka" => count($this->Modeldata->getSuperSelraCCTersangka($date['start'], $date['end'])),
+					"Tersangka" => count($this->Modeldata->getSuperSelraCTTersangka($date['start'], $date['end'])),
 				),
 			);
 
@@ -936,12 +968,13 @@ class Data extends CI_Controller {
 
 
 	// Date Modul
-	function rangeMonth($datestr) {
+	function rangeMonth($dateBefore, $dateAfter) {
 		date_default_timezone_set (date_default_timezone_get());
-		$dt = strtotime ($datestr);
+		$dtBefore = strtotime ($dateBefore);
+		$dtAfter = strtotime ($dateAfter);
 		return array (
-		"start" => date ('Y-m-d', strtotime ('first day of this month', $dt)),
-		"end" => date ('Y-m-d', strtotime ('last day of this month', $dt))
+			"start" => date ('Y-m-d', strtotime ('first day of this month', $dtBefore)),
+			"end" => date ('Y-m-d', strtotime ('last day of this month', $dtAfter))
 		);
 	}
 

@@ -2,10 +2,9 @@
  
 class Modelauth extends CI_Model{
 
-	function checkAuth($username, $password){
+	function checkAuth($username){
 		$where = array(
 			'tb_admin.nrp' => $username,
-			'tb_admin.password' => $password,
 		);
 		$this->db->select('*')
 		->from('tb_admin')
@@ -23,5 +22,9 @@ class Modelauth extends CI_Model{
 		->where($where);
 		$query = $this->db->get();   
 		return $query->result_array();
+	}
+
+	function addHistory($dataHistory){
+		return $this->db->insert('tb_history_login', $dataHistory);
 	}
 }

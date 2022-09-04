@@ -107,7 +107,7 @@
                 <a href="<?= base_url("data-tersangka/{$dataKasus['id_kasus']}") ?>" class="btn btn-secondary">Kembali ke Formulir Tersangka</a>
             </div>
             <div class="col-md-4 text-right">
-                <a href="<?= base_url("master-kasus") ?>" class="btn btn-primary">Simpan Kasus ke Database</a>
+                <a href="<?= base_url("master-kasus") ?>" class="btn btn-primary">Lihat Data Master</a>
             </div>
         </div>
       </div><!-- /.container-fluid -->

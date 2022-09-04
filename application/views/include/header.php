@@ -227,6 +227,12 @@
                   <p>Matrik Barang Bukti</p>
                 </a>
               </li>
+              <li class="nav-item">
+                <a href="<?= base_url("daftar-permohonan-edit") ?>" class="nav-link">
+                  <i class="fas fa-hands-helping nav-icon"></i>
+                  <p>Daftar Pengajuan Edit</p>
+                </a>
+              </li>
             </ul>
           </li>
           <li class="nav-header">PELIMPAHAN</li>
@@ -253,10 +259,12 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="<?= base_url('pengumuman') ?>" class="nav-link">
               <i class="fas fa-satellite-dish nav-icon"></i>
               <p>PENGUMUMAN</p>
-              <span class="badge badge-warning right"></span>
+              <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] != 'ADMINSUPER'): ?>
+              <span class="badge badge-warning right" id="countPengumuman"></span>
+              <?php endif; ?>
             </a>
           </li>
           <li class="nav-item">
@@ -294,4 +302,20 @@
         xhrCount.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xhrCount.send();
       },2000);
+      <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] != 'ADMINSUPER'): ?>
+        setInterval(() => {
+          let xhrCountPengumuman = new XMLHttpRequest();
+          xhrCountPengumuman.open("POST", "<?= base_url() ?>pengumuman/countPengumuman", true);
+          xhrCountPengumuman.onload = () => {
+              if (xhrCountPengumuman.readyState === XMLHttpRequest.DONE) {
+                  if (xhrCountPengumuman.status === 200) {
+                      let data = xhrCountPengumuman.response;
+                      document.getElementById("countPengumuman").textContent = data;
+                  }
+              }
+          }
+          xhrCountPengumuman.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+          xhrCountPengumuman.send();
+        },2000);
+      <?php endif; ?>
   </script>

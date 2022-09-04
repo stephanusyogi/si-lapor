@@ -28,12 +28,12 @@ class Dashboard extends CI_Controller {
 		if ($this->kode_kesatuan == 'ADMINSUPER') {
 
 			$dataDashboard = array(
-				"jumlahKasus" => $this->Modelkasus->getKasusDashboard($this->kode_kesatuan),
-				"jumlahTersangka" => $this->Modelkasus->getTersangkaDashboard($this->kode_kesatuan),
-				"jumlahKasusSelesai" => $this->Modelkasus->getKasusSelesaiDashboard($this->kode_kesatuan),
-				"jumlahAdmin" => count($this->Modeladmin->getAdmin($this->kode_kesatuan)),
-				"jumlahKasusMenonjol" => $this->Modelkasus->getKasusMenonjol($this->kode_kesatuan),
-				"jumlahLoginToday" => 100,
+				"jumlahKasus" => $this->Modelkasus->getSuperKasusDashboard(),
+				"jumlahTersangka" => $this->Modelkasus->getSuperTersangkaDashboard(),
+				"jumlahKasusSelesai" => $this->Modelkasus->getSuperKasusSelesaiDashboard($this->kode_kesatuan),
+				"jumlahAdmin" => count($this->Modeladmin->getAdmin()),
+				"jumlahKasusMenonjol" => $this->Modelkasus->getSuperKasusMenonjol(),
+				"jumlahLoginToday" => count($this->Modeladmin->getAdminToday()),
 			);
 
 			$data['title'] = "Dashboard";

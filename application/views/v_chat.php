@@ -71,7 +71,7 @@
         }
     }
 
-    const kodekesatuanFrom = "<?= str_replace('-','_',$this->session->userdata('login_data_admin')['kodekesatuan']) ?>";
+    const kodekesatuanFrom = "<?= ($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER') ? $this->session->userdata('login_data_admin')['kodekesatuan'] : str_replace('-','_',$this->session->userdata('login_data_admin')['kodekesatuan']) ?>";
     const grouplist = document.querySelector(".loby-menu");
     const usersList = document.querySelector(".users-list");
     const chatBox = document.getElementById("chatApp");

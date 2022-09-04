@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class ModelChat extends CI_Model {
 
     function get_allusers($kode_kesatuan){
-        $sql = "SELECT * FROM tb_kesatuan LEFT JOIN tb_chat ON tb_kesatuan.kode_kesatuan = tb_chat.outgoing_msg_id WHERE NOT tb_kesatuan.kode_kesatuan='{$kode_kesatuan}' GROUP BY tb_kesatuan.kode_kesatuan ORDER BY tb_chat.created_at DESC";
+        $sql = "SELECT * FROM tb_kesatuan LEFT JOIN tb_chat ON tb_kesatuan.kode_kesatuan = tb_chat.outgoing_msg_id WHERE NOT tb_kesatuan.kode_kesatuan='{$kode_kesatuan}' AND NOT tb_kesatuan.kode_kesatuan = 'PRINCIPAL'  GROUP BY tb_kesatuan.kode_kesatuan ORDER BY tb_chat.created_at DESC";
         $query = $this->db->query($sql);
         $res = $query->result_array();
         $output = "";
@@ -98,7 +98,6 @@ class ModelChat extends CI_Model {
         OR (outgoing_msg_id = '{$kode_kesatuan}' AND incoming_msg_id = '$incoming_id') ORDER BY tb_chat.id ASC" ;
         $query2 = $this->db->query($sql2);
         $res_msg = $query2->result_array();
-        
         $output = "";
         $srcImage = base_url()."assets/images/user.png";
         if (!empty($res_msg)) {

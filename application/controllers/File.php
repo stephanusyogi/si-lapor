@@ -16,31 +16,47 @@ class File extends CI_Controller {
 		}	
 
 		$this->load->model('Modelfile');
+		$this->load->model('Modelkesatuan');
 	}
 
 	public function viewUploadFile(){
-		$dataFile = $this->Modelfile->getAllFile($this->kode_kesatuan);
+		if ($this->kode_kesatuan == 'ADMINSUPER') {
 
-        $data['title'] = "Data Files";
-        $data['menuLink'] = "upload-file";
-		$data['dataFile'] = $dataFile;
+			$dataFile = $this->Modelfile->getAllFile($this->kode_kesatuan);
+			$kesatuan = $this->Modelkesatuan->getKesatuan();
+	
+			$data['title'] = "Management Files Jajaran";
+			$data['menuLink'] = "upload-file";
+			$data['dataFile'] = $dataFile;
+			$data['kesatuan'] = $kesatuan;
+			
+		} else {
 
+			$dataFile = $this->Modelfile->getAllFile($this->kode_kesatuan);
+	
+			$data['title'] = "Data Files";
+			$data['menuLink'] = "upload-file";
+			$data['dataFile'] = $dataFile;
+		
+		}
+		
 		$this->load->view('include/header', $data);
-		$this->load->view('v_uploadfile', $data);
+		$this->load->view('v_file', $data);
 		$this->load->view('include/footer', $data);
+		
 	}
 
-    public function uploadFile(){
-        $nrp = $this->session->userdata('login_data_admin')['nrp_admin'];
-        $ket_file = $this->input->post('ket_file');
-        $time = time();
-        $file_name = $_FILES['file'];
+	public function uploadFile(){
+		$nrp = $this->session->userdata('login_data_admin')['nrp_admin'];
+		$ket_file = $this->input->post('ket_file');
+		$time = time();
+		$file_name = $_FILES['file'];
 
 		// Move uploaded file to a temp location
 		$uploadDir = $_SERVER['DOCUMENT_ROOT'].'/si-lapor/uploads/fileJajaran/';
 		$uploadFile = $uploadDir . $time . " - " . basename($_FILES['file']['name']);
         
-        if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadFile)){
+    if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadFile)){
 			$new_data = [
 				'nrp' => $nrp,
                 'kode_kesatuan' => $this->kode_kesatuan,
@@ -73,13 +89,26 @@ class File extends CI_Controller {
 		redirect(base_url("upload-file"));
 	}
 
-    public function downloadFile($idFile){
-        $res = $this->Modelfile->getFile($idFile);
+	public function downloadFile($idFile){
+			$res = $this->Modelfile->getFile($idFile);
 
-        $namaFile = $res[0]['nama_file'];
-        $uploadDir = $_SERVER['DOCUMENT_ROOT'].'/si-lapor/uploads/fileJajaran/';
-        $uploadFile = $uploadDir . $namaFile;
+			$namaFile = $res[0]['nama_file'];
+			$uploadDir = $_SERVER['DOCUMENT_ROOT'].'/si-lapor/uploads/fileJajaran/';
+			$uploadFile = $uploadDir . $namaFile;
 
-        force_download($uploadFile, NULL);
-    }
+			force_download($uploadFile, NULL);
+	}
+
+	public function viewFileJajaran($kode_kesatuan){
+
+			$dataFile = $this->Modelfile->getAllFile($kode_kesatuan);
+	
+			$data['title'] = "Management Files Jajaran";
+			$data['menuLink'] = "upload-file";
+			$data['dataFile'] = $dataFile;
+		
+		$this->load->view('include/header', $data);
+		$this->load->view('v_file_jajaran', $data);
+		$this->load->view('include/footer', $data);
+	}
 }

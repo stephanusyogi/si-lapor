@@ -21,6 +21,7 @@
     $CI->load->model('Modeltersangka');
     $CI->load->model('Modeladmin');
     $CI->load->model('Modelkesatuan');
+    $CI->load->model('Modelpermohonan');
   ?>
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -99,8 +100,9 @@
                   <th>No</th>
                   <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER'): ?>
                   <th>Kesatuan</th>
-                  <?php endif; ?>
-                  <th>Action</th>   
+                  <?php else: ?>
+                  <th>Action</th>
+                  <?php endif; ?>   
                   <th>No Laporan Polisi</th>
                   <th>Created Date</th>
                   <th>Deskripsi Waktu & TKP</th>
@@ -138,9 +140,26 @@
                     <?php }else{ ?>
                     <td class="text-center" style="font-size:24px;">
                       <?php if($display): ?>
-                        <div data-toggle="tooltip" data-placement="top" title="Update Laporan Kasus">
-                          <a href="<?= base_url("lapor-ungkap-kasus/{$row_kasus["id_kasus"]}") ?>" style="cursor:pointer;"><i class="fas fa-pen-square" style="color:green;"></i></a>
-                        </div>
+                        <?php if(!$row_kasus["isLocked"]): ?>
+                          <div data-toggle="tooltip" data-placement="top" title="Kunci Ke Matrik">
+                            <a href="<?= base_url() ?>data/lockLP/<?= $row_kasus["id_kasus"] ?>" style="cursor:pointer;"><i class="fas fa-lock" style="color:black;"></i></a>
+                          </div>
+                          <div data-toggle="tooltip" data-placement="top" title="Update Laporan Kasus">
+                            <a href="<?= base_url("lapor-ungkap-kasus/{$row_kasus["id_kasus"]}") ?>" style="cursor:pointer;"><i class="fas fa-pen-square" style="color:green;"></i></a>
+                          </div>
+                        <?php else: ?>
+                          <div data-toggle="tooltip" data-placement="top" title="Ajukan Permohonan Update">
+                            <a 
+                            <?php 
+                            $checkPermohonan =  $CI->Modelpermohonan->checkPermohonan($row_kasus['id_kasus']);
+                            if (empty($checkPermohonan)) { ?>
+                              data-toggle="modal" data-target="#permohonanModal<?= $row_kasus['id_kasus']; ?>"  
+                            <?php } else {?>
+                              href="<?= base_url() ?>daftar-permohonan-edit"
+                            <?php } ?>
+                            style="cursor:pointer;"><i class="fas fa-pen-square" style="color:green;"></i></a>
+                          </div>
+                        <?php endif; ?>
                         <div data-toggle="tooltip" data-placement="top" title="Update Status Laporan">
                           <a style="cursor:pointer;" data-toggle="modal" data-target="#statusModal<?= $row_kasus['id_kasus']; ?>"><i class="fas fa-check-square" style="color:darkblue;"></i></a>
                         </div>
@@ -209,7 +228,15 @@
                     <td>
                       <?php
                         $dataAdmin = $CI->Modeladmin->getAdminByNRP($row_kasus['nrp_admin']);
-                        if($display){ echo $dataAdmin[0]['nama_admin'].' - NRP. '.$dataAdmin[0]['nrp']; }else{ echo '';};
+                        if($display){
+                          if (!empty($row_kasus["nrp_admin"])) {
+                            echo $dataAdmin[0]['nama_admin'].' - NRP. '.$dataAdmin[0]['nrp']; 
+                          }else{ ?>
+                            <a class="btn btn-sm btn-info w-100" data-toggle="modal" data-target="#adminModal<?= $row_kasus['id_kasus']; ?>">Pilih Admin</a>
+                          <?php }
+                        }else{ 
+                          echo '';
+                        };
                       ?>
                     </td>
                     <td>
@@ -301,6 +328,63 @@
                                 </div>
                                 <div class="modal-footer" style="height:10rem;align-items:end;">
                                     <button type="submit" class="btn btn-success">Simpan</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                                </div>
+                            </form>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <!-- Modal Pilih Admin -->
+              <div class="modal fade" id="adminModal<?= $row_kasus['id_kasus']; ?>" tabindex="-1" role="dialog" aria-labelledby="adminModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
+                      <div class="modal-content">
+                          <div class="modal-header">
+                              <h5 class="modal-title" id="adminModalLabel">Pilih Administrator</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                              </button>
+                          </div>
+                          <div class="modal-body">
+                            <form action="<?= base_url("data/updateAdmin/{$row_kasus['id_kasus']}") ?>" method="post">
+                                <div class="form-group">
+                                  <label for="nrp">Pilih Admin :</label>
+                                  <select name="nrp" class="form-control" required>
+                                    <?php 
+                                    $resAdmin = $CI->Modeladmin->getAdminByKesatuan($this->session->userdata('login_data_admin')['kodekesatuan']);
+                                    foreach ($resAdmin as $keyAdmin) { ?>
+                                      <option value="<?= $keyAdmin['nrp'] ?>"><?= $keyAdmin['nama_admin'].' - NRP. '.$keyAdmin['nrp'] ?></option>
+                                    <?php } ?>
+                                  </select>
+                                </div>
+                                <div class="modal-footer" style="height:10rem;align-items:end;">
+                                    <button type="submit" class="btn btn-success">Update</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                                </div>
+                            </form>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <!-- Modal Permohonan -->
+              <div class="modal fade" id="permohonanModal<?= $row_kasus['id_kasus']; ?>" tabindex="-1" role="dialog" aria-labelledby="adminModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
+                      <div class="modal-content">
+                          <div class="modal-header">
+                              <h5 class="modal-title" id="adminModalLabel">Permohonan Edit LP</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                              </button>
+                          </div>
+                          <div class="modal-body">
+                            <form action="<?= base_url("data/addPermohonan/{$row_kasus['id_kasus']}") ?>" method="post">
+                                <input type="hidden" nama="kode_kesatuan" value="<?= $this->session->userdata('login_data_admin')['kodekesatuan'] ?>">
+                                <div class="form-group">
+                                  <label for="">Alasan Pengajuan Perubahan LP :</label>
+                                  <textarea class="form-control" name="alasan_permohonan" rows="5" placeholder="contoh: Barang bukti pada LP belum terisi, Perubahan data instrumen pada LP"></textarea>
+                                </div>
+                                <div class="modal-footer" style="align-items:end;">
+                                    <button type="submit" class="btn btn-success">Add</button>
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
                                 </div>
                             </form>

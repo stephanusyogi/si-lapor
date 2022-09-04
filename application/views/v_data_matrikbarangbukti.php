@@ -22,12 +22,7 @@
     <section class="content">
       <div class="container-fluid px-4 py-4">
         <div class="alert alert-warning" role="alert">
-          Perhatian! Data dengan ciri-ciri berikut <strong>tidak akan</strong> ter-rekap dalam modul <strong>matrik barang bukti</strong>.
-          <ol>
-            <li>Kasus LP yang tidak memiliki tersangka / barang bukti,</li>
-            <li>Tersangka yang tidak memiliki barang bukti,</li>
-            <li>Kasus pelimpahan yang diterima.</li>
-          </ol>
+          Perhatian! Hanya LP yang <strong>terkunci ke matrik</strong> ter-rekap dalam modul <strong>matrik barang bukti</strong>.
           Silahkan melengkapi instrumen yang kosong dengan pilihan yang disiapkan!
         </div>
         <h2>Matrik Barang Bukti <strong><?= $this->session->userdata('login_data_admin')['nama'] ?></strong></h2>

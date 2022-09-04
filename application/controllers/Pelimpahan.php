@@ -24,7 +24,7 @@ class Pelimpahan extends CI_Controller {
 	public function viewKasusPelimpahan(){
 		if ($this->kode_kesatuan == 'ADMINSUPER') {
 
-			$date = $this->rangeMonth(date("Y-m-d"));
+			$date = $this->rangeMonth(date("Y-m-d", strtotime("-1 month")), date("Y-m-d", strtotime("+1 month")));
 			$dateNow = $this->dateIndonesia(date('N j/n/Y', strtotime($date['start']))).' - '.$this->dateIndonesia(date('N j/n/Y', strtotime($date['end'])));
 			$res = $this->Modelpelimpahan->getSuperPelimpahan($date['start'], $date['end']);
 	
@@ -35,7 +35,7 @@ class Pelimpahan extends CI_Controller {
 
 		}else{
 
-			$date = $this->rangeMonth(date("Y-m-d"));
+			$date = $this->rangeMonth(date("Y-m-d", strtotime("-1 month")), date("Y-m-d", strtotime("+1 month")));
 			$dateNow = $this->dateIndonesia(date('N j/n/Y', strtotime($date['start']))).' - '.$this->dateIndonesia(date('N j/n/Y', strtotime($date['end'])));
 			$res = $this->Modelpelimpahan->getKasusPelimpahanById($this->kode_kesatuan, $date['start'], $date['end']);
 	
@@ -124,7 +124,7 @@ class Pelimpahan extends CI_Controller {
 			redirect(base_url('404_override'));
 		}
 
-		$date = $this->rangeMonth(date("Y-m-d"));
+		$date = $this->rangeMonth(date("Y-m-d", strtotime("-1 month")), date("Y-m-d", strtotime("+1 month")));
 		$dateNow = $this->dateIndonesia(date('N j/n/Y', strtotime($date['start']))).' - '.$this->dateIndonesia(date('N j/n/Y', strtotime($date['end'])));
 
 		$data['title'] = "Riwayat LP Kasus Pelimpahan";
@@ -510,12 +510,13 @@ class Pelimpahan extends CI_Controller {
 	}
 	
 	// Date Modul
-	function rangeMonth($datestr) {
+	function rangeMonth($dateBefore, $dateAfter) {
 		date_default_timezone_set (date_default_timezone_get());
-		$dt = strtotime ($datestr);
+		$dtBefore = strtotime ($dateBefore);
+		$dtAfter = strtotime ($dateAfter);
 		return array (
-		"start" => date ('Y-m-d', strtotime ('first day of this month', $dt)),
-		"end" => date ('Y-m-d', strtotime ('last day of this month', $dt))
+			"start" => date ('Y-m-d', strtotime ('first day of this month', $dtBefore)),
+			"end" => date ('Y-m-d', strtotime ('last day of this month', $dtAfter))
 		);
 	}
 	

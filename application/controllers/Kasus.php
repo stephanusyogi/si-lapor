@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Kasus extends CI_Controller {
 	
-    protected $session_status;
+  protected $session_status;
 	protected $kode_kesatuan;
 	function __construct(){
 		parent::__construct();		
@@ -43,13 +43,19 @@ class Kasus extends CI_Controller {
 		}
 
 		$res = $this->Modelkasus->getByIdKasus($idKasus, $this->kode_kesatuan)->result_array()[0];
+
 		if (!$res) {
 			$this->session->set_flashdata('error', 'Forbidden Accsess!');
 			redirect(base_url('404_override'));
 		}
 
-        $data['title'] = "Lapor Ungkap Kasus";
-        $data['menuLink'] = "lapor-ungkap-kasus";
+		if ($res['isLocked']) {
+			$this->session->set_flashdata('error', 'Forbidden Accsess!');
+			redirect(base_url('404_override'));
+		}
+
+		$data['title'] = "Lapor Ungkap Kasus";
+		$data['menuLink'] = "lapor-ungkap-kasus";
 		$data['dataKasus'] = $res;
 
 		$this->load->view('include/header',$data);
@@ -151,13 +157,19 @@ class Kasus extends CI_Controller {
 		}
 
 		$res = $this->Modelkasus->getByIdKasus($idKasus, $this->kode_kesatuan)->result_array()[0];
+
 		if (!$res) {
 			$this->session->set_flashdata('error', 'Forbidden Accsess!');
 			redirect(base_url('404_override'));
 		}
+		
+		if ($res['isLocked']) {
+			$this->session->set_flashdata('error', 'Forbidden Accsess!');
+			redirect(base_url('404_override'));
+		}
 
-        $data['title'] = "Data Tersangka";
-        $data['menuLink'] = "lapor-ungkap-kasus";
+		$data['title'] = "Data Tersangka";
+		$data['menuLink'] = "lapor-ungkap-kasus";
 		$data['dataKasus'] = $res;
 		$data['dataTersangka'] = $this->Modeltersangka->getTersangkaByIdKasus($idKasus)->result_array();
 
@@ -249,7 +261,13 @@ class Kasus extends CI_Controller {
 		}
 
 		$res = $this->Modelkasus->getByIdKasus($idKasus, $this->kode_kesatuan)->result_array()[0];
+
 		if (!$res) {
+			$this->session->set_flashdata('error', 'Forbidden Accsess!');
+			redirect(base_url('404_override'));
+		}
+		
+		if ($res['isLocked']) {
 			$this->session->set_flashdata('error', 'Forbidden Accsess!');
 			redirect(base_url('404_override'));
 		}
@@ -260,8 +278,8 @@ class Kasus extends CI_Controller {
 			redirect(base_url('404_override'));
 		}
 
-        $data['title'] = "Data Barang Bukti";
-        $data['menuLink'] = "lapor-ungkap-kasus";
+		$data['title'] = "Data Barang Bukti";
+		$data['menuLink'] = "lapor-ungkap-kasus";
 		$data['dataKasus'] = $res;
 		$data['dataTersangka'] = $res_tsk;
 		$data['dataBarangBukti'] = $this->Modelbarangbukti->getBarangBuktiByIdTersangka($idKasus, $idTersangka)->result_array();

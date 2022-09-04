@@ -58,6 +58,8 @@
 
 <script>
   $(document).ready(function () {
+    $("body").addClass("sidebar-collapse");
+    
       $('[data-toggle="tooltip"]').tooltip();
 
       $('#table-full-fitur').DataTable();

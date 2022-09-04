@@ -22,7 +22,8 @@ class Modeldata extends CI_Model{
         ->from('tb_kasus')
         ->join('tb_tersangka','tb_kasus.id_kasus=tb_tersangka.id_kasus','INNER')
         ->where($where)
-        ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'");
+        ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+        ->order_by("tb_kasus.created_at", 'DESC');
 
         $query = $this->db->get();         
         return $query->result_array();  
@@ -46,6 +47,12 @@ class Modeldata extends CI_Model{
 
     function updateKasusMenonjol($idKasus){
         $this->db->set('isKasusMenonjol', 1);
+        $this->db->where('id_kasus', $idKasus);
+        $this->db->update('tb_kasus');
+    }
+    
+    function lockLP($idKasus){
+        $this->db->set('isLocked', 1);
         $this->db->where('id_kasus', $idKasus);
         $this->db->update('tb_kasus');
     }
@@ -81,17 +88,31 @@ class Modeldata extends CI_Model{
         return $idKasus;
     }
 
+    function updateAdminKasus($nrp, $idKasus){
+        return $this->db->set('nrp_admin', $nrp)
+        ->where('id_kasus', $idKasus)
+        ->update('tb_kasus');
+    }
+
     // Matrik Kasus Modul
     function getKSS($kode_kesatuan, $firstDate, $lastDate){
-        return $this->db->where('kode_kesatuan',$kode_kesatuan)
+        $where = array(
+            "kode_kesatuan" => $kode_kesatuan,
+            "tb_kasus.isLocked" => 1,
+        );
+        return $this->db->where($where)
         ->from("tb_kasus")->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")->count_all_results();
     }
     
     function getTSK($kode_kesatuan, $firstDate, $lastDate){
+        $where = array(
+            "tb_kasus.kode_kesatuan" => $kode_kesatuan,
+            "tb_kasus.isLocked" => 1,
+        );
         return $this->db->select('*')
         ->from('tb_tersangka')
         ->join('tb_kasus','tb_tersangka.id_kasus=tb_kasus.id_kasus','LEFT')
-        ->where('tb_kasus.kode_kesatuan',$kode_kesatuan)
+        ->where($where)
         ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
         ->count_all_results();
     }
@@ -100,6 +121,7 @@ class Modeldata extends CI_Model{
         $where = array(
             'tb_kasus.kode_kesatuan' => $kode_kesatuan,
             $field => $value,
+            "tb_kasus.isLocked" => 1,
         );
         $res = $this->db->select('*')
         ->from('tb_tersangka')
@@ -114,6 +136,7 @@ class Modeldata extends CI_Model{
     function getKewarganegaraanJenisKelamin($kode_kesatuan, $status_kewarganegaraan, $jenis_kelamin, $firstDate, $lastDate){
         $where = array(
             'tb_kasus.kode_kesatuan' => $kode_kesatuan,
+            "tb_kasus.isLocked" => 1,
             'tb_tersangka.status_kewarganegaraan' => $status_kewarganegaraan,
             'tb_tersangka.jenis_kelamin' => $jenis_kelamin
         );
@@ -128,8 +151,9 @@ class Modeldata extends CI_Model{
     function getBeratBB($kode_kesatuan, $kategori, $firstDate, $lastDate){
         $where = array(
             'tb_kasus.kode_kesatuan' => $kode_kesatuan,
+            "tb_kasus.isLocked" => 1,
             'tb_barangbukti.kategori' => $kategori,
-            'tb_barangbukti.isDuplicate' => 0
+            'tb_barangbukti.isDuplicate' => 0,
         );
         return $this->db->select('*')
         ->from('tb_barangbukti')
@@ -143,6 +167,7 @@ class Modeldata extends CI_Model{
     function getBBJumlahKSS($kode_kesatuan, $kategori, $status, $firstDate, $lastDate){
         $where = array(
             'tb_kasus.kode_kesatuan' => $kode_kesatuan,
+            "tb_kasus.isLocked" => 1,
             'tb_barangbukti.kategori'   => $kategori,
             'tb_tersangka.status'   => $status,
           );
@@ -161,6 +186,7 @@ class Modeldata extends CI_Model{
     function getBBJumlahTSK($kode_kesatuan, $kategori, $status, $firstDate, $lastDate){
         $where = array(
             'tb_kasus.kode_kesatuan' => $kode_kesatuan,
+            "tb_kasus.isLocked" => 1,
             'tb_tersangka.status'   => $status,
             'tb_barangbukti.kategori'   => $kategori,
           );
@@ -179,6 +205,7 @@ class Modeldata extends CI_Model{
     function getBBSelesaiKSS($kode_kesatuan, $kategori, $status, $firstDate, $lastDate){
         $where = array(
             'tb_kasus.kode_kesatuan' => $kode_kesatuan,
+            "tb_kasus.isLocked" => 1,
             'tb_kasus.status_kasus !=' => "",
             'tb_barangbukti.kategori'   => $kategori,
             'tb_tersangka.status'   => $status,
@@ -198,6 +225,7 @@ class Modeldata extends CI_Model{
     function getBBKewarganegaraanJK($kode_kesatuan, $kategori, $status, $status_kewarganegaraan, $jenis_kelamin, $firstDate, $lastDate){
         $where = array(
             'tb_kasus.kode_kesatuan' => $kode_kesatuan,
+            "tb_kasus.isLocked" => 1,
             'tb_barangbukti.kategori'   => $kategori,
             'tb_tersangka.status'   => $status,
             'tb_tersangka.status_kewarganegaraan' => $status_kewarganegaraan,
@@ -218,6 +246,7 @@ class Modeldata extends CI_Model{
     function getBBMatrikInstrumen($kode_kesatuan, $kategori, $status, $field, $value, $firstDate, $lastDate){
         $where = array(
             'tb_kasus.kode_kesatuan' => $kode_kesatuan,
+            "tb_kasus.isLocked" => 1,
             'tb_barangbukti.kategori'   => $kategori,
             'tb_tersangka.status'   => $status,
             $field => $value,
@@ -237,6 +266,7 @@ class Modeldata extends CI_Model{
     function getBBJumlahBerat($kode_kesatuan, $kategori, $status, $firstDate, $lastDate){
         $where = array(
             'tb_kasus.kode_kesatuan' => $kode_kesatuan,
+            "tb_kasus.isLocked" => 1,
             'tb_barangbukti.kategori'   => $kategori,
             'tb_tersangka.status'   => $status,
           );
@@ -255,6 +285,7 @@ class Modeldata extends CI_Model{
     function getSelraCC($kode_kesatuan, $firstDate, $lastDate){
         $where = array(
             'kode_kesatuan' => $kode_kesatuan,
+            'isLocked' => 1,
             'status_kasus !='   => '',
           );
         $res = $this->db->select('*')
@@ -269,6 +300,7 @@ class Modeldata extends CI_Model{
     function getSelraCT($kode_kesatuan, $firstDate, $lastDate){
         $where = array(
             'kode_kesatuan' => $kode_kesatuan,
+            'isLocked' => 1,
             'status_kasus ='   => '',
           );
         $res = $this->db->select('*')
@@ -283,6 +315,7 @@ class Modeldata extends CI_Model{
     function getSelraCCTersangka($kode_kesatuan, $firstDate, $lastDate){
         $where = array(
             'tb_kasus.kode_kesatuan' => $kode_kesatuan,
+            'tb_kasus.isLocked' => 1,
             'tb_kasus.status_kasus !='   => '',
           );
         $res = $this->db->select('*')
@@ -298,6 +331,7 @@ class Modeldata extends CI_Model{
     function getSelraCTTersangka($kode_kesatuan, $firstDate, $lastDate){
         $where = array(
             'tb_kasus.kode_kesatuan' => $kode_kesatuan,
+            'tb_kasus.isLocked' => 1,
             'tb_kasus.status_kasus ='   => '',
           );
         $res = $this->db->select('*')
@@ -312,10 +346,14 @@ class Modeldata extends CI_Model{
 
     // Aditional for Superadmin
     function getSuperKasus($firstDate, $lastDate){
+        $where = array(
+            "tb_kasus.kode_kesatuan !=" => "ADMINSUPER",
+            "tb_kasus.isLocked" => 1,
+        );
         $this->db->select('*')
         ->from('tb_kasus')
         ->join('tb_tersangka','tb_kasus.id_kasus=tb_tersangka.id_kasus','INNER')
-        ->where("tb_kasus.kode_kesatuan !=", "ADMINSUPER")
+        ->where($where)
         ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
         ->order_by('kode_kesatuan','DESC');
 
@@ -326,6 +364,7 @@ class Modeldata extends CI_Model{
     function getSuperSelraCC($firstDate, $lastDate){
         $where = array(
             'status_kasus !='   => '',
+            "isLocked" => 1,
           );
         $res = $this->db->select('*')
         ->from('tb_kasus')
@@ -340,6 +379,7 @@ class Modeldata extends CI_Model{
     function getSuperSelraCT($firstDate, $lastDate){
         $where = array(
             'status_kasus ='   => '',
+            "isLocked" => 1,
           );
         $res = $this->db->select('*')
         ->from('tb_kasus')
@@ -353,7 +393,23 @@ class Modeldata extends CI_Model{
 
     function getSuperSelraCCTersangka($firstDate, $lastDate){
         $where = array(
-            'tb_kasus.status_kasus !='   => '',
+            'status_kasus !=' => '',
+            "isLocked" => 1,
+          );
+        $res = $this->db->select('*')
+        ->from('tb_kasus')
+        ->join('tb_tersangka','tb_kasus.id_kasus=tb_tersangka.id_kasus','LEFT')
+        ->where($where)
+        ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+        ->get();
+        
+        return $res->result_array();
+    }
+    
+    function getSuperSelraCTTersangka($kode_kesatuan, $firstDate, $lastDate){
+        $where = array(
+            "isLocked" => 1,
+            'status_kasus ='   => '',
           );
         $res = $this->db->select('*')
         ->from('tb_kasus')
@@ -409,6 +465,7 @@ class Modeldata extends CI_Model{
     
     function getSuperBBKewarganegaraanJK($kategori, $status, $status_kewarganegaraan, $jenis_kelamin, $firstDate, $lastDate){
         $where = array(
+            'tb_kasus.isLocked' => 1,
             'tb_barangbukti.kategori' => $kategori,
             'tb_tersangka.status'  => $status,
             'tb_tersangka.status_kewarganegaraan' => $status_kewarganegaraan,
@@ -428,6 +485,7 @@ class Modeldata extends CI_Model{
     
     function getSuperBBJumlahKSS($kategori, $status, $firstDate, $lastDate){
         $where = array(
+            'tb_kasus.isLocked'   => 1,
             'tb_barangbukti.kategori'   => $kategori,
             'tb_tersangka.status'   => $status,
           );
@@ -445,6 +503,7 @@ class Modeldata extends CI_Model{
     
     function getSuperBBJumlahTSK($kategori, $status, $firstDate, $lastDate){
         $where = array(
+            'tb_kasus.isLocked'   => 1,
             'tb_tersangka.status'   => $status,
             'tb_barangbukti.kategori'   => $kategori,
           );
@@ -462,6 +521,7 @@ class Modeldata extends CI_Model{
     
     function getSuperBBSelesaiKSS($kategori, $status, $firstDate, $lastDate){
         $where = array(
+            'tb_kasus.isLocked'   => 1,
             'tb_kasus.status_kasus !=' => "",
             'tb_barangbukti.kategori'   => $kategori,
             'tb_tersangka.status'   => $status,
@@ -480,6 +540,7 @@ class Modeldata extends CI_Model{
 
     function getSuperBBMatrikInstrumen($kategori, $status, $field, $value, $firstDate, $lastDate){
         $where = array(
+            'tb_kasus.isLocked'   => 1,
             'tb_barangbukti.kategori'   => $kategori,
             'tb_tersangka.status'   => $status,
             $field => $value,
@@ -498,6 +559,7 @@ class Modeldata extends CI_Model{
 
     function getSuperBBJumlahBerat($kategori, $status, $firstDate, $lastDate){
         $where = array(
+            'tb_kasus.isLocked'   => 1,
             'tb_barangbukti.kategori'   => $kategori,
             'tb_tersangka.status'   => $status,
           );

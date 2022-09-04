@@ -92,6 +92,12 @@ $route['chat'] = 'chat';
 // Export
 $route['export-opsi/(:any)'] = 'export/viewExport/$1';
 
+// Pengumuman
+$route['pengumuman'] = 'pengumuman';
+
+// Permohonan
+$route['daftar-permohonan-edit'] = 'permohonan';
+
 // Admin
 $route['data-admin'] = 'admin/viewAdmin';
 
