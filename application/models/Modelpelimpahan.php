@@ -18,6 +18,18 @@ class Modelpelimpahan extends CI_Model{
         return $query->result_array();  
     }
     
+    function getKasusPelimpahanByIdPelimpahan($kodekesatuan, $firstDate, $lastDate){
+        $this->db->select('*')
+        ->from('tb_temp_kasus')
+        ->join('tb_temp_tersangka','tb_temp_kasus.id_kasus=tb_temp_tersangka.id_kasus','LEFT')
+        ->where('tb_temp_kasus.kodekesatuan_pelimpahanDari',$kodekesatuan)
+        ->where("tb_temp_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+        ->order_by("tb_temp_kasus.id_kasus", "ASC");
+
+        $query = $this->db->get();         
+        return $query->result_array();  
+    }
+    
 	public function addKasusPelimpahan($fromKasus){
         $this->db->insert('tb_temp_kasus', $fromKasus);
         $newIdKasus = $this->db->insert_id();
@@ -159,12 +171,32 @@ class Modelpelimpahan extends CI_Model{
         return $this->db->get_where('tb_temp_tersangka', array('id_kasus'=>$idKasus));
     }
     
+    function getTersangkaExceptIdTersangka($kode_kesatuan,$idKasus){
+        $where = array(
+            'tb_temp_kasus.kode_kesatuan =' => $kode_kesatuan,
+            'tb_temp_kasus.id_kasus =' => $idKasus,
+            'tb_temp_barangbukti.isDuplicate =' => 0,
+          );
+
+        return $this->db->select('*')
+        ->from('tb_temp_tersangka')
+        ->join('tb_temp_kasus','tb_temp_tersangka.id_kasus=tb_temp_kasus.id_kasus','LEFT')
+        ->join('tb_temp_barangbukti','tb_temp_tersangka.id_tersangka=tb_temp_barangbukti.id_tersangka','LEFT')
+        ->where($where)
+        ->group_by('tb_temp_tersangka.id_tersangka')
+        ->get();
+    }
+    
     function getBarangBuktiByIdKasus($idKasus){
         return $this->db->get_where('tb_temp_barangbukti', array('id_kasus'=>$idKasus));
     }
     
     function updateTersangka($idTersangka, $dataTersangka){
         return $this->db->update('tb_temp_tersangka', $dataTersangka, "id_tersangka={$idTersangka}");
+    }
+    
+    function addTersangka($dataTersangka, $table){
+        return $this->db->insert($table, $dataTersangka);
     }
 
     function delTersangka($idTersangka){

@@ -38,11 +38,13 @@ class Pelimpahan extends CI_Controller {
 			$date = $this->rangeMonth(date("Y-m-d", strtotime("-1 month")), date("Y-m-d", strtotime("+1 month")));
 			$dateNow = $this->dateIndonesia(date('N j/n/Y', strtotime($date['start']))).' - '.$this->dateIndonesia(date('N j/n/Y', strtotime($date['end'])));
 			$res = $this->Modelpelimpahan->getKasusPelimpahanById($this->kode_kesatuan, $date['start'], $date['end']);
+			$resPelimpahan = $this->Modelpelimpahan->getKasusPelimpahanByIdPelimpahan($this->kode_kesatuan, $date['start'], $date['end']);
 	
 			$data['title'] = "Data Kasus Pelimpahan";
 			$data['menuLink'] = "kasus-pelimpahan";
 			$data['dataKasus'] = $res;
 			$data['dateNow'] = $dateNow;
+			$data['dataKasusPelimpahan'] = $resPelimpahan;
 
 		}
 	
@@ -81,10 +83,12 @@ class Pelimpahan extends CI_Controller {
 		} else {
 			
 			$res = $this->Modelpelimpahan->getKasusPelimpahanById($this->kode_kesatuan, $firstDate, $lastDate);
+			$resPelimpahan = $this->Modelpelimpahan->getKasusPelimpahanByIdPelimpahan($this->kode_kesatuan, $firstDate, $lastDate);
 
 			$data['title'] = "Data Kasus Pelimpahan";
 			$data['menuLink'] = "kasus-pelimpahan";
 			$data['dataKasus'] = $res;
+			$data['dataKasusPelimpahan'] = $resPelimpahan;
 			$data['dateNow'] = $dateNow;
 
 		}
@@ -108,9 +112,10 @@ class Pelimpahan extends CI_Controller {
 			redirect(base_url('404_override'));
 		}
 
-        $data['title'] = "Data Kasus Pelimpahan";
-        $data['menuLink'] = "kasus-pelimpahan";
+		$data['title'] = "Data Kasus Pelimpahan";
+		$data['menuLink'] = "kasus-pelimpahan";
 		$data['dataKasus'] = $res;
+		$data['dataTersangka'] = $this->Modelpelimpahan->getTersangkaByIdKasus($idKasus)->result_array();
 
 		$this->load->view('include/header',$data);
 		$this->load->view('v_pelimpahan_laporkasusbyid',$data);
@@ -170,8 +175,8 @@ class Pelimpahan extends CI_Controller {
 	}
 
 	public function addKasusPelimpahan($idKasus){
-        $fromIdKasus = $idKasus;
-        $fromKodeKesatuan = $this->kode_kesatuan;
+		$fromIdKasus = $idKasus;
+		$fromKodeKesatuan = $this->kode_kesatuan;
 		$nama_polsek = strtoupper($this->input->post('nama_polsek'));
 		$toKodeKesatuan = $_POST['kode_kesatuan'];
 		// Get From Kasus
@@ -285,7 +290,7 @@ class Pelimpahan extends CI_Controller {
 
 		$this->Modelpelimpahan->updateKasus($idKasus, $dataKasus, 'tb_temp_kasus');
 		$this->session->set_flashdata('success', 'Update informasi kasus berhasil disimpan ke database!');
-		redirect(base_url("data-tersangka-pelimpahan/{$idKasus}"));	
+		redirect(base_url("kasus-pelimpahan/{$idKasus}"));	
 	}
 	
 	public function updateKasusPelimpahanMenonjol($idKasus, $fromIdKasus){
@@ -348,13 +353,47 @@ class Pelimpahan extends CI_Controller {
 		$this->Modelpelimpahan->updateTersangka($idTersangka,$dataTersangka);
 
 		$this->session->set_flashdata('success', 'Informasi tersangka berhasil diupdate ke database!');
-		redirect(base_url("data-tersangka-pelimpahan/{$idKasus}"));
+		redirect(base_url("kasus-pelimpahan/{$idKasus}"));
+	}
+	
+	public function addTersangka($idKasus){
+		$nama = $this->input->post('nama');
+		$alamat = $this->input->post('alamat');
+		$nik = $this->input->post('nik');
+		$agama = $this->input->post('agama');
+		$status = $this->input->post('status');
+		$status_kewarganegaraan = $this->input->post('status_kewarganegaraan');
+		$jenis_kelamin = $this->input->post('jenis_kelamin');
+		$kategori_usia = $this->input->post('kategori_usia');
+		$usia = $this->input->post('usia');
+		$pendidikan = $this->input->post('pendidikan');
+		$pekerjaan = $this->input->post('pekerjaan');
+
+		$dataTersangka = array(
+			'id_kasus' => $idKasus,
+			'nama' => $nama,
+			'alamat' => $alamat,
+			'nik' => $nik,
+			'agama' => $agama,
+			'status' => $status,
+			'status_kewarganegaraan' => $status_kewarganegaraan,
+			'jenis_kelamin' => $jenis_kelamin,
+			'kategori_usia' => $kategori_usia,
+			'usia' => $usia,
+			'pendidikan' => $pendidikan,
+			'pekerjaan' => $pekerjaan,
+		);
+
+		$this->Modelpelimpahan->addTersangka($dataTersangka, 'tb_temp_tersangka');
+
+		$this->session->set_flashdata('success', 'Informasi tersangka berhasil disimpan ke database!');
+		redirect(base_url("kasus-pelimpahan/{$idKasus}"));
 	}
 
 	public function delTersangka($idTersangka, $idKasus){
 		$this->Modelpelimpahan->delTersangka($idTersangka);
 		$this->session->set_flashdata('success', 'Informasi tersangka berhasil dihapus dari database!');
-		redirect(base_url("data-tersangka-pelimpahan/{$idKasus}"));
+		redirect(base_url("kasus-pelimpahan/{$idKasus}"));
 	}
 
 	public function getBBDuplicate(){
@@ -415,7 +454,7 @@ class Pelimpahan extends CI_Controller {
 		
 		if (!$kategori) {
 			$this->session->set_flashdata('error', 'Barang Bukti Harus Diisi');
-			redirect(base_url("data-tersangka-pelimpahan/{$id_kasus}"));
+			redirect(base_url("kasus-pelimpahan/{$id_kasus}"));
 		}
 		
 		$dataBarangBukti = array(
@@ -428,7 +467,13 @@ class Pelimpahan extends CI_Controller {
 		$this->Modelpelimpahan->addBarangBukti($dataBarangBukti, 'tb_temp_barangbukti');
 
 		$this->session->set_flashdata('success', 'Informasi barang bukti kasus berhasil disimpan ke database!');
-		redirect(base_url("data-tersangka-pelimpahan/{$id_kasus}"));
+		redirect(base_url("kasus-pelimpahan/{$id_kasus}"));
+	}
+	
+	public function delBBDuplicate($idBarangBukti, $idKasus){
+		$this->Modelpelimpahan->delBarangBukti($idBarangBukti);
+		$this->session->set_flashdata('success', 'Pembatalan berhasil!');
+		redirect(base_url("kasus-pelimpahan/{$idKasus}"));
 	}
 	
 	public function addBarangBukti($idKasus){

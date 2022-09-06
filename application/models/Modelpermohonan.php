@@ -49,7 +49,17 @@ class Modelpermohonan extends CI_Model{
 	function getSuperPermohanan(){
     return $this->db->select('*')
     ->from('tb_permohonan_edit')
+    ->order_by('isApproved', 'ASC')
     ->get()
     ->result_array();
+  }
+
+  function countPermohonan(){
+		$res = $this->db->select('*')
+		->from('tb_permohonan_edit')
+    ->where('isApproved', 0)
+		->get()->result_array(); 
+
+    echo count($res);
   }
 }

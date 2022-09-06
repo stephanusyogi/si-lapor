@@ -72,7 +72,13 @@
                 <td class="text-center" style="font-size:18px;">
                   <a class="hapus-barang-bukti mx-1" href="<?= base_url("kasus/delBarangBukti/{$row['id_barangbukti']}/{$dataKasus['id_kasus']}/{$dataTersangka['id_tersangka']}") ?>"><i class="fas fa-trash" style="color:red;"></i></a>
                 </td>
-                <td><?= $row['nama_barangbukti'] ?>&nbsp;<?= ($row['keterangan']) ? "dengan keterangan : ( {$row['keterangan']} )" : '' ?>&nbsp;<?= ($row['berat']) ? "& berat {$row['berat']} gram" : '' ?></td>
+                <td>
+                  <?php if(!$row['isDuplicate']){ ?>
+                    <?= $row['nama_barangbukti'] ?>&nbsp;<?= ($row['keterangan']) ? "dengan keterangan : ( {$row['keterangan']} )" : '' ?>&nbsp;<?= ($row['berat']) ? "& berat {$row['berat']} gram" : '' ?>
+                  <?php }else{ ?>
+                    <?= $row['kategori']." (<strong>Duplikat</strong>)" ?>
+                  <?php } ?>
+                </td>
                 <td><?= $row['jumlah'] ?></td>
                 <td><?= $row['satuan'] ?></td>
               </tr>
@@ -91,7 +97,7 @@
             <div class="col-md-8">
             </div>
             <div class="col-md-4 text-right">
-                <a href="<?= base_url("data-tersangka/{$dataKasus['id_kasus']}") ?>" class="btn btn-secondary">Kembali ke Data Tersangka</a>
+                <a href="<?= base_url("lapor-ungkap-kasus/{$dataKasus['id_kasus']}") ?>" class="btn btn-secondary">Kembali ke Data LP</a>
             </div>
         </div>
       </div><!-- /.container-fluid -->

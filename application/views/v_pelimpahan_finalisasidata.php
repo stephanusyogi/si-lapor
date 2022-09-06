@@ -25,7 +25,7 @@
             </div>
         <hr>
         <h4>Data Tersangka</h4>
-            <table id="table-full-fitur" class="table table-responsive datatable table-bordered table-striped " style="width:100%">
+            <table id="table-full-fitur" class="table datatable table-bordered table-striped " style="width:100%">
             <thead>
                 <tr>
                     <th>Nama</th>
@@ -86,7 +86,7 @@
                 <?php if(isset($dataBarangBukti)){ ?>
                     <?php foreach ($dataBarangBukti as $row) { ?>
                     <tr>
-                        <td><?= $row['nama_barangbukti'] ?>&nbsp;<?= ($row['keterangan']) ? " dengan keterangan : ( {$row['keterangan']} )" : '' ?>&nbsp;<?= ($row['berat']) ? "& berat {$row['berat']} gram" : '' ?></td>
+                        <td><?= $row['nama_barangbukti'] ?>&nbsp;<?= ($row['kategori'] == 'Lain-lain') ? " dengan keterangan : ( {$row['keterangan']} )" : '' ?>&nbsp;<?= ($row['berat']) ? "& berat {$row['berat']} gram" : '' ?></td>
                         <td><?= $row['jumlah'] ?></td>
                         <td><?= $row['satuan'] ?></td>
                     </tr>
@@ -103,11 +103,10 @@
         <hr>
         <div class="py-4 row">
             <div class="col-md-8">
-                <a href="<?= base_url("kasus-pelimpahan/{$dataKasus['id_kasus']}") ?>" class="btn btn-secondary">Kembali ke Formulir Kasus</a>
-                <a href="<?= base_url("data-tersangka-pelimpahan/{$dataKasus['id_kasus']}") ?>" class="btn btn-secondary">Kembali ke Formulir Tersangka</a>
+                <a href="<?= base_url("kasus-pelimpahan/{$dataKasus['id_kasus']}") ?>" class="btn btn-secondary">Kembali ke Data LP Pelimpahan</a>
             </div>
             <div class="col-md-4 text-right">
-                <a href="<?= base_url("kasus-pelimpahan") ?>" class="btn btn-primary">Simpan Kasus ke Database</a>
+                <a href="<?= base_url("kasus-pelimpahan") ?>" class="btn btn-primary">Lihat Master Pelimpahan</a>
             </div>
         </div>
       </div><!-- /.container-fluid -->

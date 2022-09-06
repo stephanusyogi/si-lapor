@@ -57,6 +57,7 @@ class Kasus extends CI_Controller {
 		$data['title'] = "Lapor Ungkap Kasus";
 		$data['menuLink'] = "lapor-ungkap-kasus";
 		$data['dataKasus'] = $res;
+		$data['dataTersangka'] = $this->Modeltersangka->getTersangkaByIdKasus($idKasus)->result_array();
 
 		$this->load->view('include/header',$data);
 		$this->load->view('v_kasus_laporkasusbyid',$data);
@@ -107,7 +108,7 @@ class Kasus extends CI_Controller {
 		$idKasusDatabase = $this->Modelkasus->checkNomorSuratDuplikat($noLP)->result_array();
 
 		$this->session->set_flashdata('success', 'Informasi kasus berhasil disimpan ke database!');
-		redirect(base_url("data-tersangka/{$idKasusDatabase[0]['id_kasus']}"));
+		redirect(base_url("lapor-ungkap-kasus/{$idKasusDatabase[0]['id_kasus']}"));
 	}
 
 	public function updateKasus($idKasus){
@@ -145,7 +146,7 @@ class Kasus extends CI_Controller {
 		$this->Modelkasus->updateKasus($idKasus, $dataKasus, 'tb_kasus');
 		
 		$this->session->set_flashdata('success', 'Update informasi kasus berhasil disimpan ke database!');
-		redirect(base_url("data-tersangka/{$idKasus}"));	
+		redirect(base_url("lapor-ungkap-kasus/{$idKasus}"));	
 	}
 
 	// DATA TERSANGKA MODUL
@@ -209,13 +210,13 @@ class Kasus extends CI_Controller {
 		$this->Modeltersangka->addTersangka($dataTersangka, 'tb_tersangka');
 
 		$this->session->set_flashdata('success', 'Informasi tersangka berhasil disimpan ke database!');
-		redirect(base_url("data-tersangka/{$idKasus}"));
+		redirect(base_url("lapor-ungkap-kasus/{$idKasus}"));
 	}
 
 	public function delTersangka($idTersangka, $idKasus){
 		$this->Modeltersangka->delTersangka($idTersangka);
 		$this->session->set_flashdata('success', 'Informasi tersangka berhasil dihapus dari database!');
-		redirect(base_url("data-tersangka/{$idKasus}"));
+		redirect(base_url("lapor-ungkap-kasus/{$idKasus}"));
 	}
 
 	public function updateTersangka($idTersangka, $idKasus){
@@ -249,7 +250,7 @@ class Kasus extends CI_Controller {
 		$this->Modeltersangka->updateTersangka($idTersangka,$dataTersangka);
 
 		$this->session->set_flashdata('success', 'Informasi tersangka berhasil diupdate ke database!');
-		redirect(base_url("data-tersangka/{$idKasus}"));
+		redirect(base_url("lapor-ungkap-kasus/{$idKasus}"));
 	}
 
 	// BARANG BUKTI MODUL
@@ -372,7 +373,7 @@ class Kasus extends CI_Controller {
 		
 		if (!$kategori) {
 			$this->session->set_flashdata('error', 'Barang Bukti Harus Diisi');
-			redirect(base_url("data-tersangka/{$id_kasus}"));
+			redirect(base_url("lapor-ungkap-kasus/{$id_kasus}"));
 		}
 		
 		$dataBarangBukti = array(
@@ -385,7 +386,13 @@ class Kasus extends CI_Controller {
 		$this->Modelbarangbukti->addBarangBukti($dataBarangBukti, 'tb_barangbukti');
 
 		$this->session->set_flashdata('success', 'Informasi barang bukti kasus berhasil disimpan ke database!');
-		redirect(base_url("data-tersangka/{$id_kasus}"));
+		redirect(base_url("lapor-ungkap-kasus/{$id_kasus}"));
+	}
+	
+	public function delBBDuplicate($idBarangBukti, $idKasus){
+		$this->Modelbarangbukti->delBarangBukti($idBarangBukti);
+		$this->session->set_flashdata('success', 'Pembatalan berhasil!');
+		redirect(base_url("lapor-ungkap-kasus/{$idKasus}"));
 	}
 
 	// FINALISASI DATA MODUL

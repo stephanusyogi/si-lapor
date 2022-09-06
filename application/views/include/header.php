@@ -7,7 +7,7 @@
   <title>SI-LAPOR | <?= $title ?></title>
   
   <!-- Icon Page -->
-  <link rel="icon" href="<?= base_url("assets/images/logo-ditresnarkoba-poldajatim.PNG") ?>">
+  <link rel="icon" href="<?= base_url("assets/images/logo-ditresnarkoba-poldajatim.png") ?>">
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome -->
@@ -156,7 +156,7 @@
   <aside class="main-sidebar sidebar-dark-success elevation-4">
     <!-- Brand Logo -->
     <a href="<?= base_url("dashboard")?>" class="brand-link">
-      <img src="<?= base_url("assets/images/") ?>logo-ditresnarkoba-poldajatim.PNG" alt="Ditresnarkoba polda jatim logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+      <img src="<?= base_url("assets/images/") ?>logo-ditresnarkoba-poldajatim.png" alt="Ditresnarkoba polda jatim logo" class="brand-image img-circle elevation-3" style="opacity: .8">
       <span class="brand-text font-weight-light">SI-LAPOR</span>
     </a>
 
@@ -165,7 +165,7 @@
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="<?= base_url("assets/images/") ?>police_icon.PNG" class="img-circle elevation-2" alt="User Image">
+          <img src="<?= base_url("assets/images/") ?>police_icon.png" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
           <a href="<?= base_url("dashboard") ?>" class="d-block" data-toggle="tooltip" data-placement="top" title="<?= $this->session->userdata('login_data_admin')['nama_admin'] ?>"><?= strlen($this->session->userdata('login_data_admin')['nama_admin']) > 18 ? substr($this->session->userdata('login_data_admin')['nama_admin'],0,15)."..." : $this->session->userdata('login_data_admin')['nama_admin']; ?></a>
@@ -231,6 +231,9 @@
                 <a href="<?= base_url("daftar-permohonan-edit") ?>" class="nav-link">
                   <i class="fas fa-hands-helping nav-icon"></i>
                   <p>Daftar Pengajuan Edit</p>
+                  <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER'): ?>
+                  <span class="badge badge-warning right" id="countPermohonan"></span>
+                  <?php endif; ?>
                 </a>
               </li>
             </ul>
@@ -301,7 +304,23 @@
         }
         xhrCount.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xhrCount.send();
+        
+        <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER'): ?>
+          let xhrCountPermohonan = new XMLHttpRequest();
+          xhrCountPermohonan.open("POST", "<?= base_url() ?>permohonan/countPermohonan", true);
+          xhrCountPermohonan.onload = () => {
+              if (xhrCountPermohonan.readyState === XMLHttpRequest.DONE) {
+                  if (xhrCountPermohonan.status === 200) {
+                      let data = xhrCountPermohonan.response;
+                      document.getElementById("countPermohonan").textContent = data;
+                  }
+              }
+          }
+          xhrCountPermohonan.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+          xhrCountPermohonan.send();
+        <?php endif; ?>
       },2000);
+
       <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] != 'ADMINSUPER'): ?>
         setInterval(() => {
           let xhrCountPengumuman = new XMLHttpRequest();

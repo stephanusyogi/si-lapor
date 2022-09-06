@@ -95,6 +95,7 @@ class File extends CI_Controller {
 			$namaFile = $res[0]['nama_file'];
 			$uploadDir = $_SERVER['DOCUMENT_ROOT'].'/si-lapor/uploads/fileJajaran/';
 			$uploadFile = $uploadDir . $namaFile;
+			// die(var_dump($uploadFile));
 
 			force_download($uploadFile, NULL);
 	}

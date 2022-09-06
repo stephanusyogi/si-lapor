@@ -133,218 +133,369 @@
 
         <?php }else{ ?>
 
-          <table id="table-master-kasus" class="table table-responsive datatable table-bordered table-striped" style="width:100%">
-              <thead>
-                  <tr class="text-center">
-                    <th>No</th>
-                    <th>Action</th>   
-                    <th>No Laporan Polisi</th>
-                    <th>Created Date</th>
-                    <th>Deskripsi Waktu & TKP</th>
-                    <th>Identitas Tersangka</th> 
-                    <th>Umur</th> 
-                    <th>Pendidikan</th> 
-                    <th>Pekerjaan</th> 
-                    <th>Barang Bukti</th> 
-                    <th>Modus Operandi</th> 
-                    <th>Administrator</th> 
-                    <th>Keterangan</th>
-                    <th>Status</th>
-                    <th>LP Menonjol</th>
-                  </tr>
-              </thead>
-              <tbody>
-                <?php if(isset($dataKasus)){ ?>
-                    <?php 
-                    $no = 1;
-                    $account_numbers = array();
-                    foreach ($dataKasus as $row_kasus) { 
-                        $display = FALSE;
-                        if(!in_array($row_kasus["no_laporanpolisi"], $account_numbers)) {
-                            array_push($account_numbers, $row_kasus["no_laporanpolisi"]);
-                            $display = TRUE;
-                        } 
-                      ?>
-                    <tr>
-                        <td class="text-center"><?= ($display) ? $no : "" ?></td>
-                        <td class="text-center" style="font-size:24px;">
-                          <?php if($display): ?>
-                            <div data-toggle="tooltip" data-placement="top" title="Update Laporan Kasus">
-                              <a href="<?= base_url("kasus-pelimpahan/{$row_kasus["id_kasus"]}") ?>" style="cursor:pointer;"><i class="fas fa-pen-square" style="color:green;"></i></a>
-                            </div>
-                            <div data-toggle="tooltip" data-placement="top" title="Update Status Laporan">
-                              <a style="cursor:pointer;" data-toggle="modal" data-target="#statusModal<?= $row_kasus['id_kasus']; ?>"><i class="fas fa-check-square" style="color:darkblue;"></i></a>
-                            </div>
-                            <div data-toggle="tooltip" data-placement="top" title="Kasus Menonjol">
-                              <a class="tombol-kasus-menonjol" style="cursor:pointer;" href="<?= base_url("pelimpahan/updateKasusPelimpahanMenonjol/{$row_kasus['id_kasus']}/{$row_kasus['idkasus_pelimpahanDari']}") ?>"><i class="fas fa-file-archive" style="color:grey;"></i></a>
-                            </div>
-                          <?php endif; ?>
-                        </td>
-                        <td><?= $display ? $row_kasus["no_laporanpolisi"] : ""; ?></td>
-                        <td><?= $display ? dateIndonesia(date('N j/n/Y', strtotime($row_kasus["created_at"]))) : ""; ?></td>
-                        <td>
-                          <?= ($display) ? $row_kasus["deskripsi_waktudantkp"]  :  "" ?>
-                        </td>
-                        <td>
-                          <ul>
-                            <li><strong>NAMA</strong> : <?= $row_kasus["nama"] ?></li>
-                            <li><strong>ALAMAT</strong> : <?= $row_kasus["alamat"] ?></li>
-                            <li><strong>NIK</strong> : <?= $row_kasus["nik"] ?></li>
-                            <li><strong>AGAMA</strong> : <?= $row_kasus["agama"] ?></li>
-                            <li><strong>JENIS KELAMIN</strong> : <?= $row_kasus["jenis_kelamin"] ?></li>
-                            <li><strong>KEWARGANAGARAAN</strong> : <?= $row_kasus["status_kewarganegaraan"] ?></li>
-                            <li><strong>STATUS</strong> : <?= $row_kasus["status"] ?></li>
-                          </ul>
-                        </td>
-                        <td><?= $row_kasus["usia"] ?></td>
-                        <td><?= $row_kasus["pendidikan"] ?></td>
-                        <td><?= $row_kasus["pekerjaan"] ?></td>
-                        <td>
-                          <ol>
-                          <?php 
-                            $result = $CI->Modelpelimpahan->getBarangBuktiByIdTersangka($row_kasus['id_kasus'], $row_kasus['id_tersangka'])->result_array();
-                            if(!empty($result)){ 
-                              foreach ($result as $rowBB) { 
-                                if($rowBB['isDuplicate']){
-                                  $duplicateTSK = $CI->Modelpelimpahan->getTersangkaByIdTersangka($row_kasus['id_kasus'], $rowBB['id_duplicateTSK'])->result_array();
-                                  $duplicateBB = $CI->Modelpelimpahan->getBarangBuktiByIdTersangka($row_kasus['id_kasus'], $rowBB['id_duplicateTSK'])->result_array();
-                                  ?>
-                                <button class="btn-info btn btn-sm">
-                                  Barang bukti sama dengan tersangka a.n <?= $duplicateTSK[0]['nama'] ?> (<strong><?= $duplicateBB[0]['kategori'] ?></strong>)
-                                </button>
-                                <?php }else{ ?>
-                                  <li>
-                                    <strong><?= $rowBB['nama_barangbukti'] ?></strong>
-                                    <?php if($rowBB['keterangan']) { ?>
-                                      yakni&nbsp;<?= $rowBB['keterangan'] ?>&nbsp;sejumlah&nbsp;<?= $rowBB['jumlah'] ?>&nbsp;<?= $rowBB['satuan'] ?>&nbsp;dengan berat&nbsp;<?= $rowBB['berat'] ?>&nbsp;gram.
-                                    <?php }else{ ?>
-                                      dengan berat&nbsp;<?= $rowBB['jumlah'] ?>&nbsp;<?= $rowBB['satuan'] ?>
-                                    <?php } ?>
-                                  </li>
-                              <?php } } ?> 
-                            <?php } else { ?>
-                              <button class="btn btn-warning btn-sm"><strong>Belum Diketahui</strong></button>
-                            <?php } ?>
-                            </ol>
-                        </td>
-                        <td><?= $display ? $row_kasus["pasal"] : '' ?></td>
-                        <td>
-                          <?php 
-                            if ($display) {
-                              if (!empty($row_kasus["nrp_admin"])) {
-                                $dataAdmin = $CI->Modeladmin->getAdminByNRP($row_kasus['nrp_admin']);
-                                echo $dataAdmin[0]['nama_admin'].' - NRP. '.$dataAdmin[0]['nrp'];
-                              } else { ?>
-                                <a class="btn btn-sm btn-info w-100" data-toggle="modal" data-target="#adminModal<?= $row_kasus['id_kasus']; ?>">Pilih Admin</a>
-                              <?php }
-                            } else {
-                              echo '';
-                            }
-                            
-                          ?>
-                        </td>
-                        <td>
-                          <?php if($display): ?>
-                            <?php if($row_kasus["ket_pelimpahan"] == 'diterima'){ ?>
-                              <button class="btn btn-success btn-sm"><strong>pelimpahan diterima</strong></button>
-                            <?php }else{?>
-                              <button class="btn btn-warning btn-sm"><strong>Bukan Pelimpahan</strong></button>
-                            <?php }?>
-                          <?php endif; ?>
-                        </td>
-                        <td>
-                          <?php if($display): ?>
-                            <?php if(empty($row_kasus["status_kasus"])){ ?>
-                              <button class="btn btn-warning btn-sm"><strong>Belum Diketahui</strong></button>
-                            <?php }else if ($row_kasus["status_kasus"] == 'SP3'){ ?>
-                              <button class="btn btn-success btn-sm"><strong>SP3</strong></button>
-                            <?php }else if($row_kasus["status_kasus"] == 'Tahap II'){ ?>
-                              <button class="btn btn-success btn-sm"><strong>Tahap II</strong></button>
-                            <?php }else{?>
-                              <button class="btn btn-success btn-sm"><strong>RJ</strong></button>
-                            <?php } ?>
-                          <?php endif; ?>
-                        </td>
-                        <td>
-                          <?php if($display): ?>
-                            <?php if($row_kasus["isKasusMenonjol"]){ ?>
-                              <button class="btn btn-success btn-sm"><strong>Kasus Menonjol</strong></button>
-                            <?php }else{?>
-                              <button class="btn btn-warning btn-sm"><strong>Bukan Kasus Menonjol</strong></button>
-                            <?php }?>
-                          <?php endif; ?>
-                        </td>
+          <ul class="nav nav-tabs" id="myTab" role="tablist">
+              <li class="nav-item" role="presentation">
+                  <button class="nav-link active" id="diterima-tab" data-toggle="tab" data-target="#diterima" type="button" role="tab" aria-controls="diterima" aria-selected="true"><strong>Master Pelimpahan</strong></button>
+              </li>
+              <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="dilimpahkan-tab" data-toggle="tab" data-target="#dilimpahkan" type="button" role="tab" aria-controls="dilimpahkan" aria-selected="false"><strong>Monitoring LP Dilimpahkan</strong></button>
+              </li>
+          </ul>
+          
+        <div class="tab-content py-4" id="myTabContent">
+          <div class="tab-pane fade show active py-3" id="diterima" role="tabpanel" aria-labelledby="diterima-tab">
+            <table class="table table-pelimpahan table-responsive datatable table-bordered table-striped" style="width:100%">
+                <thead>
+                    <tr class="text-center">
+                      <th>No</th>
+                      <th>Action</th>   
+                      <th>No Laporan Polisi</th>
+                      <th>Created Date</th>
+                      <th>Deskripsi Waktu & TKP</th>
+                      <th>Identitas Tersangka</th> 
+                      <th>Umur</th> 
+                      <th>Pendidikan</th> 
+                      <th>Pekerjaan</th> 
+                      <th>Barang Bukti</th> 
+                      <th>Modus Operandi</th> 
+                      <th>Administrator</th> 
+                      <th>Keterangan</th>
+                      <th>Status</th>
+                      <th>LP Menonjol</th>
                     </tr>
-                  <!-- Modal Status Kasus -->
-                  <div class="modal fade" id="statusModal<?= $row_kasus['id_kasus']; ?>" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
-                      <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
-                          <div class="modal-content">
-                              <div class="modal-header">
-                                  <h5 class="modal-title" id="statusModalLabel">Update Status Kasus</h5>
-                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                      <span aria-hidden="true">&times;</span>
+                </thead>
+                <tbody>
+                  <?php if(isset($dataKasus)){ ?>
+                      <?php 
+                      $no = 1;
+                      $account_numbers = array();
+                      foreach ($dataKasus as $row_kasus) { 
+                          $display = FALSE;
+                          if(!in_array($row_kasus["no_laporanpolisi"], $account_numbers)) {
+                              array_push($account_numbers, $row_kasus["no_laporanpolisi"]);
+                              $display = TRUE;
+                          } 
+                        ?>
+                      <tr>
+                          <td class="text-center"><?= ($display) ? $no : "" ?></td>
+                          <td class="text-center" style="font-size:24px;">
+                            <?php if($display): ?>
+                              <div data-toggle="tooltip" data-placement="top" title="Update Laporan Kasus">
+                                <a href="<?= base_url("kasus-pelimpahan/{$row_kasus["id_kasus"]}") ?>" style="cursor:pointer;"><i class="fas fa-pen-square" style="color:green;"></i></a>
+                              </div>
+                              <div data-toggle="tooltip" data-placement="top" title="Update Status Laporan">
+                                <a style="cursor:pointer;" data-toggle="modal" data-target="#statusModal<?= $row_kasus['id_kasus']; ?>"><i class="fas fa-check-square" style="color:darkblue;"></i></a>
+                              </div>
+                              <div data-toggle="tooltip" data-placement="top" title="Kasus Menonjol">
+                                <a class="tombol-kasus-menonjol" style="cursor:pointer;" href="<?= base_url("pelimpahan/updateKasusPelimpahanMenonjol/{$row_kasus['id_kasus']}/{$row_kasus['idkasus_pelimpahanDari']}") ?>"><i class="fas fa-file-archive" style="color:grey;"></i></a>
+                              </div>
+                            <?php endif; ?>
+                          </td>
+                          <td><?= $display ? $row_kasus["no_laporanpolisi"] : ""; ?></td>
+                          <td><?= $display ? dateIndonesia(date('N j/n/Y', strtotime($row_kasus["created_at"]))) : ""; ?></td>
+                          <td>
+                            <?= ($display) ? $row_kasus["deskripsi_waktudantkp"]  :  "" ?>
+                          </td>
+                          <td>
+                            <ul>
+                              <li><strong>NAMA</strong> : <?= $row_kasus["nama"] ?></li>
+                              <li><strong>ALAMAT</strong> : <?= $row_kasus["alamat"] ?></li>
+                              <li><strong>NIK</strong> : <?= $row_kasus["nik"] ?></li>
+                              <li><strong>AGAMA</strong> : <?= $row_kasus["agama"] ?></li>
+                              <li><strong>JENIS KELAMIN</strong> : <?= $row_kasus["jenis_kelamin"] ?></li>
+                              <li><strong>KEWARGANAGARAAN</strong> : <?= $row_kasus["status_kewarganegaraan"] ?></li>
+                              <li><strong>STATUS</strong> : <?= $row_kasus["status"] ?></li>
+                            </ul>
+                          </td>
+                          <td><?= $row_kasus["usia"] ?></td>
+                          <td><?= $row_kasus["pendidikan"] ?></td>
+                          <td><?= $row_kasus["pekerjaan"] ?></td>
+                          <td>
+                            <ol>
+                            <?php 
+                              $result = $CI->Modelpelimpahan->getBarangBuktiByIdTersangka($row_kasus['id_kasus'], $row_kasus['id_tersangka'])->result_array();
+                              if(!empty($result)){ 
+                                foreach ($result as $rowBB) { 
+                                  if($rowBB['isDuplicate']){
+                                    $duplicateTSK = $CI->Modelpelimpahan->getTersangkaByIdTersangka($row_kasus['id_kasus'], $rowBB['id_duplicateTSK'])->result_array();
+                                    $duplicateBB = $CI->Modelpelimpahan->getBarangBuktiByIdTersangka($row_kasus['id_kasus'], $rowBB['id_duplicateTSK'])->result_array();
+                                    ?>
+                                  <button class="btn-info btn btn-sm">
+                                    Barang bukti sama dengan tersangka a.n <?= $duplicateTSK[0]['nama'] ?> (<strong><?= $duplicateBB[0]['kategori'] ?></strong>)
                                   </button>
-                              </div>
-                              <div class="modal-body">
-                                <form action="<?= base_url("pelimpahan/updateStatusKasus/{$row_kasus['id_kasus']}/{$row_kasus['idkasus_pelimpahanDari']}") ?>" method="post">
-                                    <div class="form-group">
-                                      <label for="status_kasus">Status :</label>
-                                      <select name="status_kasus" id="status_kasus" class="form-control" required>
-                                        <option value="<?= $row_kasus['status_kasus'] ?>" selected><?= $row_kasus['status_kasus'] ?></option>
-                                        <option value="SP3">SP3</option>
-                                        <option value="RJ">RJ</option>
-                                        <option value="TAHAP II">TAHAP II</option>
-                                        <option value="">Belum Diketahui</option>
-                                      </select>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="submit" class="btn btn-success">Simpan</button>
-                                        <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
-                                    </div>
-                                </form>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-                  <!-- Modal Pilih Admin -->
-                  <div class="modal fade" id="adminModal<?= $row_kasus['id_kasus']; ?>" tabindex="-1" role="dialog" aria-labelledby="adminModalLabel" aria-hidden="true">
-                      <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
-                          <div class="modal-content">
-                              <div class="modal-header">
-                                  <h5 class="modal-title" id="adminModalLabel">Pilih Administrator</h5>
-                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                      <span aria-hidden="true">&times;</span>
+                                  <?php }else{ ?>
+                                    <li>
+                                      <strong><?= $rowBB['nama_barangbukti'] ?></strong>
+                                      <?php if($rowBB['keterangan']) { ?>
+                                        yakni&nbsp;<?= $rowBB['keterangan'] ?>&nbsp;sejumlah&nbsp;<?= $rowBB['jumlah'] ?>&nbsp;<?= $rowBB['satuan'] ?>&nbsp;dengan berat&nbsp;<?= $rowBB['berat'] ?>&nbsp;gram.
+                                      <?php }else{ ?>
+                                        dengan berat&nbsp;<?= $rowBB['jumlah'] ?>&nbsp;<?= $rowBB['satuan'] ?>
+                                      <?php } ?>
+                                    </li>
+                                <?php } } ?> 
+                              <?php } else { ?>
+                                <button class="btn btn-warning btn-sm"><strong>Belum Diketahui</strong></button>
+                              <?php } ?>
+                              </ol>
+                          </td>
+                          <td><?= $display ? $row_kasus["pasal"] : '' ?></td>
+                          <td>
+                            <?php 
+                              if ($display) {
+                                if (!empty($row_kasus["nrp_admin"])) {
+                                  $dataAdmin = $CI->Modeladmin->getAdminByNRP($row_kasus['nrp_admin']);
+                                  echo $dataAdmin[0]['nama_admin'].' - NRP. '.$dataAdmin[0]['nrp'];
+                                } else { ?>
+                                  <a class="btn btn-sm btn-info w-100" data-toggle="modal" data-target="#adminModal<?= $row_kasus['id_kasus']; ?>">Pilih Admin</a>
+                                <?php }
+                              } else {
+                                echo '';
+                              }
+                              
+                            ?>
+                          </td>
+                          <td>
+                            <?php if($display): ?>
+                              <?php if($row_kasus["ket_pelimpahan"] == 'diterima'){ ?>
+                                <button class="btn btn-success btn-sm"><strong>pelimpahan diterima</strong></button>
+                              <?php }else{?>
+                                <button class="btn btn-warning btn-sm"><strong>Bukan Pelimpahan</strong></button>
+                              <?php }?>
+                            <?php endif; ?>
+                          </td>
+                          <td>
+                            <?php if($display): ?>
+                              <?php if(empty($row_kasus["status_kasus"])){ ?>
+                                <button class="btn btn-warning btn-sm"><strong>Belum Diketahui</strong></button>
+                              <?php }else if ($row_kasus["status_kasus"] == 'SP3'){ ?>
+                                <button class="btn btn-success btn-sm"><strong>SP3</strong></button>
+                              <?php }else if($row_kasus["status_kasus"] == 'Tahap II'){ ?>
+                                <button class="btn btn-success btn-sm"><strong>Tahap II</strong></button>
+                              <?php }else{?>
+                                <button class="btn btn-success btn-sm"><strong>RJ</strong></button>
+                              <?php } ?>
+                            <?php endif; ?>
+                          </td>
+                          <td>
+                            <?php if($display): ?>
+                              <?php if($row_kasus["isKasusMenonjol"]){ ?>
+                                <button class="btn btn-success btn-sm"><strong>Kasus Menonjol</strong></button>
+                              <?php }else{?>
+                                <button class="btn btn-warning btn-sm"><strong>Bukan Kasus Menonjol</strong></button>
+                              <?php }?>
+                            <?php endif; ?>
+                          </td>
+                      </tr>
+                    <!-- Modal Status Kasus -->
+                    <div class="modal fade" id="statusModal<?= $row_kasus['id_kasus']; ?>" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="statusModalLabel">Update Status Kasus</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                  <form action="<?= base_url("pelimpahan/updateStatusKasus/{$row_kasus['id_kasus']}/{$row_kasus['idkasus_pelimpahanDari']}") ?>" method="post">
+                                      <div class="form-group">
+                                        <label for="status_kasus">Status :</label>
+                                        <select name="status_kasus" id="status_kasus" class="form-control" required>
+                                          <option value="<?= $row_kasus['status_kasus'] ?>" selected><?= $row_kasus['status_kasus'] ?></option>
+                                          <option value="SP3">SP3</option>
+                                          <option value="RJ">RJ</option>
+                                          <option value="TAHAP II">TAHAP II</option>
+                                          <option value="">Belum Diketahui</option>
+                                        </select>
+                                      </div>
+                                      <div class="modal-footer">
+                                          <button type="submit" class="btn btn-success">Simpan</button>
+                                          <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                                      </div>
+                                  </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal Pilih Admin -->
+                    <div class="modal fade" id="adminModal<?= $row_kasus['id_kasus']; ?>" tabindex="-1" role="dialog" aria-labelledby="adminModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="adminModalLabel">Pilih Administrator</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                  <form action="<?= base_url("pelimpahan/updateAdmin/{$row_kasus['id_kasus']}") ?>" method="post">
+                                      <div class="form-group">
+                                        <label for="nrp">Pilih Admin :</label>
+                                        <select name="nrp" class="form-control" required>
+                                          <?php 
+                                          $resAdmin = $CI->Modeladmin->getAdminByKesatuan($this->session->userdata('login_data_admin')['kodekesatuan']);
+                                          foreach ($resAdmin as $keyAdmin) { ?>
+                                            <option value="<?= $keyAdmin['nrp'] ?>"><?= $keyAdmin['nama_admin'].' - NRP. '.$keyAdmin['nrp'] ?></option>
+                                          <?php } ?>
+                                        </select>
+                                      </div>
+                                      <div class="modal-footer" style="height:10rem;align-items:end;">
+                                          <button type="submit" class="btn btn-success">Update</button>
+                                          <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                                      </div>
+                                  </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                      <?php ($display) ? $no++ : $no; } ?>
+                  <?php }else{?>
+                          <tr>
+                              <td colspan="1" style="text-align:center;"><p style="color:grey;font-size:18px;">Data Barang Bukti Belum Tersedia</p></td>
+                          </tr>
+                  <?php } ?>
+                </tbody>
+            </table>
+          </div>
+          <div class="tab-pane fade py-3" id="dilimpahkan" role="tabpanel" aria-labelledby="dilimpahkan-tab">
+            <table class="table table-pelimpahan table-responsive datatable table-bordered table-striped" style="width:100%">
+                <thead>
+                    <tr class="text-center">
+                      <th>No</th>  
+                      <th>No Laporan Polisi</th>
+                      <th>Created Date</th>
+                      <th>Deskripsi Waktu & TKP</th>
+                      <th>Identitas Tersangka</th> 
+                      <th>Umur</th> 
+                      <th>Pendidikan</th> 
+                      <th>Pekerjaan</th> 
+                      <th>Barang Bukti</th> 
+                      <th>Modus Operandi</th> 
+                      <th>Administrator</th> 
+                      <th>Keterangan</th>
+                      <th>Status</th>
+                      <th>LP Menonjol</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  <?php if(isset($dataKasusPelimpahan)){ ?>
+                      <?php 
+                      $no = 1;
+                      $account_numbers_pelimpahan = array();
+                      foreach ($dataKasusPelimpahan as $row_kasusPelimpahan) { 
+                          $displayPelimpahan = FALSE;
+                          if(!in_array($row_kasusPelimpahan["no_laporanpolisi"], $account_numbers_pelimpahan)) {
+                              array_push($account_numbers_pelimpahan, $row_kasusPelimpahan["no_laporanpolisi"]);
+                              $displayPelimpahan = TRUE;
+                          } 
+                        ?>
+                      <tr>
+                          <td class="text-center"><?= ($displayPelimpahan) ? $no : "" ?></td>
+                          <td><?= $displayPelimpahan ? $row_kasusPelimpahan["no_laporanpolisi"] : ""; ?></td>
+                          <td><?= $displayPelimpahan ? dateIndonesia(date('N j/n/Y', strtotime($row_kasusPelimpahan["created_at"]))) : ""; ?></td>
+                          <td>
+                            <?= ($displayPelimpahan) ? $row_kasusPelimpahan["deskripsi_waktudantkp"]  :  "" ?>
+                          </td>
+                          <td>
+                            <ul>
+                              <li><strong>NAMA</strong> : <?= $row_kasusPelimpahan["nama"] ?></li>
+                              <li><strong>ALAMAT</strong> : <?= $row_kasusPelimpahan["alamat"] ?></li>
+                              <li><strong>NIK</strong> : <?= $row_kasusPelimpahan["nik"] ?></li>
+                              <li><strong>AGAMA</strong> : <?= $row_kasusPelimpahan["agama"] ?></li>
+                              <li><strong>JENIS KELAMIN</strong> : <?= $row_kasusPelimpahan["jenis_kelamin"] ?></li>
+                              <li><strong>KEWARGANAGARAAN</strong> : <?= $row_kasusPelimpahan["status_kewarganegaraan"] ?></li>
+                              <li><strong>STATUS</strong> : <?= $row_kasusPelimpahan["status"] ?></li>
+                            </ul>
+                          </td>
+                          <td><?= $row_kasusPelimpahan["usia"] ?></td>
+                          <td><?= $row_kasusPelimpahan["pendidikan"] ?></td>
+                          <td><?= $row_kasusPelimpahan["pekerjaan"] ?></td>
+                          <td>
+                            <ol>
+                            <?php 
+                              $resultPelimpahan = $CI->Modelpelimpahan->getBarangBuktiByIdTersangka($row_kasusPelimpahan['id_kasus'], $row_kasusPelimpahan['id_tersangka'])->result_array();
+                              if(!empty($resultPelimpahan)){ 
+                                foreach ($resultPelimpahan as $rowBBPelimpahan) { 
+                                  if($rowBBPelimpahan['isDuplicate']){
+                                    $duplicateTSK = $CI->Modelpelimpahan->getTersangkaByIdTersangka($row_kasusPelimpahan['id_kasus'], $rowBBPelimpahan['id_duplicateTSK'])->result_array();
+                                    $duplicateBB = $CI->Modelpelimpahan->getBarangBuktiByIdTersangka($row_kasusPelimpahan['id_kasus'], $rowBBPelimpahan['id_duplicateTSK'])->result_array();
+                                    ?>
+                                  <button class="btn-info btn btn-sm">
+                                    Barang bukti sama dengan tersangka a.n <?= $duplicateTSK[0]['nama'] ?> (<strong><?= $duplicateBB[0]['kategori'] ?></strong>)
                                   </button>
-                              </div>
-                              <div class="modal-body">
-                                <form action="<?= base_url("pelimpahan/updateAdmin/{$row_kasus['id_kasus']}") ?>" method="post">
-                                    <div class="form-group">
-                                      <label for="nrp">Pilih Admin :</label>
-                                      <select name="nrp" class="form-control" required>
-                                        <?php 
-                                        $resAdmin = $CI->Modeladmin->getAdminByKesatuan($this->session->userdata('login_data_admin')['kodekesatuan']);
-                                        foreach ($resAdmin as $keyAdmin) { ?>
-                                          <option value="<?= $keyAdmin['nrp'] ?>"><?= $keyAdmin['nama_admin'].' - NRP. '.$keyAdmin['nrp'] ?></option>
-                                        <?php } ?>
-                                      </select>
-                                    </div>
-                                    <div class="modal-footer" style="height:10rem;align-items:end;">
-                                        <button type="submit" class="btn btn-success">Update</button>
-                                        <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
-                                    </div>
-                                </form>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-                    <?php ($display) ? $no++ : $no; } ?>
-                <?php }else{?>
-                        <tr>
-                            <td colspan="1" style="text-align:center;"><p style="color:grey;font-size:18px;">Data Barang Bukti Belum Tersedia</p></td>
-                        </tr>
-                <?php } ?>
-              </tbody>
-          </table>
+                                  <?php }else{ ?>
+                                    <li>
+                                      <strong><?= $rowBBPelimpahan['nama_barangbukti'] ?></strong>
+                                      <?php if($rowBBPelimpahan['keterangan']) { ?>
+                                        yakni&nbsp;<?= $rowBBPelimpahan['keterangan'] ?>&nbsp;sejumlah&nbsp;<?= $rowBBPelimpahan['jumlah'] ?>&nbsp;<?= $rowBBPelimpahan['satuan'] ?>&nbsp;dengan berat&nbsp;<?= $rowBBPelimpahan['berat'] ?>&nbsp;gram.
+                                      <?php }else{ ?>
+                                        dengan berat&nbsp;<?= $rowBBPelimpahan['jumlah'] ?>&nbsp;<?= $rowBBPelimpahan['satuan'] ?>
+                                      <?php } ?>
+                                    </li>
+                                <?php } } ?> 
+                              <?php } else { ?>
+                                <button class="btn btn-warning btn-sm"><strong>Belum Diketahui</strong></button>
+                              <?php } ?>
+                              </ol>
+                          </td>
+                          <td><?= $displayPelimpahan ? $row_kasusPelimpahan["pasal"] : '' ?></td>
+                          <td>
+                            <?php 
+                              if ($displayPelimpahan) {
+                                if (!empty($row_kasusPelimpahan["nrp_admin"])) {
+                                  $dataAdminPelimpahan = $CI->Modeladmin->getAdminByNRP($row_kasusPelimpahan['nrp_admin']);
+                                  echo $dataAdminPelimpahan[0]['nama_admin'].' - NRP. '.$dataAdminPelimpahan[0]['nrp'];
+                                } else { ?>
+                                  <a class="btn btn-sm btn-info w-100" data-toggle="modal" data-target="#adminModal<?= $row_kasusPelimpahan['id_kasus']; ?>">Pilih Admin</a>
+                                <?php }
+                              } else {
+                                echo '';
+                              }
+                              
+                            ?>
+                          </td>
+                          <td>
+                            <?php if($displayPelimpahan): ?>
+                              <?php if($row_kasusPelimpahan["ket_pelimpahan"] == 'diterima'){ ?>
+                                <button class="btn btn-success btn-sm"><strong>pelimpahan diterima</strong></button>
+                              <?php }else{?>
+                                <button class="btn btn-warning btn-sm"><strong>Bukan Pelimpahan</strong></button>
+                              <?php }?>
+                            <?php endif; ?>
+                          </td>
+                          <td>
+                            <?php if($displayPelimpahan): ?>
+                              <?php if(empty($row_kasusPelimpahan["status_kasus"])){ ?>
+                                <button class="btn btn-warning btn-sm"><strong>Belum Diketahui</strong></button>
+                              <?php }else if ($row_kasusPelimpahan["status_kasus"] == 'SP3'){ ?>
+                                <button class="btn btn-success btn-sm"><strong>SP3</strong></button>
+                              <?php }else if($row_kasusPelimpahan["status_kasus"] == 'Tahap II'){ ?>
+                                <button class="btn btn-success btn-sm"><strong>Tahap II</strong></button>
+                              <?php }else{?>
+                                <button class="btn btn-success btn-sm"><strong>RJ</strong></button>
+                              <?php } ?>
+                            <?php endif; ?>
+                          </td>
+                          <td>
+                            <?php if($displayPelimpahan): ?>
+                              <?php if($row_kasusPelimpahan["isKasusMenonjol"]){ ?>
+                                <button class="btn btn-success btn-sm"><strong>Kasus Menonjol</strong></button>
+                              <?php }else{?>
+                                <button class="btn btn-warning btn-sm"><strong>Bukan Kasus Menonjol</strong></button>
+                              <?php }?>
+                            <?php endif; ?>
+                          </td>
+                      </tr>
+                      <?php ($displayPelimpahan) ? $no++ : $no; } ?>
+                  <?php }else{?>
+                          <tr>
+                              <td colspan="14" style="text-align:center;"><p style="color:grey;font-size:18px;">Data Barang Bukti Belum Tersedia</p></td>
+                          </tr>
+                  <?php } ?>
+                </tbody>
+            </table>
+          </div>
+        </div>
 
         <?php } ?>
       </div><!-- /.container-fluid -->

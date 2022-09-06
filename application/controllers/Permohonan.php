@@ -42,6 +42,10 @@ class Permohonan extends CI_Controller {
 		$this->load->view('include/footer', $data);
 	}
 
+	public function countPermohonan(){
+		$this->Modelpermohonan->countPermohonan();
+	}
+	
 	public function delPermohonan($idPermohonan){
 		$this->Modelpermohonan->delPermohonan($idPermohonan);
 		$this->session->set_flashdata('success', 'Permohonan perubahan berhasil dihapus dari database!');

@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class ModelChat extends CI_Model {
+class Modelchat extends CI_Model {
 
     function get_allusers($kode_kesatuan){
         $sql = "SELECT * FROM tb_kesatuan LEFT JOIN tb_chat ON tb_kesatuan.kode_kesatuan = tb_chat.outgoing_msg_id WHERE NOT tb_kesatuan.kode_kesatuan='{$kode_kesatuan}' AND NOT tb_kesatuan.kode_kesatuan = 'PRINCIPAL'  GROUP BY tb_kesatuan.kode_kesatuan ORDER BY tb_chat.created_at DESC";

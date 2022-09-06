@@ -6,7 +6,7 @@
   <title>Log In SI-LAPOR</title>
 
   <!-- Icon Page -->
-  <link rel="icon" href="<?= base_url("assets/images/logo-ditresnarkoba-poldajatim.PNG") ?>">
+  <link rel="icon" href="<?= base_url("assets/images/logo-ditresnarkoba-poldajatim.png") ?>">
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome -->
@@ -144,7 +144,7 @@
 <h1><strong>Sistem Aplikasi Laporan & Database BINOPS</strong></h1>
 <div class="login-box">
   <div class="login-logo">
-    <img class="my-2 w-50" src="<?= base_url(); ?>/assets/images/logo-ditresnarkoba-poldajatim.PNG" />
+    <img class="my-2 w-50" src="<?= base_url(); ?>/assets/images/logo-ditresnarkoba-poldajatim.png" />
   </div>
   <!-- /.login-logo -->
   <div class="card">

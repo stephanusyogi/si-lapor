@@ -40,7 +40,7 @@
     <section class="content">
       <div class="container-fluid px-4 py-2">
         <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER'){ ?>
-          <div class="container row section-folder">
+          <div class="row section-folder ">
             <?php foreach($kesatuan as $keyKesatuan){ ?>
               <div class="col folder-jajaran mx-2 my-2 text-center">
                 <a href="<?= base_url() ?>file/viewFileJajaran/<?= $keyKesatuan['kode_kesatuan'] ?>"><i class="fas fa-folder"></i></a>
