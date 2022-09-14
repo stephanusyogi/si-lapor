@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>SI-LAPOR | <?= $title ?></title>
+  <title>SIAP | <?= $title ?></title>
   
   <!-- Icon Page -->
   <link rel="icon" href="<?= base_url("assets/images/logo-ditresnarkoba-poldajatim.png") ?>">
@@ -26,10 +26,14 @@
   <link rel="stylesheet" href="<?= base_url('/assets/adminlte/plugins'); ?>/datatables-bs4/css/dataTables.bootstrap4.css">
   <!-- Select -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+  <!-- Chart -->
+  <link rel="stylesheet" href="<?= base_url('/assets/adminlte/plugins'); ?>/chart.js/Chart.css">
   <!-- jQuery -->
   <script src="<?= base_url("assets/adminlte/") ?>plugins/jquery/jquery.min.js"></script>
   <!-- jQuery UI 1.11.4 -->
   <script src="<?= base_url("assets/adminlte/") ?>plugins/jquery-ui/jquery-ui.min.js"></script>
+  <!-- Chart -->
+  <script src="<?= base_url('assets/adminlte/plugins'); ?>/chart.js/Chart.js"></script>  
 </head>
 
 <!-- Alert Error -->
@@ -111,33 +115,24 @@
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
-      <!-- Notifications Dropdown Menu -->
-      <!-- <li class="nav-item dropdown">
+      <!-- Search Dropdown Menu -->
+      <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
-          <i class="far fa-bell"></i>
-          <span class="badge badge-info navbar-badge">15</span>
+          <i class="fas fa-search"></i>
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          <span class="dropdown-item dropdown-header">15 Notifications</span>
+          <span class="dropdown-item dropdown-header">Pilih Cara Pencarian Berdasarkan :</span>
           <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-envelope mr-2"></i> 4 new messages
-            <span class="float-right text-muted text-sm">3 mins</span>
+          <a href="<?= base_url("dashboard/viewSearch/nolp") ?>" class="dropdown-item">
+            <span><i class="fas fa-key mr-2"></i></span> Nomor Laporan Polisi
           </a>
           <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-users mr-2"></i> 8 friend requests
-            <span class="float-right text-muted text-sm">12 hours</span>
+          <a href="<?= base_url("dashboard/viewSearch/namatsk") ?>" class="dropdown-item">
+            <span><i class="fas fa-id-card mr-2"></i></span> Nama Tersangka
           </a>
           <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-file mr-2"></i> 3 new reports
-            <span class="float-right text-muted text-sm">2 days</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
         </div>
-      </li> -->
+      </li>
       <li class="nav-item">
         <a class="nav-link" data-widget="fullscreen" href="#" role="button">
           <i class="fas fa-expand-arrows-alt"></i>
@@ -157,7 +152,7 @@
     <!-- Brand Logo -->
     <a href="<?= base_url("dashboard")?>" class="brand-link">
       <img src="<?= base_url("assets/images/") ?>logo-ditresnarkoba-poldajatim.png" alt="Ditresnarkoba polda jatim logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light">SI-LAPOR</span>
+      <span class="brand-text font-weight-light">SIAP</span>
     </a>
 
     <!-- Sidebar -->
@@ -189,7 +184,7 @@
               <a href="<?= site_url("lapor-ungkap-kasus") ?>" class="nav-link">
                 <i class="nav-icon fas fa-bullhorn"></i>
                 <p>
-                  LAPOR KASUS
+                  BUAT LP
                 </p>
               </a>
             </li>
@@ -198,7 +193,7 @@
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-chalkboard-teacher"></i>
               <p>
-                PANGKALAN DATA
+                MASTER DATA
                 <i class="fas fa-angle-left right"></i>
               </p>
             </a>
@@ -206,31 +201,37 @@
               <li class="nav-item">
                 <a href="<?= base_url("master-kasus") ?>" class="nav-link">
                   <i class="fas fa-file-contract nav-icon"></i>
-                  <p>Data Kasus (Master)</p>
+                  <p>Data Ungkap Kasus</p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="<?= base_url("selra") ?>" class="nav-link">
                   <i class="nav-icon fas fa-balance-scale"></i>
-                  <p>Data Selesai Perkara</p>
+                  <p>Data Selra</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="<?= base_url("kasus-menonjol") ?>" class="nav-link">
+                  <i class="nav-icon fas fa-passport"></i>
+                  <p>Data Kasus Menonjol</p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="<?= base_url("matrik-kasus") ?>" class="nav-link">
                   <i class="fas fa-building nav-icon"></i>
-                  <p>Matrik Ungkap Kasus</p>
+                  <p>Rekap Ungkap Kasus</p>
                 </a>
               </li>
               <li class="nav-item">
                 <a target="_blank" href="<?= base_url("matrik-barang-bukti") ?>" class="nav-link">
                   <i class="fas fa-archive nav-icon"></i>
-                  <p>Matrik Barang Bukti</p>
+                  <p>Matrik Ungkap Kasus</p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="<?= base_url("daftar-permohonan-edit") ?>" class="nav-link">
                   <i class="fas fa-hands-helping nav-icon"></i>
-                  <p>Daftar Pengajuan Edit</p>
+                  <p>Daftar Persetujuan Edit</p>
                   <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER'): ?>
                   <span class="badge badge-warning right" id="countPermohonan"></span>
                   <?php endif; ?>

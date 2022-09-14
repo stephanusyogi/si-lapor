@@ -129,10 +129,15 @@ class Modelpelimpahan extends CI_Model{
         return $this->db->get_where('tb_temp_tersangka', array('id_tersangka'=>$idTersangka, 'id_kasus' => $idKasus));
     }
     
-    function updateStatusKasus($idKasus, $status){
-        return $this->db->set('status_kasus', $status)
-        ->where('id_kasus', $idKasus)
-        ->update('tb_kasus');
+    function updateStatusKasus($idKasus, $status, $keterangan, $date){
+        $set = array(
+            'status_kasus' => $status,
+            'ket_statusKasus' => $keterangan,
+            'date_statusKasus' => $date,
+        );
+        $this->db->set($set);
+        $this->db->where('id_kasus', $idKasus);
+        $this->db->update('tb_kasus');
     }
     
     function updateStatusKasusPelimpahan($idKasus, $status){
@@ -149,6 +154,19 @@ class Modelpelimpahan extends CI_Model{
     
     function updateKasusPelimpahanMenonjol($idKasus){
         return $this->db->set('isKasusMenonjol', 1)
+        ->where('id_kasus', $idKasus)
+        ->update('tb_temp_kasus');
+    }
+    
+    
+    function batalKasusMenonjol($idKasus){
+        return $this->db->set('isKasusMenonjol', 0)
+        ->where('id_kasus', $idKasus)
+        ->update('tb_kasus');
+    }
+    
+    function batalKasusPelimpahanMenonjol($idKasus){
+        return $this->db->set('isKasusMenonjol', 0)
         ->where('id_kasus', $idKasus)
         ->update('tb_temp_kasus');
     }

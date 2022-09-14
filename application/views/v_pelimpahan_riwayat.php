@@ -84,10 +84,10 @@
         </div><!-- /.container-fluid -->
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="diterima-tab" data-toggle="tab" data-target="#diterima" type="button" role="tab" aria-controls="diterima" aria-selected="true"><strong>LP Diterima</strong></button>
+                <button class="nav-link" id="diterima-tab" data-toggle="tab" data-target="#diterima" type="button" role="tab" aria-controls="diterima" aria-selected="true"><strong>LP yang Diterima</strong></button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="dilimpahkan-tab" data-toggle="tab" data-target="#dilimpahkan" type="button" role="tab" aria-controls="dilimpahkan" aria-selected="false"><strong>LP Dilimpahkan</strong></button>
+                <button class="nav-link active" id="dilimpahkan-tab" data-toggle="tab" data-target="#dilimpahkan" type="button" role="tab" aria-controls="dilimpahkan" aria-selected="false"><strong>LP yang Dilimpahkan</strong></button>
             </li>
         </ul>
         <div class="tab-content py-4" id="myTabContent">
@@ -109,7 +109,7 @@
                             foreach ($LPditerima as $rowLPditerima) { 
                             ?>
                             <tr>
-                                <td><?= $no ?></td>
+                                <td class="text-center"><?= $no ?></td>
                                 <td><?= $rowLPditerima['no_laporanpolisi'] ?></td>
                                 <td><?= $rowLPditerima['kodekesatuan_pelimpahanDari']?></td>
                                 <td><?= $rowLPditerima['nama_polsek']?></td>
@@ -130,7 +130,6 @@
                     <thead>
                         <tr class="text-center">
                             <th>No</th>
-                            <th>Batalkan Pelimpahan</th>
                             <th>No Laporan Polisi</th>
                             <th>Dilimpahkan Ke</th>
                             <th>Kepada Polsek</th>
@@ -144,12 +143,7 @@
                             foreach ($LPdilimpahkan as $rowLPdilimpahkan) { 
                             ?>
                             <tr>
-                                <td><?= $no ?></td>
-                                <td class="text-center">
-                                    <div data-toggle="tooltip" data-placement="top" title="Batalkan Pelimpahan">
-                                    <a class="tombol-batal-pelimpahan" href="<?= base_url() ?>pelimpahan/batalPelimpahan/<?= $rowLPdilimpahkan['idKasusPelimpahan'] ?>/<?= $rowLPdilimpahkan['id_kasus'] ?>" ><i class="fas fa-trash" style="color:red;"></i></a>
-                                    </div>
-                                </td>
+                                <td class="text-center"><?= $no ?></td>
                                 <td><?= $rowLPdilimpahkan['no_laporanpolisi'] ?></td>
                                 <td><?= $rowLPdilimpahkan['kodekesatuan_pelimpahanKe']?></td>
                                 <td><?= $rowLPdilimpahkan['namaPolsekPelimpahan']?></td>

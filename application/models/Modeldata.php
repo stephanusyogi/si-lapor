@@ -39,14 +39,25 @@ class Modeldata extends CI_Model{
         return $query->result_array();  
     }
     
-    function updateStatusKasus($idKasus, $status){
-        $this->db->set('status_kasus', $status);
+    function updateStatusKasus($idKasus, $status, $keterangan, $date){
+        $set = array(
+            'status_kasus' => $status,
+            'ket_statusKasus' => $keterangan,
+            'date_statusKasus' => $date,
+        );
+        $this->db->set($set);
         $this->db->where('id_kasus', $idKasus);
         $this->db->update('tb_kasus');
     }
 
     function updateKasusMenonjol($idKasus){
         $this->db->set('isKasusMenonjol', 1);
+        $this->db->where('id_kasus', $idKasus);
+        $this->db->update('tb_kasus');
+    }
+    
+    function batalKasusMenonjol($idKasus){
+        $this->db->set('isKasusMenonjol', 0);
         $this->db->where('id_kasus', $idKasus);
         $this->db->update('tb_kasus');
     }
@@ -343,6 +354,37 @@ class Modeldata extends CI_Model{
         
         return $res->result_array();
     }
+    
+    function getMatrikSelra($kode_kesatuan, $firstDate, $lastDate, $status){
+        $where = array(
+            'kode_kesatuan' => $kode_kesatuan,
+            'isLocked' => 1,
+            'status_kasus'   => $status,
+        );
+        $res = $this->db->select('*')
+        ->from('tb_kasus')
+        ->where($where)
+        ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+        ->get();
+        
+        return $res->result_array();
+    }
+
+    // Kasus Menonjol Modul
+    function getMenonjol($kode_kesatuan, $firstDate, $lastDate, $status){
+        $where = array(
+            'kode_kesatuan' => $kode_kesatuan,
+            'isLocked' => 1,
+            'isKasusMenonjol'   => $status,
+          );
+        $res = $this->db->select('*')
+        ->from('tb_kasus')
+        ->where($where)
+        ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+        ->get();
+        
+        return $res->result_array();
+    }
 
     // Aditional for Superadmin
     function getSuperKasus($firstDate, $lastDate){
@@ -406,7 +448,7 @@ class Modeldata extends CI_Model{
         return $res->result_array();
     }
     
-    function getSuperSelraCTTersangka($kode_kesatuan, $firstDate, $lastDate){
+    function getSuperSelraCTTersangka($firstDate, $lastDate){
         $where = array(
             "isLocked" => 1,
             'status_kasus ='   => '',
@@ -414,6 +456,34 @@ class Modeldata extends CI_Model{
         $res = $this->db->select('*')
         ->from('tb_kasus')
         ->join('tb_tersangka','tb_kasus.id_kasus=tb_tersangka.id_kasus','LEFT')
+        ->where($where)
+        ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+        ->get();
+        
+        return $res->result_array();
+    }
+    
+    function getTotalMatrikSelra($firstDate, $lastDate, $status){
+        $where = array(
+            'isLocked' => 1,
+            'status_kasus'   => $status,
+        );
+        $res = $this->db->select('*')
+        ->from('tb_kasus')
+        ->where($where)
+        ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+        ->get();
+        
+        return $res->result_array();
+    }
+    
+    function getTotalMenonjol($firstDate, $lastDate, $status){
+        $where = array(
+            'isLocked' => 1,
+            'isKasusMenonjol'   => $status,
+          );
+        $res = $this->db->select('*')
+        ->from('tb_kasus')
         ->where($where)
         ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
         ->get();
@@ -459,6 +529,34 @@ class Modeldata extends CI_Model{
         ->join('tb_kasus','tb_tersangka.id_kasus=tb_kasus.id_kasus','LEFT')
         ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
         ->count_all_results();
+    }
+    
+    function getSuperKewarganegaraanJenisKelamin($status_kewarganegaraan, $jenis_kelamin, $firstDate, $lastDate){
+        $where = array(
+            "tb_kasus.isLocked" => 1,
+            'tb_tersangka.status_kewarganegaraan' => $status_kewarganegaraan,
+            'tb_tersangka.jenis_kelamin' => $jenis_kelamin
+        );
+        return $this->db->select('id_tersangka')
+        ->from('tb_tersangka')
+        ->join('tb_kasus','tb_tersangka.id_kasus=tb_kasus.id_kasus','LEFT')
+        ->where($where)
+        ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+        ->count_all_results();
+    }
+
+    function getSuperMenonjol($firstDate, $lastDate, $status){
+        $where = array(
+            'isLocked' => 1,
+            'isKasusMenonjol'   => $status,
+          );
+        $res = $this->db->select('*')
+        ->from('tb_kasus')
+        ->where($where)
+        ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+        ->get();
+        
+        return $res->result_array();
     }
     
     // Matrik BB Super

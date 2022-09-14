@@ -135,10 +135,10 @@
 
           <ul class="nav nav-tabs" id="myTab" role="tablist">
               <li class="nav-item" role="presentation">
-                  <button class="nav-link active" id="diterima-tab" data-toggle="tab" data-target="#diterima" type="button" role="tab" aria-controls="diterima" aria-selected="true"><strong>Master Pelimpahan</strong></button>
+                  <button class="nav-link active" id="diterima-tab" data-toggle="tab" data-target="#diterima" type="button" role="tab" aria-controls="diterima" aria-selected="true">Data LP yang <strong>Diterima</strong></button>
               </li>
               <li class="nav-item" role="presentation">
-                  <button class="nav-link" id="dilimpahkan-tab" data-toggle="tab" data-target="#dilimpahkan" type="button" role="tab" aria-controls="dilimpahkan" aria-selected="false"><strong>Monitoring LP Dilimpahkan</strong></button>
+                  <button class="nav-link" id="dilimpahkan-tab" data-toggle="tab" data-target="#dilimpahkan" type="button" role="tab" aria-controls="dilimpahkan" aria-selected="false">Data LP yang <strong>Dilimpahkan</strong></button>
               </li>
           </ul>
           
@@ -150,7 +150,8 @@
                       <th>No</th>
                       <th>Action</th>   
                       <th>No Laporan Polisi</th>
-                      <th>Created Date</th>
+                      <th>Tanggal Input LP</th>
+                      <th>Durasi Perkara</th>
                       <th>Deskripsi Waktu & TKP</th>
                       <th>Identitas Tersangka</th> 
                       <th>Umur</th> 
@@ -159,7 +160,6 @@
                       <th>Barang Bukti</th> 
                       <th>Modus Operandi</th> 
                       <th>Administrator</th> 
-                      <th>Keterangan</th>
                       <th>Status</th>
                       <th>LP Menonjol</th>
                     </tr>
@@ -175,24 +175,33 @@
                               array_push($account_numbers, $row_kasus["no_laporanpolisi"]);
                               $display = TRUE;
                           } 
+                          $resKasusFrom = $CI->Modelpelimpahan->getKasusById($row_kasus['idkasus_pelimpahanDari']);
                         ?>
                       <tr>
                           <td class="text-center"><?= ($display) ? $no : "" ?></td>
                           <td class="text-center" style="font-size:24px;">
                             <?php if($display): ?>
-                              <div data-toggle="tooltip" data-placement="top" title="Update Laporan Kasus">
-                                <a href="<?= base_url("kasus-pelimpahan/{$row_kasus["id_kasus"]}") ?>" style="cursor:pointer;"><i class="fas fa-pen-square" style="color:green;"></i></a>
-                              </div>
-                              <div data-toggle="tooltip" data-placement="top" title="Update Status Laporan">
+                              <div data-toggle="tooltip" data-placement="top" title="Pilih Status SELRA">
                                 <a style="cursor:pointer;" data-toggle="modal" data-target="#statusModal<?= $row_kasus['id_kasus']; ?>"><i class="fas fa-check-square" style="color:darkblue;"></i></a>
                               </div>
-                              <div data-toggle="tooltip" data-placement="top" title="Kasus Menonjol">
-                                <a class="tombol-kasus-menonjol" style="cursor:pointer;" href="<?= base_url("pelimpahan/updateKasusPelimpahanMenonjol/{$row_kasus['id_kasus']}/{$row_kasus['idkasus_pelimpahanDari']}") ?>"><i class="fas fa-file-archive" style="color:grey;"></i></a>
+                              <div data-toggle="tooltip" data-placement="top" title="<?= ($row_kasus['isKasusMenonjol']) ? 'Batalkan Kasus Menonjol' : 'Ubah ke Kasus Menonjol' ?>">
+                                <a class="<?= ($row_kasus['isKasusMenonjol']) ? 'tombol-batal-menonjol' : 'tombol-kasus-menonjol' ?>" style="cursor:pointer;" href="<?= ($row_kasus['isKasusMenonjol']) ? base_url("pelimpahan/batalKasusPelimpahanMenonjol/{$row_kasus['id_kasus']}/{$row_kasus['idkasus_pelimpahanDari']}") : base_url("pelimpahan/updateKasusPelimpahanMenonjol/{$row_kasus['id_kasus']}/{$row_kasus['idkasus_pelimpahanDari']}") ?>"><i class="fas fa-file-archive" style="color:grey;"></i></a>
                               </div>
                             <?php endif; ?>
                           </td>
                           <td><?= $display ? $row_kasus["no_laporanpolisi"] : ""; ?></td>
                           <td><?= $display ? dateIndonesia(date('N j/n/Y', strtotime($row_kasus["created_at"]))) : ""; ?></td>
+                          <td>
+                          <?php if($display): 
+                            if(!empty($resKasusFrom[0]["date_statusKasus"])):
+                              $diffSelra = date_diff(date_create($resKasusFrom[0]["created_at"]), date_create($resKasusFrom[0]["date_statusKasus"]));
+                              echo $diffSelra->format("%a")." Hari (SELRA)";
+                            else:
+                              $diff = date_diff(date_create($resKasusFrom[0]["created_at"]), date_create(date("Y-m-d")));
+                              echo $diff->format("%a")." Hari - Hingga Hari Ini";
+                            endif; 
+                          endif; ?>
+                          </td>
                           <td>
                             <?= ($display) ? $row_kasus["deskripsi_waktudantkp"]  :  "" ?>
                           </td>
@@ -256,23 +265,31 @@
                           </td>
                           <td>
                             <?php if($display): ?>
-                              <?php if($row_kasus["ket_pelimpahan"] == 'diterima'){ ?>
-                                <button class="btn btn-success btn-sm"><strong>pelimpahan diterima</strong></button>
-                              <?php }else{?>
-                                <button class="btn btn-warning btn-sm"><strong>Bukan Pelimpahan</strong></button>
-                              <?php }?>
-                            <?php endif; ?>
-                          </td>
-                          <td>
-                            <?php if($display): ?>
                               <?php if(empty($row_kasus["status_kasus"])){ ?>
-                                <button class="btn btn-warning btn-sm"><strong>Belum Diketahui</strong></button>
+                                <button class="btn btn-warning btn-sm">
+                                  <strong>Belum Diketahui</strong>
+                                </button>
                               <?php }else if ($row_kasus["status_kasus"] == 'SP3'){ ?>
-                                <button class="btn btn-success btn-sm"><strong>SP3</strong></button>
+                                <button class="btn btn-success btn-sm">
+                                  <strong>SP3</strong>
+                                  <?php if(!empty($resKasusFrom[0]["ket_statusKasus"])): ?>
+                                      <p><strong>Keterangan :</strong>&nbsp;<?= $resKasusFrom[0]["ket_statusKasus"] ?></p>
+                                  <?php endif; ?>
+                                </button>
                               <?php }else if($row_kasus["status_kasus"] == 'Tahap II'){ ?>
-                                <button class="btn btn-success btn-sm"><strong>Tahap II</strong></button>
+                                <button class="btn btn-success btn-sm">
+                                  <strong>Tahap II</strong>
+                                  <?php if(!empty($resKasusFrom[0]["ket_statusKasus"])): ?>
+                                      <p><strong>Keterangan :</strong>&nbsp;<?= $resKasusFrom[0]["ket_statusKasus"] ?></p>
+                                  <?php endif; ?>
+                                </button>
                               <?php }else{?>
-                                <button class="btn btn-success btn-sm"><strong>RJ</strong></button>
+                                <button class="btn btn-success btn-sm">
+                                  <strong>RJ</strong>
+                                  <?php if(!empty($resKasusFrom[0]["ket_statusKasus"])): ?>
+                                      <p><strong>Keterangan :</strong>&nbsp;<?= $resKasusFrom[0]["ket_statusKasus"] ?></p>
+                                  <?php endif; ?>
+                                </button>
                               <?php } ?>
                             <?php endif; ?>
                           </td>
@@ -286,37 +303,6 @@
                             <?php endif; ?>
                           </td>
                       </tr>
-                    <!-- Modal Status Kasus -->
-                    <div class="modal fade" id="statusModal<?= $row_kasus['id_kasus']; ?>" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="statusModalLabel">Update Status Kasus</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                  <form action="<?= base_url("pelimpahan/updateStatusKasus/{$row_kasus['id_kasus']}/{$row_kasus['idkasus_pelimpahanDari']}") ?>" method="post">
-                                      <div class="form-group">
-                                        <label for="status_kasus">Status :</label>
-                                        <select name="status_kasus" id="status_kasus" class="form-control" required>
-                                          <option value="<?= $row_kasus['status_kasus'] ?>" selected><?= $row_kasus['status_kasus'] ?></option>
-                                          <option value="SP3">SP3</option>
-                                          <option value="RJ">RJ</option>
-                                          <option value="TAHAP II">TAHAP II</option>
-                                          <option value="">Belum Diketahui</option>
-                                        </select>
-                                      </div>
-                                      <div class="modal-footer">
-                                          <button type="submit" class="btn btn-success">Simpan</button>
-                                          <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
-                                      </div>
-                                  </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     <!-- Modal Pilih Admin -->
                     <div class="modal fade" id="adminModal<?= $row_kasus['id_kasus']; ?>" tabindex="-1" role="dialog" aria-labelledby="adminModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
@@ -348,6 +334,41 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Modal Status Kasus -->
+                    <div class="modal fade" id="statusModal<?= $row_kasus['id_kasus']; ?>" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editModalLabel">Ubah Status SELRA</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="<?= base_url("pelimpahan/updateStatusKasus/{$row_kasus['id_kasus']}/{$row_kasus['idkasus_pelimpahanDari']}") ?>" method="post">
+                                        <div class="form-group">
+                                            <label for="status_kasus">Status SELRA:</label>
+                                            <select name="status_kasus" id="status_kasus" class="form-control" required>
+                                                <option selected value="<?= $resKasusFrom[0]['status_kasus'] ?>"><?= $resKasusFrom[0]['status_kasus'] ?></option>
+                                                <option value="SP3">SP3</option>
+                                                <option value="RJ">RJ</option>
+                                                <option value="TAHAP II">TAHAP II</option>
+                                                <option value="">Belum Diketahui</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="">Keterangan SELRA <small style="color:red;">*opsional</small></label>
+                                            <textarea class="form-control" name="ket_statusKasus" rows="5" placeholder="Tulis Keterangan SELRA disini. Untuk SELRA Tahap II, mohon sertakan keterangan lokasi pelimpahan."><?= $resKasusFrom[0]['ket_statusKasus'] ?></textarea>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-success">Simpan</button>
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                       <?php ($display) ? $no++ : $no; } ?>
                   <?php }else{?>
                           <tr>
@@ -362,6 +383,7 @@
                 <thead>
                     <tr class="text-center">
                       <th>No</th>  
+                      <th>Action</th>
                       <th>No Laporan Polisi</th>
                       <th>Created Date</th>
                       <th>Deskripsi Waktu & TKP</th>
@@ -371,8 +393,7 @@
                       <th>Pekerjaan</th> 
                       <th>Barang Bukti</th> 
                       <th>Modus Operandi</th> 
-                      <th>Administrator</th> 
-                      <th>Keterangan</th>
+                      <th>Administrator Pelimpahan</th> 
                       <th>Status</th>
                       <th>LP Menonjol</th>
                     </tr>
@@ -388,9 +409,17 @@
                               array_push($account_numbers_pelimpahan, $row_kasusPelimpahan["no_laporanpolisi"]);
                               $displayPelimpahan = TRUE;
                           } 
+                          $resKasusFrom = $CI->Modelpelimpahan->getKasusById($row_kasusPelimpahan['idkasus_pelimpahanDari']);
                         ?>
                       <tr>
                           <td class="text-center"><?= ($displayPelimpahan) ? $no : "" ?></td>
+                          <td class="text-center">
+                            <?php if($displayPelimpahan): ?>
+                              <div data-toggle="tooltip" data-placement="top" title="Batal & Hapus Pelimpahan">
+                                <a class="tombol-hapus-pelimpahan" href="<?= base_url() ?>pelimpahan/batalPelimpahan/<?= $row_kasusPelimpahan['id_kasus'] ?>/<?= $row_kasusPelimpahan['idkasus_pelimpahanDari'] ?>" ><i class="fas fa-trash" style="color:red;"></i></a>
+                              </div>
+                            <?php endif; ?>
+                          </td>
                           <td><?= $displayPelimpahan ? $row_kasusPelimpahan["no_laporanpolisi"] : ""; ?></td>
                           <td><?= $displayPelimpahan ? dateIndonesia(date('N j/n/Y', strtotime($row_kasusPelimpahan["created_at"]))) : ""; ?></td>
                           <td>
@@ -446,7 +475,7 @@
                                   $dataAdminPelimpahan = $CI->Modeladmin->getAdminByNRP($row_kasusPelimpahan['nrp_admin']);
                                   echo $dataAdminPelimpahan[0]['nama_admin'].' - NRP. '.$dataAdminPelimpahan[0]['nrp'];
                                 } else { ?>
-                                  <a class="btn btn-sm btn-info w-100" data-toggle="modal" data-target="#adminModal<?= $row_kasusPelimpahan['id_kasus']; ?>">Pilih Admin</a>
+                                  <button class="btn btn-sm btn-warning w-100"><strong>Admin Belum Dipilih</strong></buttin>
                                 <?php }
                               } else {
                                 echo '';
@@ -456,23 +485,29 @@
                           </td>
                           <td>
                             <?php if($displayPelimpahan): ?>
-                              <?php if($row_kasusPelimpahan["ket_pelimpahan"] == 'diterima'){ ?>
-                                <button class="btn btn-success btn-sm"><strong>pelimpahan diterima</strong></button>
-                              <?php }else{?>
-                                <button class="btn btn-warning btn-sm"><strong>Bukan Pelimpahan</strong></button>
-                              <?php }?>
-                            <?php endif; ?>
-                          </td>
-                          <td>
-                            <?php if($displayPelimpahan): ?>
                               <?php if(empty($row_kasusPelimpahan["status_kasus"])){ ?>
                                 <button class="btn btn-warning btn-sm"><strong>Belum Diketahui</strong></button>
                               <?php }else if ($row_kasusPelimpahan["status_kasus"] == 'SP3'){ ?>
-                                <button class="btn btn-success btn-sm"><strong>SP3</strong></button>
+                                <button class="btn btn-success btn-sm">
+                                  <strong>SP3</strong>
+                                <?php if(!empty($resKasusFrom[0]["ket_statusKasus"])): ?>
+                                    <p><strong>Keterangan :</strong>&nbsp;<?= $resKasusFrom[0]["ket_statusKasus"] ?></p>
+                                <?php endif; ?>
+                                </button>
                               <?php }else if($row_kasusPelimpahan["status_kasus"] == 'Tahap II'){ ?>
-                                <button class="btn btn-success btn-sm"><strong>Tahap II</strong></button>
+                                <button class="btn btn-success btn-sm">
+                                  <strong>Tahap II</strong>
+                                  <?php if(!empty($resKasusFrom[0]["ket_statusKasus"])): ?>
+                                      <p><strong>Keterangan :</strong>&nbsp;<?= $resKasusFrom[0]["ket_statusKasus"] ?></p>
+                                  <?php endif; ?>
+                                </button>
                               <?php }else{?>
-                                <button class="btn btn-success btn-sm"><strong>RJ</strong></button>
+                                <button class="btn btn-success btn-sm">
+                                  <strong>RJ</strong>
+                                  <?php if(!empty($resKasusFrom[0]["ket_statusKasus"])): ?>
+                                      <p><strong>Keterangan :</strong>&nbsp;<?= $resKasusFrom[0]["ket_statusKasus"] ?></p>
+                                  <?php endif; ?>
+                                </button>
                               <?php } ?>
                             <?php endif; ?>
                           </td>
@@ -524,6 +559,25 @@
         }
       });
     });
+    
+    $(".tombol-hapus-pelimpahan").on("click", function (e) {
+      e.preventDefault();
+      const href = $(this).attr("href");
+
+      Swal.fire({
+        title: "Batal & Hapus Pelimpahan?",
+        text: "Membatalkan pelimpahan juga akan menghapus data kasus pada jajaran yang dilimpahkan dan bersifat permanen pada database, mohon berhati-hati.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Delete!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          document.location.href = href;
+        }
+      });
+    });
       
     $(".tombol-kasus-menonjol").on("click", function (e) {
       e.preventDefault();
@@ -543,6 +597,26 @@
         }
       });
     });
+      
+      $(".tombol-batal-menonjol").on("click", function (e) {
+        e.preventDefault();
+        const href = $(this).attr("href");
+  
+        Swal.fire({
+          title: "Batalkan Kasus Menonjol?",
+          text: "Membatalkan status kasus menonjol bersifat permanen pada database, mohon berhati-hati.",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Batalkan Menonjol!",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            document.location.href = href;
+          }
+        });
+      });
+
     $('#tanggalAwalHarian').datetimepicker({
         format: 'YYYY-MM-DD'
     });

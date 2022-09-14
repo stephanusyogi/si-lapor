@@ -90,7 +90,7 @@
             <textarea class="form-control" name="pasal" id="pasal" rows="5" required placeholder="Tulis keterangan pasal yang ditangguhkan disini"><?= $dataKasus['pasal'] ?></textarea>
           </div>  
           <div class="text-right mb-2" id="scrollToContent">
-            <button type="submit" class="btn btn-secondary">Update Informasi Umum Kasus</button>
+            <button type="submit" class="btn btn-secondary">Edit Informasi Umum Kasus</button>
           </div>
         </form>
         <hr>
@@ -104,6 +104,21 @@
                 <div class="form-group">
                   <label for="nama">Nama</label>
                   <input type="text" id="nama" class="form-control" name="nama" placeholder="Masukkan Nama Tersangka" autocomplete="off" required>
+
+                  <label for="ttl">Tempat & Tanggal Lahir</label>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <input type="text" class="form-control" name="tempatTTL" placeholder="Masukkan Tempat Lahir" autocomplete="off" required>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="input-group date" id="tahunTTL" data-target-input="nearest">
+                        <input type="text" class="form-control" name="tahunTTL" datetimepicker-input" data-target="#tahunTTL" />
+                        <div class="input-group-append" data-target="#tahunTTL" data-toggle="datetimepicker">
+                          <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                   
                   <label for="nik">NIK</label>
                   <input type="text" id="nik" class="form-control" name="nik" placeholder="Masukkan NIK Tersangka" autocomplete="off" required>
@@ -122,31 +137,6 @@
                     <option value="Konghucu">Konghucu</option>
                   </select>
                 </div>
-              </div>
-              <div class="col-md-4">
-                <label for="status">Status</label>
-                <select name="status" id="status" class="form-control" required>
-                  <option selected disabled>Pilih Status Tersangka</option>
-                  <option value="Penanam">Penanam</option>
-                  <option value="Produksi">Produksi</option>
-                  <option value="Bandar">Bandar</option>
-                  <option value="Pengedar">Pengedar</option>
-                  <option value="Pengguna">Pengguna</option>
-                </select>
-
-                <label for="status_kewarganegaraan">Kewarganegaraan</label>
-                <select name="status_kewarganegaraan" id="status_kewarganegaraan" class="form-control" required>
-                  <option selected disabled>Pilih Kewarganegaraan</option>
-                  <option value="WNI">WNI</option>
-                  <option value="WNA">WNA</option>
-                </select>
-
-                <label for="jenis_kelamin">Jenis Kelamin</label>
-                <select name="jenis_kelamin" id="jenis_kelamin" class="form-control" required>
-                  <option selected disabled>Pilih Jenis Kelamin</option>
-                  <option value="LK">Laki - Laki</option>
-                  <option value="PR">Perempuan</option>
-                </select>
               </div>
               <div class="col-md-4">
                 <label for="kategori_usia">Kategori Usia</label>
@@ -193,6 +183,31 @@
                   <option value="PNS">PNS</option>
                   <option value="PEMBANTU">PEMBANTU</option>
                   <option value="NAPI">NAPI</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label for="status">Status</label>
+                <select name="status" id="status" class="form-control" required>
+                  <option selected disabled>Pilih Status Tersangka</option>
+                  <option value="Penanam">Penanam</option>
+                  <option value="Produksi">Produksi</option>
+                  <option value="Bandar">Bandar</option>
+                  <option value="Pengedar">Pengedar</option>
+                  <option value="Pengguna">Pengguna</option>
+                </select>
+
+                <label for="status_kewarganegaraan">Kewarganegaraan</label>
+                <select name="status_kewarganegaraan" id="status_kewarganegaraan" class="form-control" required>
+                  <option selected disabled>Pilih Kewarganegaraan</option>
+                  <option value="WNI">WNI</option>
+                  <option value="WNA">WNA</option>
+                </select>
+
+                <label for="jenis_kelamin">Jenis Kelamin</label>
+                <select name="jenis_kelamin" id="jenis_kelamin" class="form-control" required>
+                  <option selected disabled>Pilih Jenis Kelamin</option>
+                  <option value="LK">Laki - Laki</option>
+                  <option value="PR">Perempuan</option>
                 </select>
               </div>
             </div>
@@ -343,7 +358,29 @@
                                       <div class="form-group">
                                         <label for="nama">Nama</label>
                                         <input type="text" id="nama" class="form-control" name="nama" placeholder="Masukkan Nama Tersangka" autocomplete="off" required value="<?= $row['nama'] ?>">
-                                        
+
+                                        <label for="ttl">Tempat & Tanggal Lahir</label>
+                                        <div class="row">
+                                          <div class="col-md-6">
+                                            <input type="text" class="form-control" name="tempatTTL" placeholder="Masukkan Tempat Lahir" autocomplete="off" required value="<?= strtok($row['ttl'],',') ?>">
+                                          </div>
+                                          <div class="col-md-6">
+                                            <div class="input-group date" id="tahunTTL<?= $row['id_tersangka'] ?>" data-target-input="nearest">
+                                              <input type="text" class="form-control" name="tahunTTL" datetimepicker-input" data-target="#tahunTTL<?= $row['id_tersangka'] ?>"value="<?= substr($row['ttl'], strpos($row['ttl'], ",") + 1)  ?>"/>
+                                              <div class="input-group-append" data-target="#tahunTTL<?= $row['id_tersangka'] ?>" data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <script>
+                                          $(function () {
+                                            $('#tahunTTL<?= $row['id_tersangka'] ?>').datetimepicker({
+                                              format: 'YYYY-MM-DD'
+                                            });
+                                          });
+                                        </script>
+
                                         <label for="nik">NIK</label>
                                         <input type="text" id="nik" class="form-control" name="nik" placeholder="Masukkan NIK Tersangka" autocomplete="off" required value="<?= $row['nik'] ?>">
 
@@ -532,6 +569,9 @@
                                     <label for="nama">Nama</label>
                                     <input type="text" id="nama" class="form-control" name="nama" placeholder="Masukkan Nama Tersangka" autocomplete="off" required value="<?= $row['nama'] ?>" disabled>
                                     
+                                    <label for="ttl">TTL</label>
+                                    <input type="text" id="ttl" class="form-control" name="ttl" placeholder="Masukkan TTL Tersangka" autocomplete="off" required value="<?= $row['ttl'] ?>" disabled>
+                                    
                                     <label for="nik">NIK</label>
                                     <input type="text" id="nik" class="form-control" name="nik" placeholder="Masukkan NIK Tersangka" autocomplete="off" required value="<?= $row['nik'] ?>" disabled>
 
@@ -699,6 +739,12 @@
           viewMode: 'years',
           format: 'YYYY'
         });
+    });
+    
+    $(function () {
+      $('#tahunTTL').datetimepicker({
+        format: 'YYYY-MM-DD'
+      });
     });
     
     $(".tombol-hapus").on("click", function (e) {

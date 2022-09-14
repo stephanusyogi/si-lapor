@@ -77,6 +77,9 @@ $route['matrik-barang-bukti'] = 'data/viewMatrikBarangBukti';
 // Selra
 $route['selra'] = 'data/viewSelra';
 
+// Kasus Menonjol
+$route['kasus-menonjol'] = 'data/viewKasusMenonjol';
+
 // Lapor Kasus Pelimpahan
 $route['kasus-pelimpahan'] = 'pelimpahan/viewKasusPelimpahan';
 $route['kasus-pelimpahan/(:num)'] = 'pelimpahan/viewKasusPelimpahanById/$1';

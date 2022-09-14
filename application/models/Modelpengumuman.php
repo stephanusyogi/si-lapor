@@ -37,6 +37,19 @@ class Modelpengumuman extends CI_Model{
       return $query->result_array();  
   }
 
+  
+  function getBelumBaca($idPengumuman){
+    $where = array(
+      'tb_pengumuman_tujuan.id_pengumuman' => $idPengumuman,
+      'tb_pengumuman_tujuan.isRead' => 0,
+    );
+		return $this->db->select('*')
+		->from('tb_pengumuman_tujuan')
+    ->join('tb_pengumuman','tb_pengumuman_tujuan.id_pengumuman=tb_pengumuman.id_pengumuman','INNER')
+    ->where($where)
+		->get()->result_array();
+}
+
   function countPengumuman($kode_kesatuan){
 		$res = $this->db->select('*')
 		->from('tb_pengumuman_tujuan')

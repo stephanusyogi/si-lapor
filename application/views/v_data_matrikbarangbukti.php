@@ -8,6 +8,10 @@
     ul> li{
       list-style-type: none;
     }
+    .hoverItem:hover{
+      background-color:darkgrey!important;
+      cursor:pointer;
+    }
   </style>
   
   <!-- DATA -->
@@ -22,7 +26,7 @@
     <section class="content">
       <div class="container-fluid px-4 py-4">
         <div class="alert alert-warning" role="alert">
-          Perhatian! Hanya LP yang <strong>terkunci ke matrik</strong> ter-rekap dalam modul <strong>matrik barang bukti</strong>.
+          Perhatian! Hanya LP yang <strong>terkunci ke database</strong> ter-rekap dalam modul <strong>matrik barang bukti</strong>.
           Silahkan melengkapi instrumen yang kosong dengan pilihan yang disiapkan!
         </div>
         <h2>Matrik Barang Bukti <strong><?= $this->session->userdata('login_data_admin')['nama'] ?></strong></h2>
@@ -174,7 +178,7 @@
                   </tr>
                   <?php foreach ($instrumenStatusTSK as $keyStatusTSK) { ?>
                   <!-- Penanam -->
-                    <tr class="text-center">
+                    <tr class="text-center hoverItem">
                         <td><?= $keyStatusTSK ?></td>
                         <!-- KSS -->
                         <td class="<?= $keyStatusTSK ?>KSS<?= str_replace(['/', ' '],'',$kategori) ?>">

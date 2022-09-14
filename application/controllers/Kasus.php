@@ -107,7 +107,7 @@ class Kasus extends CI_Controller {
 		$this->Modelkasus->addKasus($dataKasus, 'tb_kasus');
 		$idKasusDatabase = $this->Modelkasus->checkNomorSuratDuplikat($noLP)->result_array();
 
-		$this->session->set_flashdata('success', 'Informasi kasus berhasil disimpan ke database!');
+		$this->session->set_flashdata('success', 'Informasi kasus berhasil disimpan!');
 		redirect(base_url("lapor-ungkap-kasus/{$idKasusDatabase[0]['id_kasus']}"));
 	}
 
@@ -145,7 +145,7 @@ class Kasus extends CI_Controller {
 
 		$this->Modelkasus->updateKasus($idKasus, $dataKasus, 'tb_kasus');
 		
-		$this->session->set_flashdata('success', 'Update informasi kasus berhasil disimpan ke database!');
+		$this->session->set_flashdata('success', 'Update informasi kasus berhasil disimpan!');
 		redirect(base_url("lapor-ungkap-kasus/{$idKasus}"));	
 	}
 
@@ -191,10 +191,15 @@ class Kasus extends CI_Controller {
 		$usia = $this->input->post('usia');
 		$pendidikan = $this->input->post('pendidikan');
 		$pekerjaan = $this->input->post('pekerjaan');
+		// TTL
+		$tempatTTL = $this->input->post('tempatTTL');
+		$tahunTTL = $this->input->post('tahunTTL');
+		$TTL = $tempatTTL.",".$tahunTTL;
 
 		$dataTersangka = array(
 			'id_kasus' => $idKasus,
 			'nama' => $nama,
+			'ttl' => $TTL,
 			'alamat' => $alamat,
 			'nik' => $nik,
 			'agama' => $agama,
@@ -209,13 +214,13 @@ class Kasus extends CI_Controller {
 
 		$this->Modeltersangka->addTersangka($dataTersangka, 'tb_tersangka');
 
-		$this->session->set_flashdata('success', 'Informasi tersangka berhasil disimpan ke database!');
+		$this->session->set_flashdata('success', 'Informasi tersangka berhasil disimpan!');
 		redirect(base_url("lapor-ungkap-kasus/{$idKasus}"));
 	}
 
 	public function delTersangka($idTersangka, $idKasus){
 		$this->Modeltersangka->delTersangka($idTersangka);
-		$this->session->set_flashdata('success', 'Informasi tersangka berhasil dihapus dari database!');
+		$this->session->set_flashdata('success', 'Informasi tersangka berhasil dihapus!');
 		redirect(base_url("lapor-ungkap-kasus/{$idKasus}"));
 	}
 
@@ -231,10 +236,15 @@ class Kasus extends CI_Controller {
 		$usia = $this->input->post('usia');
 		$pendidikan = $this->input->post('pendidikan');
 		$pekerjaan = $this->input->post('pekerjaan');
+		// TTL
+		$tempatTTL = $this->input->post('tempatTTL');
+		$tahunTTL = $this->input->post('tahunTTL');
+		$TTL = $tempatTTL.",".$tahunTTL;
 
 		$dataTersangka = array(
 			'id_kasus' => $idKasus,
 			'nama' => $nama,
+			'ttl' => $TTL,
 			'alamat' => $alamat,
 			'nik' => $nik,
 			'agama' => $agama,
@@ -249,7 +259,7 @@ class Kasus extends CI_Controller {
 
 		$this->Modeltersangka->updateTersangka($idTersangka,$dataTersangka);
 
-		$this->session->set_flashdata('success', 'Informasi tersangka berhasil diupdate ke database!');
+		$this->session->set_flashdata('success', 'Informasi tersangka berhasil diupdate!');
 		redirect(base_url("lapor-ungkap-kasus/{$idKasus}"));
 	}
 
@@ -333,13 +343,13 @@ class Kasus extends CI_Controller {
 
 		$this->Modelbarangbukti->addBarangBukti($dataBarangBukti, 'tb_barangbukti');
 
-		$this->session->set_flashdata('success', 'Informasi barang bukti kasus berhasil disimpan ke database!');
+		$this->session->set_flashdata('success', 'Informasi barang bukti kasus berhasil disimpan!');
 		redirect(base_url("barang-bukti/{$idKasus}/{$id_tersangka}"));
 	}
 	
 	public function delBarangBukti($idBarangBukti, $idKasus, $idTersangka){
 		$this->Modelbarangbukti->delBarangBukti($idBarangBukti);
-		$this->session->set_flashdata('success', 'Informasi barang bukti berhasil dihapus dari database!');
+		$this->session->set_flashdata('success', 'Informasi barang bukti berhasil dihapus!');
 		redirect(base_url("barang-bukti/{$idKasus}/{$idTersangka}"));
 	}
 
@@ -385,7 +395,7 @@ class Kasus extends CI_Controller {
 		);
 		$this->Modelbarangbukti->addBarangBukti($dataBarangBukti, 'tb_barangbukti');
 
-		$this->session->set_flashdata('success', 'Informasi barang bukti kasus berhasil disimpan ke database!');
+		$this->session->set_flashdata('success', 'Informasi barang bukti kasus berhasil disimpan!');
 		redirect(base_url("lapor-ungkap-kasus/{$id_kasus}"));
 	}
 	

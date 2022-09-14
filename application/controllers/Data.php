@@ -106,17 +106,26 @@ class Data extends CI_Controller {
 
 	public function updateStatusKasus($idKasus){
 		$status_kasus = $this->input->post('status_kasus');
+		$ket_statusKasus = $this->input->post('ket_statusKasus');
+		$date = date('Y-m-d');
 
-		$this->Modeldata->updateStatusKasus($idKasus,$status_kasus);
-		$this->session->set_flashdata('success', 'Status kasus berhasil diupdate ke database!');
-		redirect(base_url("master-kasus"));
+		$this->Modeldata->updateStatusKasus($idKasus,$status_kasus,$ket_statusKasus,$date);
+		$this->session->set_flashdata('success', 'Status kasus berhasil diupdate!');
+		redirect(base_url("selra"));
 	}
 
 	public function updateKasusMenonjol($idKasus){
 
 		$this->Modeldata->updateKasusMenonjol($idKasus);
-		$this->session->set_flashdata('success', 'Kasus menonjol berhasil diupdate ke database!');
-		redirect(base_url("master-kasus"));
+		$this->session->set_flashdata('success', 'Kasus menonjol berhasil diupdate!');
+		redirect(base_url("kasus-menonjol"));
+	}
+	
+	public function batalKasusMenonjol($idKasus){
+
+		$this->Modeldata->batalKasusMenonjol($idKasus);
+		$this->session->set_flashdata('success', 'Kasus menonjol berhasil diupdate!');
+		redirect(base_url("kasus-menonjol"));
 	}
 
 	public function delKasus($idKasus){
@@ -128,14 +137,14 @@ class Data extends CI_Controller {
 		}
 
 		$this->Modeldata->delKasus($idKasus);
-		$this->session->set_flashdata('success', 'Informasi kasus berhasil dihapus dari database!');
+		$this->session->set_flashdata('success', 'Informasi kasus berhasil dihapus!');
 		redirect(base_url("master-kasus"));
 	}
 	
 	public function updateAdmin($idKasus){
 		$nrp = $this->input->post('nrp');
 		$this->Modeldata->updateAdminKasus($nrp, $idKasus);
-		$this->session->set_flashdata('success', 'Admin kasus berhasil diupdate ke database!');
+		$this->session->set_flashdata('success', 'Admin kasus berhasil diupdate!');
 		redirect(base_url("master-kasus"));
 	}
 	
@@ -148,7 +157,7 @@ class Data extends CI_Controller {
 			$this->Modelpermohonan->delPermohonanByIdKasus($idKasus);
 		}
 
-		$this->session->set_flashdata('success', 'Data kasus berhasil dikunci ke matrik!');
+		$this->session->set_flashdata('success', 'Data kasus berhasil dikunci ke database!');
 		redirect(base_url("master-kasus"));
 	}
 	
@@ -160,7 +169,7 @@ class Data extends CI_Controller {
 			"alasan_permohonan" => $alasan_permohonan,
 		);
 		$this->Modelpermohonan->addPermohonan($dataPermohonan);
-		$this->session->set_flashdata('success', 'Permohonan perubahan kasus berhasil diupdate ke database!');
+		$this->session->set_flashdata('success', 'Permohonan perubahan kasus berhasil diupdate!');
 		redirect(base_url("daftar-permohonan-edit"));
 	}
 
@@ -252,9 +261,69 @@ class Data extends CI_Controller {
 				);
 			};
 
+			// Get Total
+			$statusTotal = array();
+			$usiaTotal = array();
+			$pendidikanTotal = array();
+			$pekerjaanTotal = array();
+			$tkpTotal = array();
+			$bbTotal = array();
+			
+			foreach ($statusInstrumen as $keyStatusInstrumen) {
+				$status[$keyStatusInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.status", $keyStatusInstrumen, $date['start'], $date['end']);
+			};
+			foreach ($usiaInstrumen as $keyUsiaInstrumen) {
+				$usia[$keyUsiaInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.kategori_usia", $keyUsiaInstrumen, $date['start'], $date['end']);
+			};
+			foreach ($pendidikanInstrumen as $keyPendidikanInstrumen) {
+				$pendidikan[$keyPendidikanInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.pendidikan", $keyPendidikanInstrumen, $date['start'], $date['end']);
+			};
+			foreach ($pekerjaanInstrumen as $keyPekerjaanInstrumen) {
+				$pekerjaan[$keyPekerjaanInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.pekerjaan", $keyPekerjaanInstrumen, $date['start'], $date['end']);
+			};
+			foreach ($tkpInstrumen as $keyTkpInstrumen) {
+				$tkp[$keyTkpInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.pekerjaan", $keyTkpInstrumen, $date['start'], $date['end']);
+			};
+
+			foreach ($bbInstrumen as $keyBbInstrumen) {
+				$jumlahBerat = 0;
+				$res = $this->Modeldata->getSuperBeratBB($keyBbInstrumen, $date['start'], $date['end'])->result_array();
+				if (!empty($res)) {
+					foreach ($res as $keybb) {
+						$jumlahBerat += $keybb['jumlah'];
+					}
+					$beratSatuan = "{$jumlahBerat} {$res[0]['satuan']}";
+				}else{
+					$beratSatuan = $jumlahBerat;
+				}
+				$bb[$keyBbInstrumen] = $beratSatuan;
+			};
+
+			$totalMatrik = array(
+				"KSS" => $this->Modeldata->getSuperKSS($date['start'], $date['end']),
+				"TSK" => $this->Modeldata->getSuperTSK($date['start'], $date['end']),
+				"StatusTSK" => $status,
+				"KEWARGANEGARAAN" => array(
+					"WNA" => array(
+						"LK" => $this->Modeldata->getSuperKewarganegaraanJenisKelamin("WNA", "LK", $date['start'], $date['end']),
+						"PR" => $this->Modeldata->getSuperKewarganegaraanJenisKelamin("WNA", "PR", $date['start'], $date['end']),
+					),
+					"WNI" => array(
+						"LK" => $this->Modeldata->getSuperKewarganegaraanJenisKelamin("WNI", "LK", $date['start'], $date['end']),
+						"PR" => $this->Modeldata->getSuperKewarganegaraanJenisKelamin("WNI", "PR", $date['start'], $date['end']),
+					),
+				),
+				"USIA" => $usia,
+				"PENDIDIKAN" => $pendidikan,
+				"PEKERJAAAN" => $pekerjaan,
+				"TKP" => $tkp,
+				"BARANGBUKTI" => $bb,
+			);
+
 			$data['title'] = "Data Matrik Kasus";
 			$data['menuLink'] = "matrik-kasus";
 			$data['dataMatrik'] = $dataMatrikKasus;
+			$data['totalMatrik'] = $totalMatrik;
 			$data['dateNow'] = $dateNow;
 
 		} else {
@@ -560,6 +629,7 @@ class Data extends CI_Controller {
 					);
 				};
 				$data[$kategori] = $dataStatusTSK; 
+				
 			}
 		} else {
 			foreach($kategoriBB as $kategori) {
@@ -837,11 +907,35 @@ class Data extends CI_Controller {
 					"Tersangka" => count($this->Modeldata->getSuperSelraCTTersangka($date['start'], $date['end'])),
 				),
 			);
+			
+			$addMatrikSelra = array();
+			$kesatuan = $this->Modelkesatuan->getKesatuan();
+
+			foreach ($kesatuan as $keyKesatuan) {
+				$addMatrikSelra[$keyKesatuan['kode_kesatuan']] = array(
+					"SP3" => count($this->Modeldata->getMatrikSelra($keyKesatuan['kode_kesatuan'],$date['start'], $date['end'], "SP3")),
+					"RJ" => count($this->Modeldata->getMatrikSelra($keyKesatuan['kode_kesatuan'],$date['start'], $date['end'], "RJ")),
+					"TAHAPII" => count($this->Modeldata->getMatrikSelra($keyKesatuan['kode_kesatuan'],$date['start'], $date['end'], "TAHAP II")),
+					"BELUMDIKETAHUI" => count($this->Modeldata->getMatrikSelra($keyKesatuan['kode_kesatuan'],$date['start'], $date['end'], " ")),
+				);
+			}
+			
+			$matrikSelra = array(
+				$addMatrikSelra,
+				"TOTAL" => array(
+					"SP3" => count($this->Modeldata->getTotalMatrikSelra($date['start'], $date['end'], "SP3")),
+					"RJ" => count($this->Modeldata->getTotalMatrikSelra($date['start'], $date['end'], "RJ")),
+					"TAHAPII" => count($this->Modeldata->getTotalMatrikSelra($date['start'], $date['end'], "TAHAP II")),
+					"BELUMDIKETAHUI" => count($this->Modeldata->getTotalMatrikSelra($date['start'], $date['end'], " ")),
+				),
+			);
 
 			$data['title'] = "Data Selesai Perkara";
 			$data['menuLink'] = "selra";
 			$data['dateNow'] = $dateNow;
 			$data['dataKasus'] = $matrikCCCT;
+			$data['matrikSelra'] = $matrikSelra[0];
+			$data['totalMatrikSelra'] = $matrikSelra['TOTAL'];
 			$data['dataCC'] = $this->Modeldata->getSuperSelraCC($date['start'], $date['end']);
 			$data['dataCT'] = $this->Modeldata->getSuperSelraCT($date['start'], $date['end']);
 			
@@ -857,10 +951,18 @@ class Data extends CI_Controller {
 					"Tersangka" => count($this->Modeldata->getSelraCTTersangka($this->kode_kesatuan,$date['start'], $date['end'])),
 				),
 			);
+
+			$matrikSelra = array(
+				"SP3" => count($this->Modeldata->getMatrikSelra($this->kode_kesatuan,$date['start'], $date['end'], "SP3")),
+				"RJ" => count($this->Modeldata->getMatrikSelra($this->kode_kesatuan,$date['start'], $date['end'], "RJ")),
+				"TAHAPII" => count($this->Modeldata->getMatrikSelra($this->kode_kesatuan,$date['start'], $date['end'], "TAHAP II")),
+				"BELUMDIKETAHUI" => count($this->Modeldata->getMatrikSelra($this->kode_kesatuan,$date['start'], $date['end'], " ")),
+			);
 	
 			$data['title'] = "Data Selesai Perkara";
 			$data['menuLink'] = "selra";
 			$data['dataKasus'] = $matrikCCCT;
+			$data['matrikSelra'] = $matrikSelra;
 			$data['dataCC'] = $this->Modeldata->getSelraCC($this->kode_kesatuan,$date['start'], $date['end']);
 			$data['dataCT'] = $this->Modeldata->getSelraCT($this->kode_kesatuan,$date['start'], $date['end']);
 			$data['dateNow'] = $dateNow;
@@ -903,10 +1005,34 @@ class Data extends CI_Controller {
 					"Tersangka" => count($this->Modeldata->getSuperSelraCCTersangka($firstDate, $lastDate)),
 				),
 			);
+			
+			$addMatrikSelra = array();
+			$kesatuan = $this->Modelkesatuan->getKesatuan();
+
+			foreach ($kesatuan as $keyKesatuan) {
+				$addMatrikSelra[$keyKesatuan['kode_kesatuan']] = array(
+					"SP3" => count($this->Modeldata->getMatrikSelra($keyKesatuan['kode_kesatuan'],$firstDate, $lastDate, "SP3")),
+					"RJ" => count($this->Modeldata->getMatrikSelra($keyKesatuan['kode_kesatuan'],$firstDate, $lastDate, "RJ")),
+					"TAHAPII" => count($this->Modeldata->getMatrikSelra($keyKesatuan['kode_kesatuan'],$firstDate, $lastDate, "TAHAP II")),
+					"BELUMDIKETAHUI" => count($this->Modeldata->getMatrikSelra($keyKesatuan['kode_kesatuan'],$firstDate, $lastDate, " ")),
+				);
+			}
+			
+			$matrikSelra = array(
+				$addMatrikSelra,
+				"TOTAL" => array(
+					"SP3" => count($this->Modeldata->getTotalMatrikSelra($firstDate, $lastDate, "SP3")),
+					"RJ" => count($this->Modeldata->getTotalMatrikSelra($firstDate, $lastDate, "RJ")),
+					"TAHAPII" => count($this->Modeldata->getTotalMatrikSelra($firstDate, $lastDate, "TAHAP II")),
+					"BELUMDIKETAHUI" => count($this->Modeldata->getTotalMatrikSelra($firstDate, $lastDate, " ")),
+				),
+			);
 	
 			$data['title'] = "Data Selesai Perkara";
 			$data['menuLink'] = "selra";
 			$data['dataKasus'] = $matrikCCCT;
+			$data['matrikSelra'] = $matrikSelra[0];
+			$data['totalMatrikSelra'] = $matrikSelra['TOTAL'];
 			$data['dataCC'] = $this->Modeldata->getSuperSelraCC($firstDate, $lastDate);
 			$data['dataCT'] = $this->Modeldata->getSuperSelraCT($firstDate, $lastDate);
 			$data['dateNow'] = $dateNow;
@@ -925,14 +1051,24 @@ class Data extends CI_Controller {
 						"Tersangka" => count($this->Modeldata->getSelraCTTersangka($nama_kesatuan, $firstDate, $lastDate)),
 					),
 				);
+				
+				$matrikSelra = array();
+				$matrikSelra[$nama_kesatuan] = array(
+					"SP3" => count($this->Modeldata->getMatrikSelra($nama_kesatuan,$firstDate, $lastDate, "SP3")),
+					"RJ" => count($this->Modeldata->getMatrikSelra($nama_kesatuan,$firstDate, $lastDate, "RJ")),
+					"TAHAPII" => count($this->Modeldata->getMatrikSelra($nama_kesatuan,$firstDate, $lastDate, "TAHAP II")),
+					"BELUMDIKETAHUI" => count($this->Modeldata->getMatrikSelra($nama_kesatuan,$firstDate, $lastDate, " ")),
+				);
 		
 				$data['title'] = "Data Selesai Perkara";
 				$data['menuLink'] = "selra";
 				$data['dataKasus'] = $matrikCCCT;
+				$data['matrikSelra'] = $matrikSelra;
 				$data['kesatuanChoosen'] = $nama_kesatuan;
 				$data['dataCC'] = $this->Modeldata->getSelraCC($nama_kesatuan, $firstDate, $lastDate);
 				$data['dataCT'] = $this->Modeldata->getSelraCT($nama_kesatuan, $firstDate, $lastDate);
 				$data['dateNow'] = $dateNow;
+				$data['orderDate'] = true;
 	
 			} else {
 				$matrikCCCT = array(
@@ -945,10 +1081,18 @@ class Data extends CI_Controller {
 						"Tersangka" => count($this->Modeldata->getSelraCTTersangka($this->kode_kesatuan, $firstDate, $lastDate)),
 					),
 				);
+
+				$matrikSelra = array(
+					"SP3" => count($this->Modeldata->getMatrikSelra($this->kode_kesatuan,$date['start'], $date['end'], "SP3")),
+					"RJ" => count($this->Modeldata->getMatrikSelra($this->kode_kesatuan,$date['start'], $date['end'], "RJ")),
+					"TAHAPII" => count($this->Modeldata->getMatrikSelra($this->kode_kesatuan,$date['start'], $date['end'], "TAHAP II")),
+					"BELUMDIKETAHUI" => count($this->Modeldata->getMatrikSelra($this->kode_kesatuan,$date['start'], $date['end'], " ")),
+				);
 		
 				$data['title'] = "Data Selesai Perkara";
 				$data['menuLink'] = "selra";
 				$data['dataKasus'] = $matrikCCCT;
+				$data['matrikSelra'] = $matrikSelra;
 				$data['dataCC'] = $this->Modeldata->getSelraCC($this->kode_kesatuan, $firstDate, $lastDate);
 				$data['dataCT'] = $this->Modeldata->getSelraCT($this->kode_kesatuan, $firstDate, $lastDate);
 				$data['dateNow'] = $dateNow;
@@ -964,6 +1108,182 @@ class Data extends CI_Controller {
 
 	}
 
+	// KASUS MENONJOL MODUL
+  public function viewKasusMenonjol(){
+
+		$date = $this->rangeMonth(date("Y-m-d", strtotime("-1 month")), date("Y-m-d", strtotime("+1 month")));
+		$dateNow = $this->dateIndonesia(date('N j/n/Y', strtotime($date['start']))).' - '.$this->dateIndonesia(date('N j/n/Y', strtotime($date['end'])));
+
+		if ($this->kode_kesatuan == 'ADMINSUPER') {
+	
+			$matrikKasusMenonjol = array(
+				"BukanMenonjol" => count($this->Modeldata->getSuperMenonjol($date['start'], $date['end'], 0)),
+				"Menonjol" => count($this->Modeldata->getSuperMenonjol($date['start'], $date['end'], 1)),
+			);
+			
+			
+			$addMatrikMenonjol = array();
+			$kesatuan = $this->Modelkesatuan->getKesatuan();
+
+			foreach ($kesatuan as $keyKesatuan) {
+				$addMatrikMenonjol[$keyKesatuan['kode_kesatuan']] = array(
+					"BukanMenonjol" => count($this->Modeldata->getMenonjol($keyKesatuan['kode_kesatuan'], $date['start'], $date['end'], 0)),
+					"Menonjol" => count($this->Modeldata->getMenonjol($keyKesatuan['kode_kesatuan'], $date['start'], $date['end'], 1)),
+				);
+			}
+			
+			$matrikMenonjol = array(
+				$addMatrikMenonjol,
+				"TOTAL" => array(
+					"BukanMenonjol" => count($this->Modeldata->getTotalMenonjol($date['start'], $date['end'], 0)),
+					"Menonjol" => count($this->Modeldata->getTotalMenonjol($date['start'], $date['end'], 1)),
+				),
+			);
+
+			$data['title'] = "Data Kasus Menonjol";
+			$data['menuLink'] = "kasus-menonjol";
+			$data['dateNow'] = $dateNow;
+			$data['dataKasus'] = $matrikKasusMenonjol;
+			$data['matrikMenonjol'] = $matrikMenonjol[0];
+			$data['totalMatrikMenonjol'] = $matrikMenonjol['TOTAL'];
+			$data['dataMenonjol'] = $this->Modeldata->getSuperMenonjol($date['start'], $date['end'], 1);
+			$data['dataBukanMenonjol'] = $this->Modeldata->getSuperMenonjol($date['start'], $date['end'], 0);
+			
+		} else {
+	
+			$matrikKasusMenonjol = array(
+				"BukanMenonjol" => count($this->Modeldata->getMenonjol($this->kode_kesatuan, $date['start'], $date['end'], 0)),
+				"Menonjol" => count($this->Modeldata->getMenonjol($this->kode_kesatuan, $date['start'], $date['end'], 1)),
+			);
+
+			$data['title'] = "Data Kasus Menonjol";
+			$data['menuLink'] = "kasus-menonjol";
+			$data['dateNow'] = $dateNow;
+			$data['dataKasus'] = $matrikKasusMenonjol;
+			$data['dataMenonjol'] = $this->Modeldata->getMenonjol($this->kode_kesatuan, $date['start'], $date['end'], 1);
+			$data['dataBukanMenonjol'] = $this->Modeldata->getMenonjol($this->kode_kesatuan, $date['start'], $date['end'], 0);
+
+		}
+		
+		$this->load->view('include/header',$data);
+		$this->load->view('v_kasusmenonjol',$data);
+		$this->load->view('include/footer',$data);
+
+	}
+	
+  public function viewKasusMenonjolByDate(){
+		$nama_kesatuan = $this->input->post('kode_kesatuan');
+		$tanggalAwal = $this->input->post('tanggalAwal');
+		$tanggalAkhir = $this->input->post('tanggalAkhir');
+		$firstDate = '';
+		$lastDate = '';
+		
+		if (empty($tanggalAwal) || empty($tanggalAkhir)) {
+			$firstDate = $tanggalAwal;
+			$lastDate = $tanggalAwal;
+
+			$dateNow = $this->dateIndonesia(date('N j/n/Y', strtotime($firstDate)));
+		} else {
+			$firstDate = $tanggalAwal;
+			$lastDate = $tanggalAkhir;
+
+			$dateNow = $this->dateIndonesia(date('N j/n/Y', strtotime($firstDate))).' - '.$this->dateIndonesia(date('N j/n/Y', strtotime($lastDate)));	
+		}
+
+		if ($nama_kesatuan == 'all') {
+			
+			$matrikKasusMenonjol = array(
+				"BukanMenonjol" => count($this->Modeldata->getSuperMenonjol($firstDate, $lastDate, 0)),
+				"Menonjol" => count($this->Modeldata->getSuperMenonjol($firstDate, $lastDate, 1)),
+			);
+			
+			$addMatrikMenonjol = array();
+			$kesatuan = $this->Modelkesatuan->getKesatuan();
+
+			foreach ($kesatuan as $keyKesatuan) {
+				$addMatrikMenonjol[$keyKesatuan['kode_kesatuan']] = array(
+					"BukanMenonjol" => count($this->Modeldata->getMenonjol($keyKesatuan['kode_kesatuan'], $firstDate, $lastDate, 0)),
+					"Menonjol" => count($this->Modeldata->getMenonjol($keyKesatuan['kode_kesatuan'], $firstDate, $lastDate, 1)),
+				);
+			}
+			
+			$matrikMenonjol = array(
+				$addMatrikMenonjol,
+				"TOTAL" => array(
+					"BukanMenonjol" => count($this->Modeldata->getTotalMenonjol($firstDate, $lastDate, 0)),
+					"Menonjol" => count($this->Modeldata->getTotalMenonjol($firstDate, $lastDate, 1)),
+				),
+			);
+
+			$data['title'] = "Data Kasus Menonjol";
+			$data['menuLink'] = "kasus-menonjol";
+			$data['dateNow'] = $dateNow;
+			$data['dataKasus'] = $matrikKasusMenonjol;
+			$data['matrikMenonjol'] = $matrikMenonjol[0];
+			$data['totalMatrikMenonjol'] = $matrikMenonjol['TOTAL'];
+			$data['dataMenonjol'] = $this->Modeldata->getSuperMenonjol($firstDate, $lastDate, 1);
+			$data['dataBukanMenonjol'] = $this->Modeldata->getSuperMenonjol($firstDate, $lastDate, 0);
+
+		} else {
+
+			if ($this->kode_kesatuan == 'ADMINSUPER') {
+				
+				$matrikKasusMenonjol = array(
+					"BukanMenonjol" => count($this->Modeldata->getMenonjol($nama_kesatuan, $firstDate, $lastDate, 0)),
+					"Menonjol" => count($this->Modeldata->getMenonjol($nama_kesatuan, $firstDate, $lastDate, 1)),
+				);
+			
+				$addMatrikMenonjol = array();
+				$kesatuan = $this->Modelkesatuan->getKesatuan();
+	
+				foreach ($kesatuan as $keyKesatuan) {
+					$addMatrikMenonjol[$nama_kesatuan] = array(
+						"BukanMenonjol" => count($this->Modeldata->getMenonjol($nama_kesatuan, $firstDate, $lastDate, 0)),
+						"Menonjol" => count($this->Modeldata->getMenonjol($nama_kesatuan, $firstDate, $lastDate, 1)),
+					);
+				}
+				
+				$matrikMenonjol = array(
+					$addMatrikMenonjol,
+					"TOTAL" => array(
+						"BukanMenonjol" => count($this->Modeldata->getTotalMenonjol($firstDate, $lastDate, 0)),
+						"Menonjol" => count($this->Modeldata->getTotalMenonjol($firstDate, $lastDate, 1)),
+					),
+				);
+
+				$data['title'] = "Data Kasus Menonjol";
+				$data['menuLink'] = "kasus-menonjol";
+				$data['dateNow'] = $dateNow;
+				$data['dataKasus'] = $matrikKasusMenonjol;
+				$data['matrikMenonjol'] = $matrikMenonjol[0];
+				$data['totalMatrikMenonjol'] = $matrikMenonjol['TOTAL'];
+				$data['dataMenonjol'] = $this->Modeldata->getMenonjol($nama_kesatuan, $firstDate, $lastDate, 1);
+				$data['dataBukanMenonjol'] = $this->Modeldata->getMenonjol($nama_kesatuan, $firstDate, $lastDate, 0);
+				$data['orderDate'] = true;
+	
+			} else {
+				
+				$matrikKasusMenonjol = array(
+					"BukanMenonjol" => count($this->Modeldata->getMenonjol($this->kode_kesatuan, $firstDate, $lastDate, 0)),
+					"Menonjol" => count($this->Modeldata->getMenonjol($this->kode_kesatuan, $firstDate, $lastDate, 1)),
+				);
+
+				$data['title'] = "Data Kasus Menonjol";
+				$data['menuLink'] = "kasus-menonjol";
+				$data['dateNow'] = $dateNow;
+				$data['dataKasus'] = $matrikKasusMenonjol;
+				$data['dataMenonjol'] = $this->Modeldata->getMenonjol($this->kode_kesatuan, $firstDate, $lastDate, 1);
+				$data['dataBukanMenonjol'] = $this->Modeldata->getMenonjol($this->kode_kesatuan, $firstDate, $lastDate, 0);
+
+			}
+
+		}
+		
+		$this->load->view('include/header',$data);
+		$this->load->view('v_kasusmenonjol',$data);
+		$this->load->view('include/footer',$data);
+
+	}
 
 
 

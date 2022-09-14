@@ -21,6 +21,14 @@
       top:15px;
     }
   </style>
+  
+  <!-- DATA -->
+  <?php 
+    $CI =& get_instance();
+    $CI->load->model('Modelpengumuman');
+    $CI->load->model('Modelkesatuan');
+  ?>
+
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Main content -->
@@ -80,7 +88,38 @@
                               <small><?= $keyPengumuman['created_at'] ?></small>
                             </button>
                           </h2>
-                          <a href="<?= base_url() ?>pengumuman/delPengumuman/<?= $keyPengumuman['id_pengumuman'] ?>" class="btn btn-danger btn-sm delBtn" data-toggle="tooltip" data-placement="top" title="Hapus Pengumuman"><i class="fas fa-trash"></i></a>
+                          <div class="btn-action">
+                            <a class="btn btn-info btn-sm" data-toggle="modal" data-target="#belumBacaModal<?= $keyPengumuman['id_pengumuman'] ?>"><i class="fas fa-eye"></i></a>
+                            <a href="<?= base_url() ?>pengumuman/delPengumuman/<?= $keyPengumuman['id_pengumuman'] ?>" class="btn btn-danger btn-sm delBtn" data-toggle="tooltip" data-placement="top" title="Hapus Pengumuman"><i class="fas fa-trash"></i></a>
+                          </div>
+                        </div>
+                        <!-- Modal Belum Baca -->
+                        <div class="modal fade" id="belumBacaModal<?= $keyPengumuman['id_pengumuman'] ?>" tabindex="-1" aria-labelledby="belumBacaModalLabel" aria-hidden="true">
+                          <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="belumBacaModalLabel">Daftar Jajaran Belum Baca Pengumuman</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                <div class="row">
+                                  <?php $dataBelumBaca =  $CI->Modelpengumuman->getBelumBaca($keyPengumuman['id_pengumuman']);
+                                  $no = 1;?>
+                                    <?php foreach ($dataBelumBaca as $keyBelumBaca) { ?>
+                                      <div class="col-md-3 text-left">
+                                        <?php $dataKesatuan =  $CI->Modelkesatuan->getKesatuanByKode($keyBelumBaca['kode_kesatuan']);?>
+                                        <h5><?= $no.". ".$dataKesatuan[0]["nama"] ?></h5>
+                                      </div>
+                                    <?php $no++; } ?>
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                         <div id="collapse<?= $keyPengumuman['id_pengumuman'] ?>" class="collapse" aria-labelledby="heading<?= $keyPengumuman['id_pengumuman'] ?>" data-parent="#accordion<?= $keyPengumuman['id_pengumuman'] ?>">
                           <div class="card-body text-justify">
@@ -101,48 +140,47 @@
             </div>
           </div>
 
-        <?php } ?>
+        <?php }else{ ?>
 
         <div class="container">
-            <div class="section-pengumuman card">
-              <div class="card-body">
-                <?php 
-                if(!empty($dataPengumuman)){
-                foreach($dataPengumuman as $keyPengumuman){ ?>
-                  <div class="accordion" id="accordion<?= $keyPengumuman['id_pengumuman'] ?>">
-                      <div class="card">
-                        <div class="card-header pengumuman-title" id="heading<?= $keyPengumuman['id_pengumuman'] ?>">
-                          <h2 class="mb-0">
-                            <button class="btn btn-block text-left <?= (!$keyPengumuman['isRead']) ? 'font-weight-bold' : '' ?>" type="button" data-toggle="collapse" data-target="#collapse<?= $keyPengumuman['id_pengumuman'] ?>" aria-expanded="true" aria-controls="collapseOne">
-                              <?= $keyPengumuman['judul'] ?>
-                              <br>
-                              <small><?= $keyPengumuman['created_at'] ?></small>
-                            </button>
-                          </h2>
-                          <div class="btn-action">
-                            <a href="<?= base_url() ?>pengumuman/bacaPengumuman/<?= $keyPengumuman['id_pengumuman_tujuan'] ?>" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Tandai Sudah Dibaca"><i class="fas fa-check-double"></i></a>
-                            <a href="<?= base_url() ?>pengumuman/delPengumumanTujuan/<?= $keyPengumuman['id_pengumuman_tujuan'] ?>" class="btn btn-danger btn-sm delBtn" data-toggle="tooltip" data-placement="top" title="Hapus Pengumuman"><i class="fas fa-trash"></i></a>
-                          </div>
-                        </div>
-                        <div id="collapse<?= $keyPengumuman['id_pengumuman'] ?>" class="collapse" aria-labelledby="heading<?= $keyPengumuman['id_pengumuman'] ?>" data-parent="#accordion<?= $keyPengumuman['id_pengumuman'] ?>">
-                          <div class="card-body text-justify">
-                            <?= $keyPengumuman['deskripsi'] ?>
-                            <?php if(!empty($keyPengumuman['nama_file'])): ?>
+          <div class="section-pengumuman card">
+            <div class="card-body">
+              <?php 
+              if(!empty($dataPengumuman)){
+              foreach($dataPengumuman as $keyPengumuman){ ?>
+                <div class="accordion" id="accordion<?= $keyPengumuman['id_pengumuman'] ?>">
+                    <div class="card">
+                      <div class="card-header pengumuman-title" id="heading<?= $keyPengumuman['id_pengumuman'] ?>">
+                        <h2 class="mb-0">
+                          <button id="titleCard<?= $keyPengumuman['id_pengumuman'] ?>" class="btn btn-block text-left <?= (!$keyPengumuman['isRead']) ? 'font-weight-bold' : '' ?>" type="button" data-toggle="collapse" data-target="#collapse<?= $keyPengumuman['id_pengumuman'] ?>" aria-expanded="true" aria-controls="collapseOne" onclick=readPengumuman(<?= $keyPengumuman['id_pengumuman'] ?>,<?= $keyPengumuman['id_pengumuman_tujuan'] ?>)>
+                            <?= $keyPengumuman['judul'] ?>
                             <br>
-                            <br>
-                            <a href="<?= base_url() ?>pengumuman/downloadFile/<?= $keyPengumuman['id_pengumuman'] ?>"><span><i class="fas fa-download"></i></span> Download File</a>
-                            <?php endif; ?>
-                          </div>
+                            <small><?= $keyPengumuman['created_at'] ?></small>
+                          </button>
+                        </h2>
+                        <div class="btn-action">
+                          <a href="<?= base_url() ?>pengumuman/delPengumumanTujuan/<?= $keyPengumuman['id_pengumuman_tujuan'] ?>" class="btn btn-danger btn-sm delBtn" data-toggle="tooltip" data-placement="top" title="Hapus Pengumuman"><i class="fas fa-trash"></i></a>
                         </div>
                       </div>
-                  </div>
-                <?php } }else{ ?>
-                  <h2 class="text-center">Data Belum Tersedia</h2>
-                <?php } ?>
-              </div>
+                      <div id="collapse<?= $keyPengumuman['id_pengumuman'] ?>" class="collapse" aria-labelledby="heading<?= $keyPengumuman['id_pengumuman'] ?>" data-parent="#accordion<?= $keyPengumuman['id_pengumuman'] ?>">
+                        <div class="card-body text-justify">
+                          <?= $keyPengumuman['deskripsi'] ?>
+                          <?php if(!empty($keyPengumuman['nama_file'])): ?>
+                          <br>
+                          <br>
+                          <a href="<?= base_url() ?>pengumuman/downloadFile/<?= $keyPengumuman['id_pengumuman'] ?>"><span><i class="fas fa-download"></i></span> Download File</a>
+                          <?php endif; ?>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+              <?php } }else{ ?>
+                <h2 class="text-center">Data Belum Tersedia</h2>
+              <?php } ?>
             </div>
           </div>
-
+        </div>
+        <?php } ?>
       </div>
     </section>
     <!-- /.content -->
@@ -150,6 +188,35 @@
   <!-- /.content-wrapper -->
   
   <script>
+  function readPengumuman(id, idTujuan){
+    var titlePengumuman = document.getElementById(`titleCard${id}`);
+    if (titlePengumuman.classList.contains("font-weight-bold")) {
+      titlePengumuman.classList.remove("font-weight-bold");
+      
+      var xhrPengumuman = new XMLHttpRequest();
+      xhrPengumuman.open("POST", `<?= base_url() ?>pengumuman/bacaPengumuman/${idTujuan}`, true);
+      xhrPengumuman.onload = () => {
+          if (xhrPengumuman.readyState === XMLHttpRequest.DONE) {
+              if (xhrPengumuman.status === 200) {
+                const Toast = Swal.mixin({
+                  toast: true,
+                  position: 'top-end',
+                  showConfirmButton: false,
+                  showCloseButton: true,
+                  timer: 5000
+                });
+
+                Toast.fire({
+                  icon: 'success',
+                  title: 'Pengumuman Berhasil Dibaca'
+                })
+              }
+          }
+      }
+      xhrPengumuman.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xhrPengumuman.send();
+    }
+  }
   $(document).ready(function() {
     $(".delBtn").on("click", function (e) {
       e.preventDefault();

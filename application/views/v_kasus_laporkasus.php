@@ -26,7 +26,7 @@
                 <select id="bulansurat" name="bulansurat" class="form-control" style="width:10%;"><option selected disabled></option><option value="I">I</option><option value="II">II</option><option value="III">III</option><option value="IV">IV</option><option value="V">V</option><option value="VI">VI</option><option value="VII">VII</option><option value="VIII">VIII</option><option value="IX">IX</option><option value="X">X</option><option value="XI">XI</option><option value="XII">XII</option></select>
                 <p class="mb-0">/</p>
                 <div class="input-group date" id="tahunsurat" data-target-input="nearest" style="width:10%;">
-                <input type="text" name="tahunsurat" class="form-control datetimepicker-input" data-target="#tahunsurat" /><div class="input-group-append" data-target="#tahunsurat" data-toggle="datetimepicker"><div class="input-group-text"><i class="fa fa-calendar"></i></div></div></div>
+                <input type="text" name="tahunsurat" class="form-control datetimepicker-input" autocomplete="off" data-target="#tahunsurat" /><div class="input-group-append" data-target="#tahunsurat" data-toggle="datetimepicker"><div class="input-group-text"><i class="fa fa-calendar"></i></div></div></div>
                 <p class="mb-0">/SPKT.</p><p class="mb-0"><?= $this->session->userdata('login_data_admin')['kode_lp'] ?></p><p class="mb-0">/POLDA JAWA TIMUR</p></div>
           </div>
           <div class="form-group">

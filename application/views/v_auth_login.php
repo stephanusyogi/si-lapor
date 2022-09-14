@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Log In SI-LAPOR</title>
+  <title>Log In SIAP</title>
 
   <!-- Icon Page -->
   <link rel="icon" href="<?= base_url("assets/images/logo-ditresnarkoba-poldajatim.png") ?>">
@@ -141,7 +141,9 @@
     }
   </style>
 <body class="hold-transition login-page" style="padding-top:1rem!important;">  
-<h1><strong>Sistem Aplikasi Laporan & Database BINOPS</strong></h1>
+<h1><strong>SIAP</strong></h1>
+<h2><strong>Si</strong>stem <strong>A</strong>plikasi <strong>P</strong>elaporan</h2>
+<h3>Bagbinopnal Ditresnarkoba Polda Jatim</h3>
 <div class="login-box">
   <div class="login-logo">
     <img class="my-2 w-50" src="<?= base_url(); ?>/assets/images/logo-ditresnarkoba-poldajatim.png" />

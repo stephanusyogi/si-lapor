@@ -1,3 +1,8 @@
+  <style>
+    .diagramTren{
+      border:1px solid lightgrey;
+    }
+  </style>
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- /.content-header -->
@@ -42,6 +47,7 @@
               <div class="icon">
                 <i class="ion ion-folder"></i>
               </div>
+              <a href="<?= base_url('master-kasus') ?>" class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           <!-- ./col -->
@@ -56,6 +62,7 @@
               <div class="icon">
                 <i class="ion ion-person"></i>
               </div>
+              <a href="<?= base_url('master-kasus') ?>" class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
           <!-- ./col -->
@@ -70,6 +77,7 @@
               <div class="icon">
                 <i class="ion ion-briefcase"></i>
               </div>
+              <a href="<?= base_url('selra') ?>" class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
         </div>
@@ -87,6 +95,7 @@
                 <div class="icon">
                   <i class="ion ion-happy"></i>
                 </div>
+                <a href="<?= base_url('data-admin') ?>" class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
               </div>
             </div>
             <!-- ./col -->
@@ -101,6 +110,7 @@
                 <div class="icon">
                   <i class="ion ion-clipboard"></i>
                 </div>
+                <a href="<?= base_url('kasus-menonjol') ?>" class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
               </div>
             </div>
             <!-- ./col -->
@@ -115,6 +125,7 @@
                 <div class="icon">
                   <i class="ion ion-clock"></i>
                 </div>
+                <a href="<?= base_url('data-admin') ?>" class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
               </div>
             </div>
           
@@ -122,16 +133,94 @@
         <?php endif; ?>
         <!-- Main row -->
         <div class="row">
-
+          <div class="diagramTren my-2 px-2 py-2 w-100">
+            <form action="<?= base_url() ?>dashboard/viewDiagramByDate" method="post">
+              <label for="tahunsurat"><small>Tampilkan Diagram Tindak Pidana Berdasarkan Tahun :</small></label>
+              <div class="d-flex">
+                <div class="input-group date" id="tahunsurat" data-target-input="nearest" style="width:10%;">
+                  <input type="text" name="tahunDiagram" class="form-control datetimepicker-input" data-target="#tahunsurat" required/>
+                  <div class="input-group-append" data-target="#tahunsurat" data-toggle="datetimepicker">
+                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                  </div>
+                </div>
+                <button class="btn btn-info mx-2" type="submit"><i class="fa fa-search"></i></button>
+              </div>
+            </form>
+            <canvas class="chart mt-2" id="myChart" width="300" height="100"></canvas>
+          </div>
         </div>
         <!-- /.row (main row) -->
-        <!-- Image Welcome -->
-        <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] != 'ADMINSUPER'): ?>
-          <img class="mb-4" src="<?= base_url() ?>assets/images/bg.PNG" alt="Logo Ditresnarkoba Polda Jatim" style="width:50%;display: block;margin-left: auto;margin-right: auto;">
-        <?php endif; ?>
       </div><!-- /.container-fluid -->
     </section>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
+  <script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var chart = new Chart(ctx, {
+      // The type of chart we want to create
+      type: 'bar', // also try bar or other graph types
+
+      // The data for our dataset
+      data: {
+        labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"],
+        // Information about the dataset
+        datasets: [
+          {
+            label: "Kasus",
+            backgroundColor: '#1C6758',
+            borderColor: '#1C6758',
+            data: [<?= $dataDiagram['Jan']['KSS'] ?>, <?= $dataDiagram['Feb']['KSS'] ?>, <?= $dataDiagram['Mar']['KSS'] ?>, <?= $dataDiagram['Apr']['KSS'] ?>, <?= $dataDiagram['Mei']['KSS'] ?>, <?= $dataDiagram['Jun']['KSS'] ?>, <?= $dataDiagram['Jul']['KSS'] ?>, <?= $dataDiagram['Agu']['KSS'] ?>, <?= $dataDiagram['Sep']['KSS'] ?>, <?= $dataDiagram['Okt']['KSS'] ?>, <?= $dataDiagram['Nov']['KSS'] ?>, <?= $dataDiagram['Des']['KSS'] ?>],
+          },
+          {
+            label: "Tersangka",
+            backgroundColor: '#16213E',
+            borderColor: '#16213E',
+            data: [<?= $dataDiagram['Jan']['TSK'] ?>, <?= $dataDiagram['Feb']['TSK'] ?>, <?= $dataDiagram['Mar']['TSK'] ?>, <?= $dataDiagram['Apr']['TSK'] ?>, <?= $dataDiagram['Mei']['TSK'] ?>, <?= $dataDiagram['Jun']['TSK'] ?>, <?= $dataDiagram['Jul']['TSK'] ?>, <?= $dataDiagram['Agu']['TSK'] ?>, <?= $dataDiagram['Sep']['TSK'] ?>, <?= $dataDiagram['Okt']['TSK'] ?>, <?= $dataDiagram['Nov']['TSK'] ?>, <?= $dataDiagram['Des']['TSK'] ?>],
+          },
+          {
+            label: "SELRA",
+            backgroundColor: '#FF1E00',
+            borderColor: '#FF1E00',
+            data: [<?= $dataDiagram['Jan']['SELRA'] ?>, <?= $dataDiagram['Feb']['SELRA'] ?>, <?= $dataDiagram['Mar']['SELRA'] ?>, <?= $dataDiagram['Apr']['SELRA'] ?>, <?= $dataDiagram['Mei']['SELRA'] ?>, <?= $dataDiagram['Jun']['SELRA'] ?>, <?= $dataDiagram['Jul']['SELRA'] ?>, <?= $dataDiagram['Agu']['SELRA'] ?>, <?= $dataDiagram['Sep']['SELRA'] ?>, <?= $dataDiagram['Okt']['SELRA'] ?>, <?= $dataDiagram['Nov']['SELRA'] ?>, <?= $dataDiagram['Des']['SELRA'] ?>],
+          }
+      ]
+      },
+
+      // Configuration options
+      options: {
+        layout: {
+          padding: 2,
+        },
+        legend: {
+          position: 'bottom',
+        },
+        title: {
+          display: true,
+          text: 'Diagram Tren Tindak Pidana Narkotika & Psikotropika <?= $tahunDiagram ?> <?= $this->session->userdata('login_data_admin')['nama'] ?>'
+        },
+        scales: {
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Jumlah'
+            }
+          }],
+          xAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Bulan'
+            }
+          }]
+        }
+      }
+    });
+    
+    $(function () {
+      $('#tahunsurat').datetimepicker({
+          viewMode: 'years',
+          format: 'YYYY'
+        });
+    });
+  </script>
 

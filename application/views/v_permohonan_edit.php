@@ -46,12 +46,16 @@
                       <td class="text-center"><?= $no ?></td>
                       <td class="text-center">
                       <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER'): ?>
-                        <div data-toggle="tooltip" data-placement="top" title="Update Status Laporan">
-                          <a class="update-ajuan mx-1" href="<?= base_url() ?>permohonan/updatePermohonan/<?= $rowPermohonan['id_permohonan']?>/<?= $rowPermohonan["id_kasus"] ?>" style="cursor:pointer;"><i class="fas fa-check-square" style="color:darkblue;"></i></a>
-                        </div>
+                        <?php if($rowPermohonan['isApproved'] == 0): ?>
+                          <div data-toggle="tooltip" data-placement="top" title="Update Permohonan Edit">
+                            <a class="update-ajuan mx-1" href="<?= base_url() ?>permohonan/updatePermohonan/<?= $rowPermohonan['id_permohonan']?>/<?= $rowPermohonan["id_kasus"] ?>" style="cursor:pointer;"><i class="fas fa-check-square" style="color:darkblue;"></i></a>
+                          </div>
+                        <?php else: ?>
+                          -
+                        <?php endif; ?>
                       <?php else: ?>  
                         <div data-toggle="tooltip" data-placement="top" title="Hapus Pengajuan">
-                          <a class="hapus-ajuan mx-1" href="<?= base_url() ?>permohonan/delPermohonan/<?= $rowPermohonan['id_permohonan']?>"><i class="fas fa-trash" style="color:red;"></i></a>
+                          <a class="<?= (($rowPermohonan["isApproved"])) ? 'hapus-ajuan' : 'batal-ajuan' ?> mx-1" href="<?= base_url() ?>permohonan/delPermohonan/<?= $rowPermohonan['id_permohonan']?>"><i class="fas fa-trash" style="color:red;"></i></a>
                         </div>
                       <?php endif; ?>
                       </td>
@@ -94,13 +98,33 @@
     
   $(document).ready(function() {
     
-    $(".hapus-ajuan").on("click", function (e) {
+    $(".batal-ajuan").on("click", function (e) {
       e.preventDefault();
       const href = $(this).attr("href");
 
       Swal.fire({
         title: "Batalkan Pengajuan?",
         text: "Membatalkan pengajuan bersifat permanen pada database, mohon berhati-hati.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Delete!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          document.location.href = href;
+        }
+      });
+    });
+    
+    
+    $(".hapus-ajuan").on("click", function (e) {
+      e.preventDefault();
+      const href = $(this).attr("href");
+
+      Swal.fire({
+        title: "Hapus Riwayat Pengajuan?",
+        text: "Menghapus riwayat pengajuan bersifat permanen pada database, mohon berhati-hati.",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",

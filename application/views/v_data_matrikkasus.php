@@ -8,6 +8,10 @@
     ul> li{
       list-style-type: none;
     }
+    .hoverItem:hover{
+      background-color:darkgrey!important;
+      cursor:pointer;
+    }
   </style>
   <!-- DATA -->
   <?php 
@@ -20,7 +24,7 @@
     <section class="content">
       <div class="container-fluid px-4 py-4">
         <div class="alert alert-warning" role="alert">
-          Perhatian! Hanya LP yang <strong>terkunci ke matrik</strong> ter-rekap dalam modul <strong>matrik barang bukti</strong>.
+          Perhatian! Hanya LP yang <strong>terkunci ke database</strong> ter-rekap dalam modul <strong>matrik barang bukti</strong>.
           Silahkan melengkapi instrumen yang kosong dengan pilihan yang disiapkan!
         </div>
         <h2>Matrik Kasus <strong><?= $this->session->userdata('login_data_admin')['nama'] ?></strong></h2>
@@ -81,7 +85,7 @@
             </div>
         </div>
         <hr>
-        <table id="table-matrik-kasus" class="table table-responsive table-bordered table-striped text-center" style="width:100%">
+        <table id="table-matrik-kasus" class="table table-responsive table-bordered table-hover table-striped text-center" style="width:100%">
             <thead class="text-center">
                 <tr>
                   <th rowspan="3">NO</th>
@@ -180,7 +184,7 @@
                 $no = 1;
                   foreach ($dataMatrik as $keyKesatuan => $item) {
                 ?>
-                <tr>
+                <tr class="hoverItem">
                     <!-- No -->
                     <td class="text-center"><?= $no ?>.</td>
                     <!-- KESATUAN -->
@@ -339,6 +343,174 @@
 
             <?php } ?>
         </table>
+        <hr>
+        <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER'): ?>
+        <h5 class="text-center"><strong>TOTAL</strong></h5>
+        <table class="table table-responsive table-bordered" style="width:100%;">
+          <thead class="text-center">
+              <tr>
+                <th rowspan="3" colspan="2">NO</th>
+                <th rowspan="3">KSS</th>
+                <th rowspan="3">TSK</th>
+                <td colspan="5">STATUS TSK</td>
+                <td colspan="4">KEWARGANEGARAAN</td>
+                <td colspan="5">USIA</td>
+                <td colspan="6">PENDIDIKAN</td>
+                <td colspan="17">PEKERJAAN</td>
+                <td colspan="7">TEMPAT KEJADIAN PERKARA</td>
+                <td colspan="13">BARANG BUKTI</td>
+              </tr>
+              <tr>
+                  <!-- Status TSK -->
+                  <th rowspan="2">Penanam</th>
+                  <th rowspan="2">Produksi</th>
+                  <th rowspan="2">Bandar</th>
+                  <th rowspan="2">Pengedar</th>
+                  <th rowspan="2">Pengguna</th>
+                  <!-- Kewarganegaraan -->
+                  <td colspan="2">WNI</td>
+                  <td colspan="2">WNA</td>
+                  <!-- Status TSK -->
+                  <th rowspan="2">< 14</th>
+                  <th rowspan="2">15 - 18</th>
+                  <th rowspan="2">19 - 24</th>
+                  <th rowspan="2">25 - 64</th>
+                  <th rowspan="2">> 65</th>
+                  <!-- Pendidikan -->
+                  <th rowspan="2">Tidak Sekolah</th>
+                  <th rowspan="2">SD</th>
+                  <th rowspan="2">SMP</th>
+                  <th rowspan="2">SMA</th>
+                  <th rowspan="2">PT</th>
+                  <th rowspan="2">Belum Diketahui</th>
+                  <!-- Pekerjaan -->
+                  <th rowspan="2">Pelajar</th>
+                  <th rowspan="2">Mahasiswa</th>
+                  <th rowspan="2">Swasta</th>
+                  <th rowspan="2">Buruh/Karyawan</th>
+                  <th rowspan="2">Petani/Nelayan</th>
+                  <th rowspan="2">Pedagang</th>
+                  <th rowspan="2">Wiraswasta/Pengusaha</th>
+                  <th rowspan="2">Sopir/Tukang Ojek</th>
+                  <th rowspan="2">Ikut Orang Tua</th>
+                  <th rowspan="2">Ibu Rumah Tangga</th>
+                  <th rowspan="2">Tidak Kerja</th>
+                  <th rowspan="2">Notaris</th>
+                  <th rowspan="2">TNI</th>
+                  <th rowspan="2">POLRI</th>
+                  <th rowspan="2">PNS</th>
+                  <th rowspan="2">Pembantu</th>
+                  <th rowspan="2">NAPI</th>
+                  <!-- Tempat Kejadian Perkara -->
+                  <th rowspan="2">Hotel/Villa/Kos</th>
+                  <th rowspan="2">Ruko/Gedung/Mall/Pabrik</th>
+                  <th rowspan="2">Tempat Umum</th>
+                  <th rowspan="2">Pemukiman/Pondok</th>
+                  <th rowspan="2">Diskotik/Tempat Karaoke</th>
+                  <th rowspan="2">Terminal/Bandara/Pelabuhan</th>
+                  <th rowspan="2">Rumah Tahanan</th>
+                  <!-- Barang Bukti -->
+                  <td colspan="10">Narkotika & Psikotropika</td>
+                  <td colspan="3">Okerbaya</td>
+              </tr>
+              <tr>
+                  <!-- Kewarganegaraan & Jenis Kelamin -->
+                  <th>LK</th>
+                  <th>PR</th>
+                  <th>LK</th>
+                  <th>PR</th>
+                  <!-- Barang Bukti -->
+                  <th>Ganja</th>
+                  <th>Tembakau Gorilla</th>
+                  <th>Hashish</th>
+                  <th>Opium</th>
+                  <th>Morphin</th>
+                  <th>Heroin/Putaw</th>
+                  <th>Kokain</th>
+                  <th>Exstacy/Carnophen</th>
+                  <th>Sabu</th>
+                  <th>GOL IV</th>
+                  <th>Daftar G</th>
+                  <th>Kosmetik</th>
+                  <th>Jamu</th>
+              </tr>
+          </thead>
+          <tbody>  
+            <tr>
+                    <!-- No -->
+                    <td class="text-center" colspan="2"><strong>TOTAL</strong></td>
+                    <!-- Kasus -->
+                    <td><?= $totalMatrik['KSS'] ?></td>
+                    <!-- Tersangka -->
+                    <td><?= $totalMatrik['TSK'] ?></td>
+                    <!-- Status Tersangka -->
+                    <td><?= $totalMatrik['StatusTSK']['Penanam'] ?></td>
+                    <td><?= $totalMatrik['StatusTSK']['Produksi'] ?></td>
+                    <td><?= $totalMatrik['StatusTSK']['Bandar'] ?></td>
+                    <td><?= $totalMatrik['StatusTSK']['Pengedar'] ?></td>
+                    <td><?= $totalMatrik['StatusTSK']['Pengguna'] ?></td>
+                    <!-- Kewarganegaraan & Jenis Kelamin -->
+                    <td><?= $totalMatrik['KEWARGANEGARAAN']['WNI']['LK'] ?></td>
+                    <td><?= $totalMatrik['KEWARGANEGARAAN']['WNI']['PR'] ?></td>
+                    <td><?= $totalMatrik['KEWARGANEGARAAN']['WNA']['LK'] ?></td>
+                    <td><?= $totalMatrik['KEWARGANEGARAAN']['WNA']['PR'] ?></td>
+                    <!-- Usia -->
+                    <td><?= $totalMatrik['USIA']['<14'] ?></td>
+                    <td><?= $totalMatrik['USIA']['15-18'] ?></td>
+                    <td><?= $totalMatrik['USIA']['19-24'] ?></td>
+                    <td><?= $totalMatrik['USIA']['25-64'] ?></td>
+                    <td><?= $totalMatrik['USIA']['<65'] ?></td>
+                    <!-- Pendidikan -->
+                    <td><?= $totalMatrik['PENDIDIKAN']['Tidak Sekolah'] ?></td>
+                    <td><?= $totalMatrik['PENDIDIKAN']['SD'] ?></td>
+                    <td><?= $totalMatrik['PENDIDIKAN']['SMP'] ?></td>
+                    <td><?= $totalMatrik['PENDIDIKAN']['SMA'] ?></td>
+                    <td><?= $totalMatrik['PENDIDIKAN']['PT'] ?></td>
+                    <td><?= $totalMatrik['PENDIDIKAN']['Belum Diketahui'] ?></td>
+                    <!-- Pekerjaan -->
+                    <td><?= $totalMatrik['PEKERJAAAN']['Pelajar'] ?></td>
+                    <td><?= $totalMatrik['PEKERJAAAN']['Mahasiswa'] ?></td>
+                    <td><?= $totalMatrik['PEKERJAAAN']['Swasta'] ?></td>
+                    <td><?= $totalMatrik['PEKERJAAAN']['Buruh/Karyawan'] ?></td>
+                    <td><?= $totalMatrik['PEKERJAAAN']['Petani/Nelayan'] ?></td>
+                    <td><?= $totalMatrik['PEKERJAAAN']['Pedagang'] ?></td>
+                    <td><?= $totalMatrik['PEKERJAAAN']['Wiraswasta/Pengusaha'] ?></td>
+                    <td><?= $totalMatrik['PEKERJAAAN']['Sopir/TukangOjek'] ?></td>
+                    <td><?= $totalMatrik['PEKERJAAAN']['Ikut Orang Tua'] ?></td>
+                    <td><?= $totalMatrik['PEKERJAAAN']['Ibu Rumah Tangga'] ?></td>
+                    <td><?= $totalMatrik['PEKERJAAAN']['Tidak Kerja'] ?></td>
+                    <td><?= $totalMatrik['PEKERJAAAN']['Notaris'] ?></td>
+                    <td><?= $totalMatrik['PEKERJAAAN']['TNI'] ?></td>
+                    <td><?= $totalMatrik['PEKERJAAAN']['POLRI'] ?></td>
+                    <td><?= $totalMatrik['PEKERJAAAN']['PNS'] ?></td>
+                    <td><?= $totalMatrik['PEKERJAAAN']['PEMBANTU'] ?></td>
+                    <td><?= $totalMatrik['PEKERJAAAN']['NAPI'] ?></td>
+                    <!-- TKP -->
+                    <td><?= $totalMatrik['TKP']['Hotel/Villa/Kos'] ?></td>
+                    <td><?= $totalMatrik['TKP']['Ruko/Gedung/Mall/Pabrik'] ?></td>
+                    <td><?= $totalMatrik['TKP']['Tempat Umum'] ?></td>
+                    <td><?= $totalMatrik['TKP']['Pemukiman/Pondok'] ?></td>
+                    <td><?= $totalMatrik['TKP']['Diskotik/Tempat Karaoke'] ?></td>
+                    <td><?= $totalMatrik['TKP']['Terminal/Bandara/Pelabuhan'] ?></td>
+                    <td><?= $totalMatrik['TKP']['Rumah Tahanan'] ?></td>
+                    <!-- Barang Bukti -->
+                    <td><?= $totalMatrik['BARANGBUKTI']['Ganja'] ?></td>
+                    <td><?= $totalMatrik['BARANGBUKTI']['Tembakau Gorilla'] ?></td>
+                    <td><?= $totalMatrik['BARANGBUKTI']['Hashish'] ?></td>
+                    <td><?= $totalMatrik['BARANGBUKTI']['Opium'] ?></td>
+                    <td><?= $totalMatrik['BARANGBUKTI']['Morphin'] ?></td>
+                    <td><?= $totalMatrik['BARANGBUKTI']['Heroin/Putaw'] ?></td>
+                    <td><?= $totalMatrik['BARANGBUKTI']['Kokain'] ?></td>
+                    <td><?= $totalMatrik['BARANGBUKTI']['Exstacy/Carnophen'] ?></td>
+                    <td><?= $totalMatrik['BARANGBUKTI']['Sabu'] ?></td>
+                    <td><?= $totalMatrik['BARANGBUKTI']['GOL IV'] ?></td>
+                    <td><?= $totalMatrik['BARANGBUKTI']['Daftar G'] ?></td>
+                    <td><?= $totalMatrik['BARANGBUKTI']['Kosmetik'] ?></td>
+                    <td><?= $totalMatrik['BARANGBUKTI']['Jamu'] ?></td>
+                </tr>
+          </tbody>
+        </table>
+        <?php endif;?>
       </div><!-- /.container-fluid -->
     </section>
     <!-- /.content -->

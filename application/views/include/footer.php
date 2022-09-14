@@ -58,6 +58,7 @@
 
 <script>
   $(document).ready(function () {
+
     $("body").addClass("sidebar-collapse");
     
       $('[data-toggle="tooltip"]').tooltip();
@@ -71,6 +72,9 @@
       } );
       $('.table-pelimpahan').dataTable( {
         "ordering": false
+      } );
+      $('.table-selra').dataTable( {
+        "lengthMenu": [5],
       } );
   });
 </script>

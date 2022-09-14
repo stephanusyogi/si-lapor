@@ -209,6 +209,7 @@ class Pelimpahan extends CI_Controller {
 			$newTSK = array(
 				'id_kasus' => $newIdKasus,
 				'nama' => $TSK[$i]['nama'],
+				'ttl' => $TSK[$i]['ttl'],
 				'alamat' => $TSK[$i]['alamat'],
 				'nik' => $TSK[$i]['nik'],
 				'agama' => $TSK[$i]['agama'],
@@ -252,13 +253,15 @@ class Pelimpahan extends CI_Controller {
 		$this->Modelpelimpahan->updatePelimpahanFrom($idFrom);
         
 		$this->session->set_flashdata('success', 'Pelimpahan berhasil dibatalkan!');
-		return redirect(base_url() . 'master-kasus');
+		return redirect(base_url() . 'kasus-pelimpahan');
 	}
 
 	public function updateStatusKasus($idKasus, $fromIdKasus){
 		$status_kasus = $this->input->post('status_kasus');
+		$ket_statusKasus = $this->input->post('ket_statusKasus');
+		$date = date('Y-m-d');
 
-		$this->Modelpelimpahan->updateStatusKasus($fromIdKasus,$status_kasus);
+		$this->Modelpelimpahan->updateStatusKasus($fromIdKasus,$status_kasus,$ket_statusKasus,$date);
 		$this->Modelpelimpahan->updateStatusKasusPelimpahan($idKasus,$status_kasus);
 		$this->session->set_flashdata('success', 'Status kasus pelimpahan berhasil diupdate ke database!');
 		redirect(base_url("kasus-pelimpahan"));
@@ -296,6 +299,13 @@ class Pelimpahan extends CI_Controller {
 	public function updateKasusPelimpahanMenonjol($idKasus, $fromIdKasus){
 		$this->Modelpelimpahan->updateKasusMenonjol($fromIdKasus);
 		$this->Modelpelimpahan->updateKasusPelimpahanMenonjol($idKasus);
+		$this->session->set_flashdata('success', 'Status kasus pelimpahan berhasil diupdate ke database!');
+		redirect(base_url("kasus-pelimpahan"));
+	}
+	
+	public function batalKasusPelimpahanMenonjol($idKasus, $fromIdKasus){
+		$this->Modelpelimpahan->batalKasusMenonjol($fromIdKasus);
+		$this->Modelpelimpahan->batalKasusPelimpahanMenonjol($idKasus);
 		$this->session->set_flashdata('success', 'Status kasus pelimpahan berhasil diupdate ke database!');
 		redirect(base_url("kasus-pelimpahan"));
 	}

@@ -97,7 +97,7 @@
             <div class="col-md-8">
             </div>
             <div class="col-md-4 text-right">
-                <a href="<?= base_url("lapor-ungkap-kasus/{$dataKasus['id_kasus']}") ?>" class="btn btn-secondary">Kembali ke Data LP</a>
+                <a href="<?= base_url("lapor-ungkap-kasus/{$dataKasus['id_kasus']}") ?>" class="btn btn-success">Kembali ke Data LP</a>
             </div>
         </div>
       </div><!-- /.container-fluid -->

@@ -107,6 +107,146 @@ function getSuperKasusMenonjol(){
     ->from("tb_kasus")->count_all_results();
 }
 
+// DIAGRAM TINDAK PIDANA
+function getDiagramKasus($kode_kesatuan, $firstDate, $lastDate){
+    $where = array(
+        'kode_kesatuan' => $kode_kesatuan,
+        'isLocked' => 1,
+    );
+    return $this->db->where($where)
+    ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+    ->from("tb_kasus")->count_all_results();
+}
+
+function getDiagramTSK($kode_kesatuan, $firstDate, $lastDate){
+    $where = array(
+        'tb_kasus.kode_kesatuan'=>$kode_kesatuan,
+        'isLocked' => 1,
+    );
+    return $this->db->select('*')
+    ->from('tb_tersangka')
+    ->join('tb_kasus','tb_tersangka.id_kasus=tb_kasus.id_kasus','LEFT')
+    ->where($where)
+    ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+    ->count_all_results();
+}
+
+function getDiagramSELRA($kode_kesatuan, $firstDate, $lastDate){
+    $where = array(
+        'kode_kesatuan' => $kode_kesatuan,
+        'status_kasus !=' => "",
+        'isLocked' => 1,
+      );
+    $res = $this->db->where($where)
+    ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+    ->from("tb_kasus")->count_all_results();
+
+    return $res;
+}
+
+function getSuperDiagramKasus($firstDate, $lastDate){
+    $where = array(
+        'isLocked' => 1,
+    );
+    return $this->db->where($where)
+    ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+    ->from("tb_kasus")->count_all_results();
+}
+
+function getSuperDiagramTSK($firstDate, $lastDate){
+    $where = array(
+        'isLocked' => 1,
+    );
+    return $this->db->select('*')
+    ->from('tb_tersangka')
+    ->join('tb_kasus','tb_tersangka.id_kasus=tb_kasus.id_kasus','LEFT')
+    ->where($where)
+    ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+    ->count_all_results();
+}
+
+function getSuperDiagramSELRA($firstDate, $lastDate){
+    $where = array(
+        'status_kasus !=' => "",
+        'isLocked' => 1,
+      );
+    $res = $this->db->where($where)
+    ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+    ->from("tb_kasus")->count_all_results();
+
+    return $res;
+}
+
+// SEARCH MODUL
+function searchData($searchValue, $kode_kesatuan,$kategoriPencarian){   
+    $search_query_values = explode(' ',$searchValue);
+
+    $where = array(
+        "tb_kasus.kode_kesatuan" => $kode_kesatuan,
+    );
+
+    $this->db->select('*')
+    ->from('tb_kasus')
+    ->join('tb_tersangka','tb_kasus.id_kasus=tb_tersangka.id_kasus','INNER')
+    ->where($where)
+    ->group_start();
+
+    $counter = 0;
+    foreach ($search_query_values as $key => $value) {
+        if ($counter == 0) {
+            if ($kategoriPencarian == 'nolp') {
+                $this->db->like('tb_kasus.no_laporanpolisi', $searchValue);
+            } else {
+                $this->db->like('tb_tersangka.nama', $value);
+            }
+        } else {
+            if ($kategoriPencarian == 'nolp') {
+                $this->db->like('tb_kasus.no_laporanpolisi', $searchValue);
+            } else {
+                $this->db->like('tb_tersangka.nama', $value);
+            }
+        }
+        $counter++;
+    }
+
+    $this->db->group_end();
+    $res = $this->db->get();
+
+    return $res->result_array();
+}
+
+function searchSuperData($searchValue, $kategoriPencarian){
+    $search_query_values = explode(' ',$searchValue);
+
+    $this->db->select('*')
+    ->from('tb_kasus')
+    ->join('tb_tersangka','tb_kasus.id_kasus=tb_tersangka.id_kasus','INNER')
+    ->group_start();
+
+    $counter = 0;
+    foreach ($search_query_values as $key => $value) {
+        if ($counter == 0) {
+            if ($kategoriPencarian == 'nolp') {
+                $this->db->like('tb_kasus.no_laporanpolisi', $searchValue);
+            } else {
+                $this->db->like('tb_tersangka.nama', $value);
+            }
+        } else {
+            if ($kategoriPencarian == 'nolp') {
+                $this->db->like('tb_kasus.no_laporanpolisi', $searchValue);
+            } else {
+                $this->db->like('tb_tersangka.nama', $value);
+            }
+        }
+        $counter++;
+    }
+
+    $this->db->group_end();
+    $res = $this->db->get();
+
+    return $res->result_array();
+}
+
 
 
 }

@@ -1,3 +1,11 @@
+  
+  <!-- DATA -->
+  <?php 
+    $CI =& get_instance();
+    $CI->load->model('Modelbarangbukti');
+    $CI->load->model('Modeltersangka');
+  ?>
+
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Main content -->
@@ -86,9 +94,15 @@
                 <?php if(isset($dataBarangBukti)){ ?>
                     <?php foreach ($dataBarangBukti as $row) { ?>
                     <tr>
-                        <td><?= $row['nama_barangbukti'] ?>&nbsp;<?= ($row['kategori'] == 'Lain-lain') ? " dengan keterangan : ( {$row['keterangan']} )" : '' ?>&nbsp;<?= ($row['berat']) ? "& berat {$row['berat']} gram" : '' ?></td>
-                        <td><?= $row['jumlah'] ?></td>
-                        <td><?= $row['satuan'] ?></td>
+                        <?php if(!$row['isDuplicate']){ ?>
+                            <td><?= $row['nama_barangbukti'] ?>&nbsp;<?= ($row['kategori'] == 'Lain-lain') ? " dengan keterangan : ( {$row['keterangan']} )" : '' ?>&nbsp;<?= ($row['berat']) ? "& berat {$row['berat']} gram" : '' ?></td>
+                            <td><?= $row['jumlah'] ?></td>
+                            <td><?= $row['satuan'] ?></td>
+                        <?php }else{ 
+                            $duplicateTSK = $CI->Modeltersangka->getTersangkaByIdTersangka($dataKasus['id_kasus'], $row['id_duplicateTSK'])->result_array();
+                            ?>
+                            <td colspan="3"><?= $row['kategori']." (<strong>Duplikat</strong> dengan tersangka a.n ".$duplicateTSK[0]['nama'].")" ?></td>
+                        <?php } ?>
                     </tr>
                     <?php } ?>
                 <?php }else{?>

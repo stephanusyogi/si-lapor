@@ -118,8 +118,5 @@ class Pengumuman extends CI_Controller {
 
 	public function bacaPengumuman($idPengumuman){
     $this->Modelpengumuman->bacaPengumuman($idPengumuman);
-
-    $this->session->set_flashdata('success', 'Pengumuman berhasil dibaca!');
-    redirect(base_url("pengumuman"));
   }
 }
