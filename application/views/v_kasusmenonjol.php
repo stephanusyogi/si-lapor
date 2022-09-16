@@ -38,7 +38,7 @@
                 <a class="btn btn-primary btn-sm mt-1 mx-1" data-toggle="modal" data-target="#sortModal"><span><i class="fas fa-filter"></i> </span>Sort by Date</a>
             </div>
             <div class="col-md-2 text-right">
-                <a class="btn btn-success btn-sm mt-1" href="<?= base_url('export-opsi/selra') ?>"><span><i class="fas fa-print"></i> </span>Export</a>
+                <a class="btn btn-success btn-sm mt-1" href="<?= base_url('export-opsi/kasusmenonjol') ?>"><span><i class="fas fa-print"></i> </span>Export</a>
             </div>
         </div>
         <!-- Modal Sort Date -->

@@ -97,9 +97,13 @@
                   <tr class="text-center">
                     <th>No</th>
                     <th>No Laporan Polisi</th>
-                    <th>Tanggal Pelimpahan</th>
+                    <th>Tanggal Input LP</th>
+                    <th>Durasi Perkara</th>
                     <th>Dari Kesatuan</th>
                     <th>Untuk Kesatuan</th> 
+                    <th>Status</th>
+                    <th>LP Menonjol</th>
+                    <th>Tanggal Pelimpahan</th> 
                   </tr>
               </thead>
               <tbody>
@@ -107,11 +111,21 @@
                     <?php 
                     $no = 1;
                     foreach ($dataKasus as $row_kasus) { 
+                      $resKasusFrom = $CI->Modelpelimpahan->getKasusById($row_kasus['idkasus_pelimpahanDari']);
                       ?>
                     <tr>
                         <td class="text-center"><?= $no ?></td>
                         <td><?= $row_kasus['no_laporanpolisi']  ?></td>
-                        <td><?=  dateIndonesia(date('N j/n/Y', strtotime($row_kasus["created_at"]))) ?></td>
+                        <td><?=  dateIndonesia(date('N j/n/Y', strtotime($resKasusFrom[0]["created_at"]))) ?></td>
+                        <td>
+                          <?php if(!empty($resKasusFrom[0]["date_statusKasus"])):
+                              $diffSelra = date_diff(date_create($resKasusFrom[0]["created_at"]), date_create($resKasusFrom[0]["date_statusKasus"]));
+                              echo $diffSelra->format("%a")." Hari (SELRA)";
+                            else:
+                              $diff = date_diff(date_create($resKasusFrom[0]["created_at"]), date_create(date("Y-m-d")));
+                              echo $diff->format("%a")." Hari - Hingga Hari Ini";
+                            endif;  ?>
+                          </td>
                         <td><?php 
                           $dataKesatuanUntuk =  $CI->Modelkesatuan->getKesatuanByKode($row_kasus['kodekesatuan_pelimpahanDari']);
                           echo $dataKesatuanUntuk[0]['nama'];
@@ -120,6 +134,42 @@
                           <?php $dataKesatuanDari =  $CI->Modelkesatuan->getKesatuanByKode($row_kasus['kode_kesatuan']); ?>
                           <?= ($row_kasus['nama_polsek']) ? $dataKesatuanDari[0]['nama'] . ' || '.$row_kasus['nama_polsek'] : $dataKesatuanDari[0]['nama']  ?>
                         </td>
+                        <td>
+                            <?php if(empty($row_kasus["status_kasus"])){ ?>
+                              <button class="btn btn-warning btn-sm">
+                                <strong>Belum Diketahui</strong>
+                              </button>
+                            <?php }else if ($row_kasus["status_kasus"] == 'SP3'){ ?>
+                              <button class="btn btn-success btn-sm">
+                                <strong>SP3</strong>
+                                <?php if(!empty($resKasusFrom[0]["ket_statusKasus"])): ?>
+                                    <p><strong>Keterangan :</strong>&nbsp;<?= $resKasusFrom[0]["ket_statusKasus"] ?></p>
+                                <?php endif; ?>
+                              </button>
+                            <?php }else if($row_kasus["status_kasus"] == 'Tahap II'){ ?>
+                              <button class="btn btn-success btn-sm">
+                                <strong>Tahap II</strong>
+                                <?php if(!empty($resKasusFrom[0]["ket_statusKasus"])): ?>
+                                    <p><strong>Keterangan :</strong>&nbsp;<?= $resKasusFrom[0]["ket_statusKasus"] ?></p>
+                                <?php endif; ?>
+                              </button>
+                            <?php }else{?>
+                              <button class="btn btn-success btn-sm">
+                                <strong>RJ</strong>
+                                <?php if(!empty($resKasusFrom[0]["ket_statusKasus"])): ?>
+                                    <p><strong>Keterangan :</strong>&nbsp;<?= $resKasusFrom[0]["ket_statusKasus"] ?></p>
+                                <?php endif; ?>
+                              </button>
+                            <?php } ?>
+                        </td>
+                        <td>
+                            <?php if($row_kasus["isKasusMenonjol"]){ ?>
+                              <button class="btn btn-success btn-sm"><strong>Kasus Menonjol</strong></button>
+                            <?php }else{?>
+                              <button class="btn btn-warning btn-sm"><strong>Bukan Kasus Menonjol</strong></button>
+                            <?php }?>
+                        </td>
+                        <td><?=  dateIndonesia(date('N j/n/Y', strtotime($row_kasus["created_at"]))) ?></td>
                     </tr>
                     <?php $no++; } ?>
                 <?php }else{?>
@@ -162,6 +212,7 @@
                       <th>Administrator</th> 
                       <th>Status</th>
                       <th>LP Menonjol</th>
+                      <th>Tanggal Pelimpahan</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -190,7 +241,7 @@
                             <?php endif; ?>
                           </td>
                           <td><?= $display ? $row_kasus["no_laporanpolisi"] : ""; ?></td>
-                          <td><?= $display ? dateIndonesia(date('N j/n/Y', strtotime($row_kasus["created_at"]))) : ""; ?></td>
+                          <td><?= $display ? dateIndonesia(date('N j/n/Y', strtotime($resKasusFrom[0]["created_at"]))) : ""; ?></td>
                           <td>
                           <?php if($display): 
                             if(!empty($resKasusFrom[0]["date_statusKasus"])):
@@ -260,7 +311,6 @@
                               } else {
                                 echo '';
                               }
-                              
                             ?>
                           </td>
                           <td>
@@ -302,6 +352,7 @@
                               <?php }?>
                             <?php endif; ?>
                           </td>
+                          <td><?= $display ? dateIndonesia(date('N j/n/Y', strtotime($row_kasus["created_at"]))) : ""; ?></td>
                       </tr>
                     <!-- Modal Pilih Admin -->
                     <div class="modal fade" id="adminModal<?= $row_kasus['id_kasus']; ?>" tabindex="-1" role="dialog" aria-labelledby="adminModalLabel" aria-hidden="true">
@@ -385,7 +436,8 @@
                       <th>No</th>  
                       <th>Action</th>
                       <th>No Laporan Polisi</th>
-                      <th>Created Date</th>
+                      <th>Tanggal Input LP</th>
+                      <th>Durasi Perkara</th>
                       <th>Deskripsi Waktu & TKP</th>
                       <th>Identitas Tersangka</th> 
                       <th>Umur</th> 
@@ -396,6 +448,7 @@
                       <th>Administrator Pelimpahan</th> 
                       <th>Status</th>
                       <th>LP Menonjol</th>
+                      <th>Tanggal Pelimpahan</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -421,7 +474,18 @@
                             <?php endif; ?>
                           </td>
                           <td><?= $displayPelimpahan ? $row_kasusPelimpahan["no_laporanpolisi"] : ""; ?></td>
-                          <td><?= $displayPelimpahan ? dateIndonesia(date('N j/n/Y', strtotime($row_kasusPelimpahan["created_at"]))) : ""; ?></td>
+                          <td><?= $displayPelimpahan ? dateIndonesia(date('N j/n/Y', strtotime($resKasusFrom[0]["created_at"]))) : ""; ?></td>
+                          <td>
+                          <?php if($displayPelimpahan): 
+                            if(!empty($resKasusFrom[0]["date_statusKasus"])):
+                              $diffSelra = date_diff(date_create($resKasusFrom[0]["created_at"]), date_create($resKasusFrom[0]["date_statusKasus"]));
+                              echo $diffSelra->format("%a")." Hari (SELRA)";
+                            else:
+                              $diff = date_diff(date_create($resKasusFrom[0]["created_at"]), date_create(date("Y-m-d")));
+                              echo $diff->format("%a")." Hari - Hingga Hari Ini";
+                            endif; 
+                          endif; ?>
+                          </td>
                           <td>
                             <?= ($displayPelimpahan) ? $row_kasusPelimpahan["deskripsi_waktudantkp"]  :  "" ?>
                           </td>
@@ -520,6 +584,7 @@
                               <?php }?>
                             <?php endif; ?>
                           </td>
+                          <td><?= $displayPelimpahan ? dateIndonesia(date('N j/n/Y', strtotime($row_kasusPelimpahan["created_at"]))) : ""; ?></td>
                       </tr>
                       <?php ($displayPelimpahan) ? $no++ : $no; } ?>
                   <?php }else{?>

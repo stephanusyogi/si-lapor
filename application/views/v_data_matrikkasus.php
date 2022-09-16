@@ -27,7 +27,7 @@
           Perhatian! Hanya LP yang <strong>terkunci ke database</strong> ter-rekap dalam modul <strong>matrik barang bukti</strong>.
           Silahkan melengkapi instrumen yang kosong dengan pilihan yang disiapkan!
         </div>
-        <h2>Matrik Kasus <strong><?= $this->session->userdata('login_data_admin')['nama'] ?></strong></h2>
+        <h2>Rekap Ungkap Kasus <strong><?= $this->session->userdata('login_data_admin')['nama'] ?></strong></h2>
         <p>Periode : <?= $dateNow ?></p>
         <hr>
         <div class="row">

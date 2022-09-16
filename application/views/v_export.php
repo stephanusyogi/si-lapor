@@ -26,6 +26,10 @@
             case 'selra':
                 echo base_url().'export/downloadExcel/'.$kodeExport;
                 break;
+
+            case 'kasusmenonjol':
+                echo base_url().'export/downloadExcel/'.$kodeExport;
+                break;
                 
             case 'matrikKasus':
                 echo base_url().'export/downloadExcel/'.$kodeExport;

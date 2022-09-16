@@ -38,6 +38,11 @@ class Export extends CI_Controller {
                 $data['menuLink'] = "selra";
                 break;
                 
+            case 'kasusmenonjol':
+                $data['title'] = "Export Kasus Menonjol";
+                $data['menuLink'] = "kasus-menonjol";
+                break;
+                
             case 'matrikKasus':
                 $data['title'] = "Export Matrik Kasus";
                 $data['menuLink'] = "matrik-kasus";
@@ -104,6 +109,7 @@ class Export extends CI_Controller {
                     $res = $this->Modeldata->getSuperKasus($firstDate, $lastDate);
                     $data['dataKasus'] = $res;
                     $data['dateNow'] = $dateNow;
+                    $data['allSearch'] = true;
     
                     $this->load->view('exportExcel/include/headerExport');
                     $this->load->view('exportExcel/v_excel_masterkasus', $data);
@@ -126,13 +132,27 @@ class Export extends CI_Controller {
                     $data['dateNow'] = $dateNow;
                     $data['dataCC'] = $this->Modeldata->getSuperSelraCC($firstDate, $lastDate);
                     $data['dataCT'] = $this->Modeldata->getSuperSelraCT($firstDate, $lastDate);
+                    $data['allSearch'] = true;
                     
                     $this->load->view('exportExcel/include/headerExport');
                     $this->load->view('exportExcel/v_excel_selra', $data);
                     $this->load->view('exportExcel/include/footerExport');
     
                     break;
+                case 'kasusmenonjol':
+
+                    $data['title'] = "Export Kasus Menonjol";
+                    $data['menuLink'] = "kasus-menonjol";
+                    $data['dateNow'] = $dateNow;
+                    $data['dataMenonjol'] = $this->Modeldata->getSuperMenonjol($firstDate, $lastDate, 1);
+                    $data['dataBukanMenonjol'] = $this->Modeldata->getSuperMenonjol($firstDate, $lastDate, 0);
+                    $data['allSearch'] = true;
+
+                    $this->load->view('exportExcel/include/headerExport');
+                    $this->load->view('exportExcel/v_excel_kasusmenonjol', $data);
+                    $this->load->view('exportExcel/include/footerExport');
                     
+                    break;
                 case 'matrikKasus':
 
                     $dataMatrikKasus = array();
@@ -317,6 +337,7 @@ class Export extends CI_Controller {
                         $res = $this->Modeldata->getKasusByKodeKesatuan($kesatuan, $firstDate, $lastDate);
                         $data['dataKasus'] = $res;
                         $data['dateNow'] = $dateNow;
+                        $data['allSearch'] = false;
         
                         $this->load->view('exportExcel/include/headerExport');
                         $this->load->view('exportExcel/v_excel_masterkasus', $data);
@@ -339,13 +360,29 @@ class Export extends CI_Controller {
                         $data['dateNow'] = $dateNow;
                         $data['dataCC'] = $this->Modeldata->getSelraCC($kesatuan, $firstDate, $lastDate);
                         $data['dataCT'] = $this->Modeldata->getSelraCT($kesatuan, $firstDate, $lastDate);
+                        $data['kesatuanChoosen'] = $kesatuan;
+                        $data['allSearch'] = false;
                         
                         $this->load->view('exportExcel/include/headerExport');
                         $this->load->view('exportExcel/v_excel_selra', $data);
                         $this->load->view('exportExcel/include/footerExport');
         
                         break;
+                    case 'kasusmenonjol':
+
+                        $data['title'] = "Export Kasus Menonjol";
+                        $data['menuLink'] = "kasus-menonjol";
+                        $data['dateNow'] = $dateNow;
+                        $data['dataMenonjol'] = $this->Modeldata->getMenonjol($kesatuan,$firstDate, $lastDate, 1);
+                        $data['dataBukanMenonjol'] = $this->Modeldata->getMenonjol($kesatuan,$firstDate, $lastDate, 0);
+                        $data['allSearch'] = false;
+                        $data['kesatuanChoosen'] = $kesatuan;
+    
+                        $this->load->view('exportExcel/include/headerExport');
+                        $this->load->view('exportExcel/v_excel_kasusmenonjol', $data);
+                        $this->load->view('exportExcel/include/footerExport');
                         
+                        break;
                     case 'matrikKasus':
 
                         $dataMatrikKasus = array();
@@ -528,6 +565,7 @@ class Export extends CI_Controller {
                         $res = $this->Modeldata->getKasusByKodeKesatuan($this->kode_kesatuan, $firstDate, $lastDate);
                         $data['dataKasus'] = $res;
                         $data['dateNow'] = $dateNow;
+                        $data['allSearch'] = false;
         
                         $this->load->view('exportExcel/include/headerExport');
                         $this->load->view('exportExcel/v_excel_masterkasus', $data);
@@ -550,13 +588,27 @@ class Export extends CI_Controller {
                         $data['dateNow'] = $dateNow;
                         $data['dataCC'] = $this->Modeldata->getSelraCC($this->kode_kesatuan, $firstDate, $lastDate);
                         $data['dataCT'] = $this->Modeldata->getSelraCT($this->kode_kesatuan, $firstDate, $lastDate);
+                        $data['allSearch'] = false;
                         
                         $this->load->view('exportExcel/include/headerExport');
                         $this->load->view('exportExcel/v_excel_selra', $data);
                         $this->load->view('exportExcel/include/footerExport');
         
                         break;
+                    case 'kasusmenonjol':
+
+                        $data['title'] = "Export Kasus Menonjol";
+                        $data['menuLink'] = "kasus-menonjol";
+                        $data['dateNow'] = $dateNow;
+                        $data['dataMenonjol'] = $this->Modeldata->getMenonjol($this->kode_kesatuan,$firstDate, $lastDate, 1);
+                        $data['dataBukanMenonjol'] = $this->Modeldata->getMenonjol($this->kode_kesatuan,$firstDate, $lastDate, 0);
+                        $data['allSearch'] = false;
+
+                        $this->load->view('exportExcel/include/headerExport');
+                        $this->load->view('exportExcel/v_excel_kasusmenonjol', $data);
+                        $this->load->view('exportExcel/include/footerExport');
                         
+                        break;
                     case 'matrikKasus':
                         // Get Count For Matrik
                         $status = array("Penanam", "Produksi", "Bandar", "Pengedar", "Pengguna");

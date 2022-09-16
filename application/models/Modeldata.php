@@ -494,6 +494,7 @@ class Modeldata extends CI_Model{
     function getSuperCountWithOneCondition($field, $value, $firstDate, $lastDate){
         $where = array(
             $field => $value,
+            'tb_kasus.isLocked' => 1
         );
         $res = $this->db->select('*')
         ->from('tb_tersangka')
@@ -507,6 +508,7 @@ class Modeldata extends CI_Model{
     
     function getSuperBeratBB($kategori, $firstDate, $lastDate){
         $where = array(
+            'tb_kasus.isLocked' => 1,
             'tb_barangbukti.kategori' => $kategori,
             'tb_barangbukti.isDuplicate' => 0
         );
@@ -519,14 +521,24 @@ class Modeldata extends CI_Model{
     }
 
     function getSuperKSS($firstDate, $lastDate){
+        $where = array(
+            'tb_kasus.isLocked' => 1,
+        );
         return $this->db->select('*')
-        ->from("tb_kasus")->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")->count_all_results();
+        ->from("tb_kasus")
+        ->where($where)
+        ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
+        ->count_all_results();
     }
     
     function getSuperTSK($firstDate, $lastDate){
+        $where = array(
+            'tb_kasus.isLocked' => 1,
+        );
         return $this->db->select('*')
         ->from('tb_tersangka')
         ->join('tb_kasus','tb_tersangka.id_kasus=tb_kasus.id_kasus','LEFT')
+        ->where($where)
         ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
         ->count_all_results();
     }

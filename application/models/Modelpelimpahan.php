@@ -61,7 +61,7 @@ class Modelpelimpahan extends CI_Model{
 	}
     
     // Modul Riwayat Pelimpahan
-	public function getPelimpahanDiterima($kodekesatuan, $firstDate, $lastDate){
+	public function getPelimpahanDiterima($kodekesatuan){
         $where = array(
             'tb_temp_kasus.kode_kesatuan' => $kodekesatuan,
             'tb_temp_kasus.ket_pelimpahan' => 'diterima',
@@ -69,13 +69,12 @@ class Modelpelimpahan extends CI_Model{
           $res = $this->db->select('*')
           ->from('tb_temp_kasus')
           ->where($where)
-          ->where("tb_temp_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
           ->get();
   
           return $res->result_array();
 	}
 
-    public function getPelimpahanDilimpahkan($kodekesatuan, $firstDate, $lastDate){
+    public function getPelimpahanDilimpahkan($kodekesatuan){
         $where = array(
             'tb_kasus.kode_kesatuan' => $kodekesatuan,
             'tb_kasus.ket_pelimpahan' => 'dilimpahkan',
@@ -83,7 +82,6 @@ class Modelpelimpahan extends CI_Model{
         $res = $this->db->select('*')
         ->from('tb_kasus')
         ->where($where)
-        ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")
         ->get();
 
         return $res->result_array();

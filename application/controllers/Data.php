@@ -34,7 +34,7 @@ class Data extends CI_Controller {
 			$res = $this->Modeldata->getSuperKasus($date['start'], $date['end']);
 			$dateNow = $this->dateIndonesia(date('N j/n/Y', strtotime($date['start']))).' - '.$this->dateIndonesia(date('N j/n/Y', strtotime($date['end'])));
 	
-			$data['title'] = "Data Master Kasus";
+			$data['title'] = "Data Ungkap Kasus";
 			$data['menuLink'] = "master-kasus";
 			$data['dataKasus'] = $res;
 			$data['dateNow'] = $dateNow;
@@ -45,7 +45,7 @@ class Data extends CI_Controller {
 			$kesatuan = $this->Modeldata->getKesatuan($this->kode_kesatuan);
 			$dateNow = $this->dateIndonesia(date('N j/n/Y', strtotime($date['start']))) .' - '.$this->dateIndonesia(date('N j/n/Y', strtotime($date['end'])));
 	
-			$data['title'] = "Data Master Kasus";
+			$data['title'] = "Data Ungkap Kasus";
 			$data['menuLink'] = "master-kasus";
 			$data['dataKasus'] = $res;
 			$data['kesatuan'] = $kesatuan;
@@ -80,7 +80,7 @@ class Data extends CI_Controller {
 
 			$res = $this->Modeldata->getSuperKasus($firstDate, $lastDate);
 	
-			$data['title'] = "Data Master Kasus";
+			$data['title'] = "Data Ungkap Kasus";
 			$data['menuLink'] = "master-kasus";
 			$data['dataKasus'] = $res;
 			$data['dateNow'] = $dateNow;
@@ -90,7 +90,7 @@ class Data extends CI_Controller {
 			$res = $this->Modeldata->getKasusByKodeKesatuan($this->kode_kesatuan, $firstDate, $lastDate);
 			$kesatuan = $this->Modeldata->getKesatuan($this->kode_kesatuan);
 	
-			$data['title'] = "Data Master Kasus";
+			$data['title'] = "Data Ungkap Kasus";
 			$data['menuLink'] = "master-kasus";
 			$data['dataKasus'] = $res;
 			$data['kesatuan'] = $kesatuan;
@@ -320,7 +320,7 @@ class Data extends CI_Controller {
 				"BARANGBUKTI" => $bb,
 			);
 
-			$data['title'] = "Data Matrik Kasus";
+			$data['title'] = "Rekap Ungkap Kasus";
 			$data['menuLink'] = "matrik-kasus";
 			$data['dataMatrik'] = $dataMatrikKasus;
 			$data['totalMatrik'] = $totalMatrik;
@@ -386,7 +386,7 @@ class Data extends CI_Controller {
 				"BARANGBUKTI" => $bb,
 			);
 
-			$data['title'] = "Data Matrik Kasus";
+			$data['title'] = "Rekap Ungkap Kasus";
 			$data['menuLink'] = "matrik-kasus";
 			$data['dataMatrik'] = $data;
 			$data['dateNow'] = $dateNow;
@@ -496,8 +496,68 @@ class Data extends CI_Controller {
 				);
 			};
 
-			$data['title'] = "Data Matrik Kasus";
+			// Get Total
+			$statusTotal = array();
+			$usiaTotal = array();
+			$pendidikanTotal = array();
+			$pekerjaanTotal = array();
+			$tkpTotal = array();
+			$bbTotal = array();
+			
+			foreach ($statusInstrumen as $keyStatusInstrumen) {
+				$status[$keyStatusInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.status", $keyStatusInstrumen, $firstDate, $lastDate);
+			};
+			foreach ($usiaInstrumen as $keyUsiaInstrumen) {
+				$usia[$keyUsiaInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.kategori_usia", $keyUsiaInstrumen, $firstDate, $lastDate);
+			};
+			foreach ($pendidikanInstrumen as $keyPendidikanInstrumen) {
+				$pendidikan[$keyPendidikanInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.pendidikan", $keyPendidikanInstrumen, $firstDate, $lastDate);
+			};
+			foreach ($pekerjaanInstrumen as $keyPekerjaanInstrumen) {
+				$pekerjaan[$keyPekerjaanInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.pekerjaan", $keyPekerjaanInstrumen, $firstDate, $lastDate);
+			};
+			foreach ($tkpInstrumen as $keyTkpInstrumen) {
+				$tkp[$keyTkpInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.pekerjaan", $keyTkpInstrumen, $firstDate, $lastDate);
+			};
+
+			foreach ($bbInstrumen as $keyBbInstrumen) {
+				$jumlahBerat = 0;
+				$res = $this->Modeldata->getSuperBeratBB($keyBbInstrumen, $firstDate, $lastDate)->result_array();
+				if (!empty($res)) {
+					foreach ($res as $keybb) {
+						$jumlahBerat += $keybb['jumlah'];
+					}
+					$beratSatuan = "{$jumlahBerat} {$res[0]['satuan']}";
+				}else{
+					$beratSatuan = $jumlahBerat;
+				}
+				$bb[$keyBbInstrumen] = $beratSatuan;
+			};
+
+			$totalMatrik = array(
+				"KSS" => $this->Modeldata->getSuperKSS($firstDate, $lastDate),
+				"TSK" => $this->Modeldata->getSuperTSK($firstDate, $lastDate),
+				"StatusTSK" => $status,
+				"KEWARGANEGARAAN" => array(
+					"WNA" => array(
+						"LK" => $this->Modeldata->getSuperKewarganegaraanJenisKelamin("WNA", "LK", $firstDate, $lastDate),
+						"PR" => $this->Modeldata->getSuperKewarganegaraanJenisKelamin("WNA", "PR", $firstDate, $lastDate),
+					),
+					"WNI" => array(
+						"LK" => $this->Modeldata->getSuperKewarganegaraanJenisKelamin("WNI", "LK", $firstDate, $lastDate),
+						"PR" => $this->Modeldata->getSuperKewarganegaraanJenisKelamin("WNI", "PR", $firstDate, $lastDate),
+					),
+				),
+				"USIA" => $usia,
+				"PENDIDIKAN" => $pendidikan,
+				"PEKERJAAAN" => $pekerjaan,
+				"TKP" => $tkp,
+				"BARANGBUKTI" => $bb,
+			);
+
+			$data['title'] = "Rekap Ungkap Kasus";
 			$data['menuLink'] = "matrik-kasus";
+			$data['totalMatrik'] = $totalMatrik;
 			$data['dataMatrik'] = $dataMatrikKasus;
 			$data['dateNow'] = $dateNow;
 
@@ -560,7 +620,7 @@ class Data extends CI_Controller {
 				"BARANGBUKTI" => $bb,
 			);
 
-			$data['title'] = "Data Matrik Kasus";
+			$data['title'] = "Rekap Ungkap Kasus";
 			$data['menuLink'] = "matrik-kasus";
 			$data['dataMatrik'] = $data;
 			$data['dateNow'] = $dateNow;
@@ -679,7 +739,7 @@ class Data extends CI_Controller {
 			}
 		}
 		
-		$data['title'] = "Data Matrik Barang Bukti";
+		$data['title'] = "Matrik Ungkap Kasus";
 		$data['menuLink'] = "matrik-barang-bukti";
 		$data['dataMatrik'] = $data;
 		$data['dateNow'] = $dateNow;
@@ -759,7 +819,8 @@ class Data extends CI_Controller {
 				$data[$kategori] = $dataStatusTSK; 
 			}
 
-			$data['title'] = "Data Matrik Barang Bukti";
+			
+			$data['title'] = "Matrik Ungkap Kasus";
 			$data['menuLink'] = "matrik-barang-bukti";
 			$data['dataMatrik'] = $data;
 			$data['dateNow'] = $dateNow;
@@ -816,7 +877,7 @@ class Data extends CI_Controller {
 						$data[$kategori] = $dataStatusTSK; 
 				}
 				
-				$data['title'] = "Data Matrik Barang Bukti";
+				$data['title'] = "Matrik Ungkap Kasus";
 				$data['menuLink'] = "matrik-barang-bukti";
 				$data['dataMatrik'] = $data;
 				$data['kesatuanChoosen'] = $nama_kesatuan;
@@ -874,7 +935,7 @@ class Data extends CI_Controller {
 						$data[$kategori] = $dataStatusTSK; 
 				}
 				
-				$data['title'] = "Data Matrik Barang Bukti";
+				$data['title'] = "Matrik Ungkap Kasus";
 				$data['menuLink'] = "matrik-barang-bukti";
 				$data['dataMatrik'] = $data;
 				$data['dateNow'] = $dateNow;
@@ -1083,10 +1144,10 @@ class Data extends CI_Controller {
 				);
 
 				$matrikSelra = array(
-					"SP3" => count($this->Modeldata->getMatrikSelra($this->kode_kesatuan,$date['start'], $date['end'], "SP3")),
-					"RJ" => count($this->Modeldata->getMatrikSelra($this->kode_kesatuan,$date['start'], $date['end'], "RJ")),
-					"TAHAPII" => count($this->Modeldata->getMatrikSelra($this->kode_kesatuan,$date['start'], $date['end'], "TAHAP II")),
-					"BELUMDIKETAHUI" => count($this->Modeldata->getMatrikSelra($this->kode_kesatuan,$date['start'], $date['end'], " ")),
+					"SP3" => count($this->Modeldata->getMatrikSelra($this->kode_kesatuan,$firstDate, $lastDate, "SP3")),
+					"RJ" => count($this->Modeldata->getMatrikSelra($this->kode_kesatuan,$firstDate, $lastDate, "RJ")),
+					"TAHAPII" => count($this->Modeldata->getMatrikSelra($this->kode_kesatuan,$firstDate, $lastDate, "TAHAP II")),
+					"BELUMDIKETAHUI" => count($this->Modeldata->getMatrikSelra($this->kode_kesatuan,$firstDate, $lastDate, " ")),
 				);
 		
 				$data['title'] = "Data Selesai Perkara";

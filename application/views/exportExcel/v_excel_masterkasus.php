@@ -24,6 +24,8 @@
     $CI =& get_instance();
     $CI->load->model('Modelbarangbukti');
     $CI->load->model('Modeltersangka');
+    $CI->load->model('Modelkesatuan');
+    $CI->load->model('Modeladmin');
 ?>
 
 <div class="container">
@@ -35,8 +37,12 @@
             <thead>
                 <tr class="text-center">
                   <th>No</th>
+                  <?php if($allSearch): ?>
+                  <th>Kesatuan</th>
+                  <?php endif; ?>
                   <th>No Laporan Polisi</th>
-                  <th>Created Date</th>
+                  <th>Tanggal Input LP</th>
+                  <th>Durasi Perkara</th>
                   <th>Deskripsi Waktu & TKP</th>
                   <th>Identitas Tersangka</th> 
                   <th>Umur</th> 
@@ -44,6 +50,7 @@
                   <th>Pekerjaan</th> 
                   <th>Barang Bukti</th> 
                   <th>Modus Operandi</th> 
+                  <th>Administrator</th> 
                   <th>Keterangan Pelimpahan</th> 
                   <th>Status(Selra)</th>
                   <th>LP Menonjol</th>
@@ -63,8 +70,25 @@
                   ?>
                 <tr>
                     <td class="text-center"><?= ($display) ? $no : "" ?></td>
+                    <?php if($allSearch): ?>
+                    <td class="textcenter">
+                      <?php $dataKesatuan =  $CI->Modelkesatuan->getKesatuanByKode($row_kasus['kode_kesatuan']);?>
+                      <?= ($display) ? $dataKesatuan[0]["nama"]  :  "" ?>
+                    </td>
+                    <?php endif; ?>
                     <td><?= $display ? $row_kasus["no_laporanpolisi"] : ""; ?></td>
                     <td><?= $display ? dateIndonesia(date('N j/n/Y', strtotime($row_kasus["created_at"]))) : ""; ?></td>
+                    <td>
+                      <?php if($display): 
+                        if(!empty($row_kasus["date_statusKasus"])):
+                          $diffSelra = date_diff(date_create($row_kasus["created_at"]), date_create($row_kasus["date_statusKasus"]));
+                          echo $diffSelra->format("%a")." Hari (SELRA)";
+                        else:
+                          $diff = date_diff(date_create($row_kasus["created_at"]), date_create(date("Y-m-d")));
+                          echo $diff->format("%a")." Hari - Hingga Hari Ini";
+                        endif; 
+                      endif; ?>
+                    </td>
                     <td>
                       <?= ($display) ? $row_kasus["deskripsi_waktudantkp"]  :  "" ?>
                     </td>
@@ -112,6 +136,20 @@
                     </td>
                     <td><?= $display ? $row_kasus["pasal"] : '' ?></td>
                     <td>
+                      <?php
+                        $dataAdmin = $CI->Modeladmin->getAdminByNRP($row_kasus['nrp_admin']);
+                        if($display){
+                          if (!empty($row_kasus["nrp_admin"])) {
+                            echo $dataAdmin[0]['nama_admin'].' - NRP. '.$dataAdmin[0]['nrp']; 
+                          }else{ ?>
+                            <a class="btn btn-sm btn-info w-100" data-toggle="modal" data-target="#adminModal<?= $row_kasus['id_kasus']; ?>">Pilih Admin</a>
+                          <?php }
+                        }else{ 
+                          echo '';
+                        };
+                      ?>
+                    </td>
+                    <td>
                       <?php if($display): ?>
                         <?php if($row_kasus["ket_pelimpahan"] == 'dilimpahkan'){ ?>
                           <button class="btn btn-success btn-sm"><strong>Dilimpahkan</strong></button>
@@ -120,14 +158,31 @@
                         <?php } ?>
                       <?php endif; ?>
                     </td>
-                    <td>
+                    <td class="text-center">
                       <?php if($display): ?>
                         <?php if(empty($row_kasus["status_kasus"])){ ?>
                           <button class="btn btn-warning btn-sm"><strong>Belum Diketahui</strong></button>
                         <?php }else if ($row_kasus["status_kasus"] == 'TAHAP II'){ ?>
-                          <button class="btn btn-success btn-sm"><strong>Tahap II</strong></button>
-                        <?php }else{ ?>
-                          <button class="btn btn-success btn-sm"><strong>SP3/RJ</strong></button>
+                          <button class="btn btn-success btn-sm">
+                            <strong>Tahap II</strong>
+                            <?php if(!empty($row_kasus["ket_statusKasus"])): ?>
+                                <p><strong>Keterangan :</strong>&nbsp;<?= $row_kasus["ket_statusKasus"] ?></p>
+                            <?php endif; ?>
+                          </button>
+                        <?php }else if($row_kasus["status_kasus"] == 'SP3'){ ?>
+                          <button class="btn btn-success btn-sm">
+                            <strong>SP3</strong>
+                            <?php if(!empty($row_kasus["ket_statusKasus"])): ?>
+                                <p><strong>Keterangan :</strong>&nbsp;<?= $row_kasus["ket_statusKasus"] ?></p>
+                            <?php endif; ?>
+                          </button>
+                        <?php }else{?>
+                          <button class="btn btn-success btn-sm">
+                            <strong>RJ</strong>
+                            <?php if(!empty($row_kasus["ket_statusKasus"])): ?>
+                                <p><strong>Keterangan :</strong>&nbsp;<?= $row_kasus["ket_statusKasus"] ?></p>
+                            <?php endif; ?>
+                          </button>
                         <?php }?>
                       <?php endif; ?>
                     </td>

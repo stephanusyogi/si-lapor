@@ -129,14 +129,11 @@ class Pelimpahan extends CI_Controller {
 			redirect(base_url('404_override'));
 		}
 
-		$date = $this->rangeMonth(date("Y-m-d", strtotime("-1 month")), date("Y-m-d", strtotime("+1 month")));
-		$dateNow = $this->dateIndonesia(date('N j/n/Y', strtotime($date['start']))).' - '.$this->dateIndonesia(date('N j/n/Y', strtotime($date['end'])));
-
 		$data['title'] = "Riwayat LP Kasus Pelimpahan";
 		$data['menuLink'] = "riwayat-pelimpahan";
-		$data['LPditerima'] = $this->Modelpelimpahan->getPelimpahanDiterima($this->kode_kesatuan, $date['start'], $date['end']);
-		$data['LPdilimpahkan'] = $this->Modelpelimpahan->getPelimpahanDilimpahkan($this->kode_kesatuan, $date['start'], $date['end']);
-		$data['dateNow'] = $dateNow;
+		$data['LPditerima'] = $this->Modelpelimpahan->getPelimpahanDiterima($this->kode_kesatuan);
+		$data['LPdilimpahkan'] = $this->Modelpelimpahan->getPelimpahanDilimpahkan($this->kode_kesatuan);
+		$data['dateNow'] = "All";
 
 
 		$this->load->view('include/header',$data);
@@ -164,8 +161,8 @@ class Pelimpahan extends CI_Controller {
 
 		$data['title'] = "Riwayat LP Kasus Pelimpahan";
 		$data['menuLink'] = "riwayat-pelimpahan";
-		$data['LPditerima'] = $this->Modelpelimpahan->getPelimpahanDiterima($this->kode_kesatuan, $firstDate, $lastDate);
-		$data['LPdilimpahkan'] = $this->Modelpelimpahan->getPelimpahanDilimpahkan($this->kode_kesatuan, $firstDate, $lastDate);
+		$data['LPditerima'] = $this->Modelpelimpahan->getPelimpahanDiterima($this->kode_kesatuan);
+		$data['LPdilimpahkan'] = $this->Modelpelimpahan->getPelimpahanDilimpahkan($this->kode_kesatuan);
 		$data['dateNow'] = $dateNow;
 
 
