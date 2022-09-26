@@ -46,8 +46,9 @@
       },
       // Configuration options
       options: {
+        maintainAspectRatio: false,
         layout: {
-          padding: 2,
+          padding: 1
         },
         legend: {
           position: 'bottom',
@@ -99,6 +100,7 @@
       ]
       },
       options: {
+        maintainAspectRatio: false,
         layout: {
           padding: 3,
         },
@@ -152,6 +154,7 @@
       ]
       },
       options: {
+        maintainAspectRatio: false,
         layout: {
           padding: 3,
         },
@@ -205,6 +208,7 @@
       ]
       },
       options: {
+        maintainAspectRatio: false,
         layout: {
           padding: 3,
         },
@@ -258,6 +262,7 @@
       ]
       },
       options: {
+        maintainAspectRatio: false,
         layout: {
           padding: 3,
         },
@@ -311,6 +316,7 @@
       ]
       },
       options: {
+        maintainAspectRatio: false,
         layout: {
           padding: 3,
         },
@@ -364,6 +370,7 @@
       ]
       },
       options: {
+        maintainAspectRatio: false,
         layout: {
           padding: 3,
         },
@@ -417,6 +424,7 @@
       ]
       },
       options: {
+        maintainAspectRatio: false,
         layout: {
           padding: 3,
         },
@@ -470,6 +478,7 @@
       ]
       },
       options: {
+        maintainAspectRatio: false,
         layout: {
           padding: 3,
         },
@@ -523,6 +532,7 @@
       ]
       },
       options: {
+        maintainAspectRatio: false,
         layout: {
           padding: 3,
         },
@@ -576,6 +586,7 @@
       ]
       },
       options: {
+        maintainAspectRatio: false,
         layout: {
           padding: 3,
         },
@@ -629,6 +640,7 @@
       ]
       },
       options: {
+        maintainAspectRatio: false,
         layout: {
           padding: 3,
         },
@@ -682,6 +694,7 @@
       ]
       },
       options: {
+        maintainAspectRatio: false,
         layout: {
           padding: 3,
         },
@@ -735,6 +748,7 @@
       ]
       },
       options: {
+        maintainAspectRatio: false,
         layout: {
           padding: 3,
         },

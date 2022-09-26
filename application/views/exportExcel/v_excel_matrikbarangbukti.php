@@ -812,7 +812,7 @@
                     $beratTotal = 0;
                     if (!empty($JML_BERAT_BB)) {
                         foreach ($JML_BERAT_BB as $keyBeratBB) {
-                        $berat = (int)$keyBeratBB['jumlah'];
+                        $berat = (float)$keyBeratBB['jumlah'];
                         $beratTotal += $berat;
                         }
                         $countResult = "{$beratTotal} {$JML_BERAT_BB[0]['satuan']}";

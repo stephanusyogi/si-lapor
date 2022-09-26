@@ -48,6 +48,9 @@
       <div class="row">
         <div class="col-md-10">
           <a class="btn btn-primary btn-sm mt-1 mx-1" data-toggle="modal" data-target="#sortModal"><span><i class="fas fa-filter"></i> </span>Sort by Date</a>
+          <?php if($btnExitSort): ?>
+            <a class="btn btn-danger btn-sm mt-1 mx-1" href="<?= base_url('master-kasus')?>">Exit From Sort View by Date</a>
+          <?php endif; ?>
         </div>
         <div class="col-md-2 text-right">
           <a class="btn btn-success btn-sm mt-1" href="<?= base_url('export-opsi/kasusMaster') ?>"><span><i class="fas fa-print"></i> </span>Export</a>

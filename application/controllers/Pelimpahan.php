@@ -47,6 +47,8 @@ class Pelimpahan extends CI_Controller {
 			$data['dataKasusPelimpahan'] = $resPelimpahan;
 
 		}
+		
+		$data['btnExitSort'] = false;
 	
 		$this->load->view('include/header',$data);
 		$this->load->view('v_pelimpahan_masterkasus',$data);
@@ -92,6 +94,8 @@ class Pelimpahan extends CI_Controller {
 			$data['dateNow'] = $dateNow;
 
 		}
+
+		$data['btnExitSort'] = true;
 		
 		$this->load->view('include/header',$data);
 		$this->load->view('v_pelimpahan_masterkasus',$data);
@@ -135,6 +139,7 @@ class Pelimpahan extends CI_Controller {
 		$data['LPdilimpahkan'] = $this->Modelpelimpahan->getPelimpahanDilimpahkan($this->kode_kesatuan);
 		$data['dateNow'] = "All";
 
+		$data['btnExitSort'] = false;
 
 		$this->load->view('include/header',$data);
 		$this->load->view('v_pelimpahan_riwayat',$data);
@@ -164,6 +169,8 @@ class Pelimpahan extends CI_Controller {
 		$data['LPditerima'] = $this->Modelpelimpahan->getPelimpahanDiterima($this->kode_kesatuan);
 		$data['LPdilimpahkan'] = $this->Modelpelimpahan->getPelimpahanDilimpahkan($this->kode_kesatuan);
 		$data['dateNow'] = $dateNow;
+
+		$data['btnExitSort'] = true;
 
 
 		$this->load->view('include/header',$data);

@@ -142,7 +142,7 @@
               <form action="<?= base_url() ?>dashboard/viewDiagramByDate" method="post">
                 <label for="tahunsurat"><small>Tampilkan Seluruh Diagram Berdasarkan Tahun :</small></label>
                 <div class="d-flex">
-                  <div class="input-group date" id="tahunsurat" data-target-input="nearest" style="width:10%;">
+                  <div class="input-group date inputSort" id="tahunsurat" data-target-input="nearest">
                     <input type="text" name="tahunDiagram" class="form-control datetimepicker-input" data-target="#tahunsurat" required/>
                     <div class="input-group-append" data-target="#tahunsurat" data-toggle="datetimepicker">
                       <div class="input-group-text"><i class="fa fa-calendar"></i></div>
@@ -154,8 +154,12 @@
                   <?php endif; ?>
                 </div>
               </form>
+              <div class="chartCard">
+                <div class="chartBox">
+                  <canvas id="myChart" class="chart mt-2"></canvas>
+                </div>
               </div>
-            <canvas class="chart mt-2" id="myChart" width="300" height="100"></canvas>
+              </div>
           </div>
           <hr>
           <!-- Diagram Barang Bukti -->
@@ -174,19 +178,71 @@
             </div>
             <hr>
             <div id="suburbList">
-              <canvas class="chart mt-2" id="GanjaChart" height="100" title="Ganja"></canvas>
-              <canvas class="chart mt-2" id="GorillaChart" height="100" title="Tembakau Gorilla"></canvas>
-              <canvas class="chart mt-2" id="HashishChart" height="100" title="Hashish"></canvas>
-              <canvas class="chart mt-2" id="OpiumChart" height="100" title="Opium"></canvas>
-              <canvas class="chart mt-2" id="MorphinChart" height="100" title="Morphin"></canvas>
-              <canvas class="chart mt-2" id="HeroinChart" height="100" title="Heroin/Putaw"></canvas>
-              <canvas class="chart mt-2" id="KokainChart" height="100" title="Kokain"></canvas>
-              <canvas class="chart mt-2" id="ExstacyChart" height="100" title="Exstacy/Carnophen"></canvas>
-              <canvas class="chart mt-2" id="SabuChart" height="100" title="Sabu"></canvas>
-              <canvas class="chart mt-2" id="GolChart" height="100" title="GOL IV"></canvas>
-              <canvas class="chart mt-2" id="DaftarChart" height="100" title="Daftar G"></canvas>
-              <canvas class="chart mt-2" id="KosmetikChart" height="100" title="Kosmetik"></canvas>
-              <canvas class="chart mt-2" id="JamuChart" height="100" title="Jamu"></canvas>
+              <div class="chartCard" title="Ganja">
+                <div class="chartBox">
+                  <canvas class="chart mt-2" id="GanjaChart" height="100" ></canvas>
+                </div>
+              </div>
+              <div class="chartCard" title="Tembakau Gorilla">
+                <div class="chartBox">
+                  <canvas class="chart mt-2" id="GorillaChart" height="100" ></canvas>
+                </div>
+              </div>
+              <div class="chartCard" title="Hashish">
+                <div class="chartBox">
+                  <canvas class="chart mt-2" id="HashishChart" height="100" ></canvas>
+                </div>
+              </div>
+              <div class="chartCard" title="Opium">
+                <div class="chartBox">
+                  <canvas class="chart mt-2" id="OpiumChart" height="100" ></canvas>
+                </div>
+              </div>
+              <div class="chartCard" title="Morphin">
+                <div class="chartBox">
+                  <canvas class="chart mt-2" id="MorphinChart" height="100" ></canvas>
+                </div>
+              </div>
+              <div class="chartCard" title="Heroin/Putaw">
+                <div class="chartBox">
+                  <canvas class="chart mt-2" id="HeroinChart" height="100" ></canvas>
+                </div>
+              </div>
+              <div class="chartCard" title="Kokain">
+                <div class="chartBox">
+                  <canvas class="chart mt-2" id="KokainChart" height="100" ></canvas>
+                </div>
+              </div>
+              <div class="chartCard" title="Exstacy/Carnophen">
+                <div class="chartBox">
+                  <canvas class="chart mt-2" id="ExstacyChart" height="100" ></canvas>
+                </div>
+              </div>
+              <div class="chartCard" title="Sabu">
+                <div class="chartBox">
+                  <canvas class="chart mt-2" id="SabuChart" height="100" ></canvas>
+                </div>
+              </div>
+              <div class="chartCard" title="GOL IV">
+                <div class="chartBox">
+                  <canvas class="chart mt-2" id="GolChart" height="100" ></canvas>
+                </div>
+              </div>
+              <div class="chartCard" title="Daftar G">
+                <div class="chartBox">
+                  <canvas class="chart mt-2" id="DaftarChart" height="100" ></canvas>
+                </div>
+              </div>
+              <div class="chartCard" title="Kosmetik">
+                <div class="chartBox">
+                  <canvas class="chart mt-2" id="KosmetikChart" height="100"></canvas>
+                </div>
+              </div>
+              <div class="chartCard" title="Jamu">
+                <div class="chartBox">
+                  <canvas class="chart mt-2" id="JamuChart" height="100"></canvas>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -203,7 +259,7 @@
         input = document.getElementById('ccf_filter_input');
         filter = input.value.toUpperCase();
         div = document.getElementById("suburbList");
-        canvas = div.getElementsByTagName('canvas');
+        canvas = div.getElementsByClassName('chartCard');
         // Loop through all list items, and hide those who don't match the search query
         for (i = 0; i < canvas.length; i++) {
             title = canvas[i].getAttribute("title");

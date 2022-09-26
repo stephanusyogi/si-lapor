@@ -11,6 +11,8 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="<?= base_url()?>/assets/adminlte/plugins/fontawesome-free/css/all.min.css">
+  <!-- Style LESS -->
+  <link rel="stylesheet/less" type="text/css" href="<?= base_url() ?>assets/css/style.less" />
   <!-- icheck bootstrap -->
   <link rel="stylesheet" href="<?php echo base_url()?>/assets/adminlte/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
   <!-- Theme style -->
@@ -141,9 +143,11 @@
     }
   </style>
 <body class="hold-transition login-page" style="padding-top:1rem!important;height:unset!important;">  
-<h1><strong>SIAP</strong></h1>
-<h2><strong>Si</strong>stem <strong>A</strong>plikasi <strong>P</strong>elaporan</h2>
-<h3>Bagbinopnal Ditresnarkoba Polda Jatim</h3>
+<div class="container text-center">
+  <h1><strong>SIAP</strong></h1>
+  <h2><strong>Si</strong>stem <strong>A</strong>plikasi <strong>P</strong>elaporan</h2>
+  <h3>Bagbinopnal Ditresnarkoba Polda Jatim</h3>
+</div>
 <div class="login-box">
   <div class="login-logo">
     <img class="my-2 w-50" src="<?= base_url(); ?>/assets/images/logo-ditresnarkoba-poldajatim.png" />

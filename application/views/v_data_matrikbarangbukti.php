@@ -40,6 +40,9 @@
         <div class="row">
           <div class="col-md-10">
             <a class="btn btn-primary btn-sm mt-1 mx-1" data-toggle="modal" data-target="#sortModal"><span><i class="fas fa-filter"></i> </span>Sort</a>
+            <?php if($btnExitSort): ?>
+              <a class="btn btn-danger btn-sm mt-1 mx-1" href="<?= base_url('matrik-barang-bukti')?>">Exit From Sort View by Date</a>
+            <?php endif; ?>
           </div>
           <div class="col-md-2 text-right">
               <a class="btn btn-success btn-sm mt-1" href="<?= base_url('export-opsi/matrikBB') ?>"><span><i class="fas fa-print"></i> </span>Export</a>
@@ -897,7 +900,7 @@
                             $beratTotal = 0;
                             if (!empty($JML_BERAT_BB)) {
                               foreach ($JML_BERAT_BB as $keyBeratBB) {
-                                $berat = (int)$keyBeratBB['jumlah'];
+                                $berat = (float)$keyBeratBB['jumlah'];
                                 $beratTotal += $berat;
                               }
                               $countResult = "{$beratTotal} {$JML_BERAT_BB[0]['satuan']}";

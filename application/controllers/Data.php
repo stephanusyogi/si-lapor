@@ -52,6 +52,8 @@ class Data extends CI_Controller {
 			$data['dateNow'] = $dateNow;
 
 		}
+		
+		$data['btnExitSort'] = false;
 
 		$this->load->view('include/header',$data);
 		$this->load->view('v_data_masterkasus',$data);
@@ -97,6 +99,8 @@ class Data extends CI_Controller {
 			$data['dateNow'] = $dateNow;
 
 		}
+		
+		$data['btnExitSort'] = true;
 	
 		$this->load->view('include/header',$data);
 		$this->load->view('v_data_masterkasus',$data);
@@ -392,6 +396,8 @@ class Data extends CI_Controller {
 			$data['dateNow'] = $dateNow;
 
 		}
+			
+		$data['btnExitSort'] = false;
 		
 		$this->load->view('include/header',$data);
 		$this->load->view('v_data_matrikkasus',$data);
@@ -626,6 +632,8 @@ class Data extends CI_Controller {
 			$data['dateNow'] = $dateNow;
 
 		}
+			
+		$data['btnExitSort'] = true;
 
 		$this->load->view('include/header',$data);
 		$this->load->view('v_data_matrikkasus',$data);
@@ -743,6 +751,8 @@ class Data extends CI_Controller {
 		$data['menuLink'] = "matrik-barang-bukti";
 		$data['dataMatrik'] = $data;
 		$data['dateNow'] = $dateNow;
+		
+		$data['btnExitSort'] = false;
 
 		$this->load->view('include/header',$data);
 		$this->load->view('v_data_matrikbarangbukti',$data);
@@ -939,6 +949,8 @@ class Data extends CI_Controller {
 				$data['menuLink'] = "matrik-barang-bukti";
 				$data['dataMatrik'] = $data;
 				$data['dateNow'] = $dateNow;
+				
+			$data['btnExitSort'] = true;
 
 				$this->load->view('include/header',$data);
 				$this->load->view('v_data_matrikbarangbukti',$data);
@@ -1028,6 +1040,8 @@ class Data extends CI_Controller {
 			$data['dataCT'] = $this->Modeldata->getSelraCT($this->kode_kesatuan,$date['start'], $date['end']);
 			$data['dateNow'] = $dateNow;
 		}
+		
+		$data['btnExitSort'] = false;
 		
 		$this->load->view('include/header',$data);
 		$this->load->view('v_selra',$data);
@@ -1162,6 +1176,8 @@ class Data extends CI_Controller {
 
 		}
 		
+		$data['btnExitSort'] = true;
+		
 		$this->load->view('include/header',$data);
 		$this->load->view('v_selra',$data);
 		$this->load->view('include/footer',$data);
@@ -1225,6 +1241,8 @@ class Data extends CI_Controller {
 			$data['dataBukanMenonjol'] = $this->Modeldata->getMenonjol($this->kode_kesatuan, $date['start'], $date['end'], 0);
 
 		}
+		
+		$data['btnExitSort'] = false;
 		
 		$this->load->view('include/header',$data);
 		$this->load->view('v_kasusmenonjol',$data);
@@ -1339,6 +1357,8 @@ class Data extends CI_Controller {
 			}
 
 		}
+		
+		$data['btnExitSort'] = true;
 		
 		$this->load->view('include/header',$data);
 		$this->load->view('v_kasusmenonjol',$data);

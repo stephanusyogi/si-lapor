@@ -109,7 +109,3 @@ $route['data-admin'] = 'admin/viewAdmin';
 
 // Files
 $route['upload-file'] = 'file/viewUploadFile';
-
-// Additional route for super admin
-// $route['riwayat-pelimpahan'] = 'pelimpahan/viewRiwayatPelimpahan';
-// $route['upload-file'] = 'file/viewUploadFile';

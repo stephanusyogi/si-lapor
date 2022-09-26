@@ -353,15 +353,15 @@ $(document).ready(function(){
     
     // JUMLAH BERAT BB
     var arrayJumlahBERAT_BB = {
-        "Penanam" : parseInt(document.getElementsByClassName('PenanamBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[0]),
+        "Penanam" : parseFloat(document.getElementsByClassName('PenanamBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[0]),
         "PenanamSatuan" : document.getElementsByClassName('PenanamBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[1],
-        "Produksi" : parseInt(document.getElementsByClassName('ProduksiBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[0]),
+        "Produksi" : parseFloat(document.getElementsByClassName('ProduksiBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[0]),
         "ProduksiSatuan" : document.getElementsByClassName('ProduksiBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[1],
-        "Bandar" : parseInt(document.getElementsByClassName('BandarBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[0]),
+        "Bandar" : parseFloat(document.getElementsByClassName('BandarBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[0]),
         "BandarSatuan" : document.getElementsByClassName('BandarBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[1],
-        "Pengedar" : parseInt(document.getElementsByClassName('PengedarBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[0]),
+        "Pengedar" : parseFloat(document.getElementsByClassName('PengedarBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[0]),
         "PengedarSatuan" : document.getElementsByClassName('PengedarBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[1],
-        "Pengguna" : parseInt(document.getElementsByClassName('PenggunaBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[0]),
+        "Pengguna" : parseFloat(document.getElementsByClassName('PenggunaBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[0]),
         "PenggunaSatuan" : document.getElementsByClassName('PenggunaBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[1],
     };
     var satuanBerat = '';

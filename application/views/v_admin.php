@@ -36,9 +36,9 @@
           <li class="nav-item" role="presentation">
             <button class="nav-link" id="superadmin-tab" data-toggle="tab" data-target="#superadmin" type="button" role="tab" aria-controls="superadmin" aria-selected="false">Super Admin</button>
           </li>
-          <li class="nav-item" role="presentation">
+          <!-- <li class="nav-item" role="presentation">
             <button class="nav-link" id="principal-tab" data-toggle="tab" data-target="#principal" type="button" role="tab" aria-controls="principal" aria-selected="false">Principal Admin</button>
-          </li>
+          </li> -->
         </ul>
         <div class="tab-content" id="myTabContent">
           <div class="tab-pane fade show active py-3" id="admin" role="tabpanel" aria-labelledby="admin-tab">
@@ -106,8 +106,8 @@
                                   <div class="input-group-append">
                                     <div class="input-group-text">
                                       <script>
-                                          function pswVisibiltyEdit(<?= $row_admin['id_admin'] ?>){
-                                            var x = document.getElementById("passwordEdit<?= $row_admin['id_admin'] ?>");
+                                          function pswVisibiltyEdit(id){
+                                            var x = document.getElementById(`passwordEdit${id}`);
                                             if (x.type === "password") {
                                               x.type = "text";
                                             } else {
@@ -185,25 +185,25 @@
                               <input type="hidden" name="kode_kesatuan" value="<?= $row_superadmin['kode_kesatuan'] ?>">
                               <div class="form-group">
                                 <label for="">Nama :</label>
-                                <input type="text" name="nama_admin" class="form-control" autocomplete="off" placeholder="Masukkan Nama Admin" required value="<?= $row_admin['nama_admin'] ?>">
+                                <input type="text" name="nama_admin" class="form-control" autocomplete="off" placeholder="Masukkan Nama Admin" required value="<?= $row_superadmin['nama_admin'] ?>">
                               </div>
                               <div class="form-group">
                                 <label for="">NRP :</label>
-                                <input type="text" name="nrp" class="form-control" autocomplete="off" placeholder="Masukkan NRP Admin" required value="<?= $row_admin['nrp'] ?>">
+                                <input type="text" name="nrp" class="form-control" autocomplete="off" placeholder="Masukkan NRP Admin" required value="<?= $row_superadmin['nrp'] ?>">
                               </div>
                               <div class="form-group">
                                 <label for="">No. Telepon :</label>
-                                <input type="text" name="notelp" class="form-control" autocomplete="off" placeholder="Masukkan No. Telepeon Admin" required value="<?= $row_admin['notelp'] ?>">
+                                <input type="text" name="notelp" class="form-control" autocomplete="off" placeholder="Masukkan No. Telepeon Admin" required value="<?= $row_superadmin['notelp'] ?>">
                               </div>
                               <div class="form-group ">
                                 <label for="">Ubah Password :</label>
                                 <div class="input-group">
-                                  <input type="password" id="passwordEdit" name="password" class="form-control" autocomplete="off" placeholder="Masukkan Password Admin">
+                                  <input type="password" id="passwordEdit<?= $row_superadmin['id_admin'] ?>" name="password" class="form-control" autocomplete="off" placeholder="Masukkan Password Admin">
                                   <div class="input-group-append">
                                     <div class="input-group-text">
                                       <script>
-                                          function pswVisibiltyEdit(){
-                                            var x = document.getElementById("passwordEdit");
+                                          function pswVisibiltyEdit(id){
+                                            var x = document.getElementById(`passwordEdit${id}`);
                                             if (x.type === "password") {
                                               x.type = "text";
                                             } else {
@@ -211,7 +211,7 @@
                                             }
                                           }
                                       </script>
-                                      <span class="fas fa-eye" onclick="pswVisibiltyEdit()"></span>
+                                      <span class="fas fa-eye" onclick="pswVisibiltyEdit(<?= $row_superadmin['id_admin'] ?>)"></span>
                                     </div>
                                   </div>
                                 </div>
@@ -281,25 +281,25 @@
                               <input type="hidden" name="kode_kesatuan" value="<?= $row_principaladmin['kode_kesatuan'] ?>">
                               <div class="form-group">
                                 <label for="">Nama :</label>
-                                <input type="text" name="nama_admin" class="form-control" autocomplete="off" placeholder="Masukkan Nama Admin" required value="<?= $row_admin['nama_admin'] ?>">
+                                <input type="text" name="nama_admin" class="form-control" autocomplete="off" placeholder="Masukkan Nama Admin" required value="<?= $row_principaladmin['nama_admin'] ?>">
                               </div>
                               <div class="form-group">
                                 <label for="">NRP :</label>
-                                <input type="text" name="nrp" class="form-control" autocomplete="off" placeholder="Masukkan NRP Admin" required value="<?= $row_admin['nrp'] ?>">
+                                <input type="text" name="nrp" class="form-control" autocomplete="off" placeholder="Masukkan NRP Admin" required value="<?= $row_principaladmin['nrp'] ?>">
                               </div>
                               <div class="form-group">
                                 <label for="">No. Telepon :</label>
-                                <input type="text" name="notelp" class="form-control" autocomplete="off" placeholder="Masukkan No. Telepeon Admin" required value="<?= $row_admin['notelp'] ?>">
+                                <input type="text" name="notelp" class="form-control" autocomplete="off" placeholder="Masukkan No. Telepeon Admin" required value="<?= $row_principaladmin['notelp'] ?>">
                               </div>
                               <div class="form-group ">
                                 <label for="">Ubah Password :</label>
                                 <div class="input-group">
-                                  <input type="password" id="passwordEdit" name="password" class="form-control" autocomplete="off" placeholder="Masukkan Password Admin">
+                                  <input type="password" id="passwordEdit<?= $row_principaladmin['id_admin'] ?>" name="password" class="form-control" autocomplete="off" placeholder="Masukkan Password Admin">
                                   <div class="input-group-append">
                                     <div class="input-group-text">
                                       <script>
-                                          function pswVisibiltyEdit(){
-                                            var x = document.getElementById("passwordEdit");
+                                          function pswVisibiltyEdit(id){
+                                            var x = document.getElementById(`passwordEdit${id}`);
                                             if (x.type === "password") {
                                               x.type = "text";
                                             } else {
@@ -307,7 +307,7 @@
                                             }
                                           }
                                       </script>
-                                      <span class="fas fa-eye" onclick="pswVisibiltyEdit()"></span>
+                                      <span class="fas fa-eye" onclick="pswVisibiltyEdit(<?= $row_principaladmin['id_admin'] ?>)"></span>
                                     </div>
                                   </div>
                                 </div>

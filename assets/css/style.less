@@ -1,0 +1,45 @@
+body{
+  margin:0;
+  padding:0;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #444; 
+}
+
+// General
+.inputSort{
+  width:15%!important;
+  @media screen and (max-width: 769px) {
+    width:30%!important;
+  }
+  @media screen and (max-width: 426px) {
+    width:50%!important;
+  }
+}
+
+// Dashboard View
+.chartCard {
+  overflow:auto;
+}
+.chartBox {
+  height:30rem!important;
+  @media screen and (max-width: 426px) {
+    height:20rem!important;
+  }
+}

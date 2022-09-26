@@ -42,6 +42,8 @@
 <script src="<?php echo base_url(); ?>/assets/adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
 <!-- Select -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+<!-- LESS -->
+<script src="https://cdn.jsdelivr.net/npm/less" ></script>
 
 <script type="text/javascript">
   var windowURL = window.location.href;
