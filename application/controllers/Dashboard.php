@@ -78,7 +78,6 @@ class Dashboard extends CI_Controller {
 			// Data Diagram BB
 			$data['dataDiagramBB'] = $dataDiagramBB;
 			$data['tahunDiagram'] = $tahunDiagram;
-			$data['btnExitSort'] = false;
 
 		} else {
 
@@ -141,10 +140,10 @@ class Dashboard extends CI_Controller {
 			// Data Diagram BB
 			$data['dataDiagramBB'] = $dataDiagramBB;
 			$data['tahunDiagram'] = $tahunDiagram;
-			$data['btnExitSort'] = false;
 		}
 
 		$data['viewDiagramByDate'] = false;
+		$data['btnExitSort'] = false;
 
 		$this->load->view('include/header', $data);
 		$this->load->view('v_dashboard', $data);
@@ -299,6 +298,7 @@ class Dashboard extends CI_Controller {
 		}
 
 		$data['viewDiagramByDate'] = true;
+		$data['btnExitSort'] = true;
 
 		$this->load->view('include/header', $data);
 		$this->load->view('v_dashboard', $data);

@@ -828,12 +828,12 @@ class Data extends CI_Controller {
 				};
 				$data[$kategori] = $dataStatusTSK; 
 			}
-
 			
 			$data['title'] = "Matrik Ungkap Kasus";
 			$data['menuLink'] = "matrik-barang-bukti";
 			$data['dataMatrik'] = $data;
 			$data['dateNow'] = $dateNow;
+			$data['btnExitSort'] = true;
 
 			$this->load->view('include/header',$data);
 			$this->load->view('v_data_matrikbarangbukti',$data);
@@ -892,6 +892,7 @@ class Data extends CI_Controller {
 				$data['dataMatrik'] = $data;
 				$data['kesatuanChoosen'] = $nama_kesatuan;
 				$data['dateNow'] = $dateNow;
+				$data['btnExitSort'] = true;
 
 				$this->load->view('include/header',$data);
 				$this->load->view('v_data_matrikbarangbukti',$data);
@@ -949,8 +950,7 @@ class Data extends CI_Controller {
 				$data['menuLink'] = "matrik-barang-bukti";
 				$data['dataMatrik'] = $data;
 				$data['dateNow'] = $dateNow;
-				
-			$data['btnExitSort'] = true;
+				$data['btnExitSort'] = true;
 
 				$this->load->view('include/header',$data);
 				$this->load->view('v_data_matrikbarangbukti',$data);
