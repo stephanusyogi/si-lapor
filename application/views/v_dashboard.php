@@ -2,6 +2,11 @@
     .diagramTren{
       border:1px solid lightgrey;
     }
+    .diagramBB{
+      border:1px solid lightgrey;
+      height: 30rem;
+      overflow-y:scroll;
+    }
   </style>
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -133,20 +138,56 @@
         <?php endif; ?>
         <!-- Main row -->
         <div class="row">
-          <div class="diagramTren my-2 px-2 py-2 w-100">
-            <form action="<?= base_url() ?>dashboard/viewDiagramByDate" method="post">
-              <label for="tahunsurat"><small>Tampilkan Diagram Tindak Pidana Berdasarkan Tahun :</small></label>
-              <div class="d-flex">
-                <div class="input-group date" id="tahunsurat" data-target-input="nearest" style="width:10%;">
-                  <input type="text" name="tahunDiagram" class="form-control datetimepicker-input" data-target="#tahunsurat" required/>
-                  <div class="input-group-append" data-target="#tahunsurat" data-toggle="datetimepicker">
-                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+          <div class="diagramTren my-2 px-2 py-2 w-100" id="<?= ($viewDiagramByDate) ? 'scrollToContent' : '' ?>">
+              <form action="<?= base_url() ?>dashboard/viewDiagramByDate" method="post">
+                <label for="tahunsurat"><small>Tampilkan Seluruh Diagram Berdasarkan Tahun :</small></label>
+                <div class="d-flex">
+                  <div class="input-group date" id="tahunsurat" data-target-input="nearest" style="width:10%;">
+                    <input type="text" name="tahunDiagram" class="form-control datetimepicker-input" data-target="#tahunsurat" required/>
+                    <div class="input-group-append" data-target="#tahunsurat" data-toggle="datetimepicker">
+                      <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
                   </div>
+                  <button class="btn btn-info mx-2" type="submit"><i class="fa fa-search"></i></button>
+                  <?php if($btnExitSort): ?>
+                    <a class="btn btn-danger" href="<?= base_url()?>">Exit From Diagram View by Date</a>
+                  <?php endif; ?>
                 </div>
-                <button class="btn btn-info mx-2" type="submit"><i class="fa fa-search"></i></button>
+              </form>
               </div>
-            </form>
             <canvas class="chart mt-2" id="myChart" width="300" height="100"></canvas>
+          </div>
+          <hr>
+          <!-- Diagram Barang Bukti -->
+          <div class="diagramBB my-2 px-2 py-2 w-100">
+            <h5 class="text-center">Diagram Tren Barang Bukti - <?= $tahunDiagram ?></h5>
+            <div class="row">
+              <div class="col-md-12 text-center">
+                <label for=""><small>Cari Barang Bukti :</small></label>
+                <div class="d-flex justify-content-center">
+                    <input type="text" class="form-control" style="width:30%;" id="ccf_filter_input" onkeyup="filterSuburbs()">
+                    <button type="submit" class="btn btn-info mx-2">
+                      <i class="fa fa-search"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <hr>
+            <div id="suburbList">
+              <canvas class="chart mt-2" id="GanjaChart" height="100" title="Ganja"></canvas>
+              <canvas class="chart mt-2" id="GorillaChart" height="100" title="Tembakau Gorilla"></canvas>
+              <canvas class="chart mt-2" id="HashishChart" height="100" title="Hashish"></canvas>
+              <canvas class="chart mt-2" id="OpiumChart" height="100" title="Opium"></canvas>
+              <canvas class="chart mt-2" id="MorphinChart" height="100" title="Morphin"></canvas>
+              <canvas class="chart mt-2" id="HeroinChart" height="100" title="Heroin/Putaw"></canvas>
+              <canvas class="chart mt-2" id="KokainChart" height="100" title="Kokain"></canvas>
+              <canvas class="chart mt-2" id="ExstacyChart" height="100" title="Exstacy/Carnophen"></canvas>
+              <canvas class="chart mt-2" id="SabuChart" height="100" title="Sabu"></canvas>
+              <canvas class="chart mt-2" id="GolChart" height="100" title="GOL IV"></canvas>
+              <canvas class="chart mt-2" id="DaftarChart" height="100" title="Daftar G"></canvas>
+              <canvas class="chart mt-2" id="KosmetikChart" height="100" title="Kosmetik"></canvas>
+              <canvas class="chart mt-2" id="JamuChart" height="100" title="Jamu"></canvas>
+            </div>
           </div>
         </div>
         <!-- /.row (main row) -->
@@ -156,71 +197,39 @@
   </div>
   <!-- /.content-wrapper -->
   <script>
-    var ctx = document.getElementById('myChart').getContext('2d');
-    var chart = new Chart(ctx, {
-      // The type of chart we want to create
-      type: 'bar', // also try bar or other graph types
-
-      // The data for our dataset
-      data: {
-        labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"],
-        // Information about the dataset
-        datasets: [
-          {
-            label: "Kasus",
-            backgroundColor: '#1C6758',
-            borderColor: '#1C6758',
-            data: [<?= $dataDiagram['Jan']['KSS'] ?>, <?= $dataDiagram['Feb']['KSS'] ?>, <?= $dataDiagram['Mar']['KSS'] ?>, <?= $dataDiagram['Apr']['KSS'] ?>, <?= $dataDiagram['Mei']['KSS'] ?>, <?= $dataDiagram['Jun']['KSS'] ?>, <?= $dataDiagram['Jul']['KSS'] ?>, <?= $dataDiagram['Agu']['KSS'] ?>, <?= $dataDiagram['Sep']['KSS'] ?>, <?= $dataDiagram['Okt']['KSS'] ?>, <?= $dataDiagram['Nov']['KSS'] ?>, <?= $dataDiagram['Des']['KSS'] ?>],
-          },
-          {
-            label: "Tersangka",
-            backgroundColor: '#16213E',
-            borderColor: '#16213E',
-            data: [<?= $dataDiagram['Jan']['TSK'] ?>, <?= $dataDiagram['Feb']['TSK'] ?>, <?= $dataDiagram['Mar']['TSK'] ?>, <?= $dataDiagram['Apr']['TSK'] ?>, <?= $dataDiagram['Mei']['TSK'] ?>, <?= $dataDiagram['Jun']['TSK'] ?>, <?= $dataDiagram['Jul']['TSK'] ?>, <?= $dataDiagram['Agu']['TSK'] ?>, <?= $dataDiagram['Sep']['TSK'] ?>, <?= $dataDiagram['Okt']['TSK'] ?>, <?= $dataDiagram['Nov']['TSK'] ?>, <?= $dataDiagram['Des']['TSK'] ?>],
-          },
-          {
-            label: "SELRA",
-            backgroundColor: '#FF1E00',
-            borderColor: '#FF1E00',
-            data: [<?= $dataDiagram['Jan']['SELRA'] ?>, <?= $dataDiagram['Feb']['SELRA'] ?>, <?= $dataDiagram['Mar']['SELRA'] ?>, <?= $dataDiagram['Apr']['SELRA'] ?>, <?= $dataDiagram['Mei']['SELRA'] ?>, <?= $dataDiagram['Jun']['SELRA'] ?>, <?= $dataDiagram['Jul']['SELRA'] ?>, <?= $dataDiagram['Agu']['SELRA'] ?>, <?= $dataDiagram['Sep']['SELRA'] ?>, <?= $dataDiagram['Okt']['SELRA'] ?>, <?= $dataDiagram['Nov']['SELRA'] ?>, <?= $dataDiagram['Des']['SELRA'] ?>],
-          }
-      ]
-      },
-
-      // Configuration options
-      options: {
-        layout: {
-          padding: 2,
-        },
-        legend: {
-          position: 'bottom',
-        },
-        title: {
-          display: true,
-          text: 'Diagram Tren Tindak Pidana Narkotika & Psikotropika <?= $tahunDiagram ?> <?= $this->session->userdata('login_data_admin')['nama'] ?>'
-        },
-        scales: {
-          yAxes: [{
-            scaleLabel: {
-              display: true,
-              labelString: 'Jumlah'
+    function filterSuburbs() {
+        // Declare variables
+        var input, filter, ul, li, about,a, title, i, txtValue;
+        input = document.getElementById('ccf_filter_input');
+        filter = input.value.toUpperCase();
+        div = document.getElementById("suburbList");
+        canvas = div.getElementsByTagName('canvas');
+        // Loop through all list items, and hide those who don't match the search query
+        for (i = 0; i < canvas.length; i++) {
+            title = canvas[i].getAttribute("title");
+            txtValue = title;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+              canvas[i].style.display = "";
+            } else {
+              canvas[i].style.display = "none";
             }
-          }],
-          xAxes: [{
-            scaleLabel: {
-              display: true,
-              labelString: 'Bulan'
-            }
-          }]
         }
-      }
-    });
-    
+    }
+    <?php if($viewDiagramByDate): ?>
+      $('html, body').animate({
+          scrollTop: $("#scrollToContent").offset().top
+      }, 2000);
+    <?php endif; ?>
     $(function () {
       $('#tahunsurat').datetimepicker({
           viewMode: 'years',
           format: 'YYYY'
-        });
+      });
+      $('#tahunsuratBB').datetimepicker({
+          viewMode: 'years',
+          format: 'YYYY'
+      });
     });
   </script>
+  <?php include('diagram/diagramDashboard.php') ?>
 

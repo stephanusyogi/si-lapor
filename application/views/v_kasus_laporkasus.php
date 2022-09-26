@@ -10,7 +10,7 @@
           Setelah mengisi deskripsi LP, harap segera dilanjutkan dengan mengisi identitas tersangka dan barangbukti!
         </div>
         <form action="<?= base_url() ?>kasus/addKasus" method="post">
-          <h4>Kesatuan :</h4>
+          <h4>Format Laporan Polisi :</h4>
           <select id="kesatuan" name="kesatuan" class="form-control" style="width:20%;">
             <option value="polres">Polres</option>
             <option value="polsek">Polsek</option>

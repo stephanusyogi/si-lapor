@@ -217,6 +217,7 @@ class Pelimpahan extends CI_Controller {
 				'usia' => $TSK[$i]['usia'],
 				'pendidikan' => $TSK[$i]['pendidikan'],
 				'pekerjaan' => $TSK[$i]['pekerjaan'],
+				'file_foto' => $TSK[$i]['file_foto'],
 			);
 
 			// Add to Temporary Tersangka

@@ -37,15 +37,15 @@ function getKasusSelesaiDashboard($kode_kesatuan){
 }
 
 function addKasus($dataKasus, $table){
-return $this->db->insert($table, $dataKasus);
+    return $this->db->insert($table, $dataKasus);
 }
 
 function updateKasus($idKasus,$dataKasus, $table){
-return $this->db->update($table, $dataKasus, "id_kasus={$idKasus}");
+    return $this->db->update($table, $dataKasus, "id_kasus={$idKasus}");
 }
 
 function checkNomorSuratDuplikat($dataKasus){
-return $this->db->get_where('tb_kasus', array('no_laporanpolisi'=>$dataKasus));
+    return $this->db->get_where('tb_kasus', array('no_laporanpolisi'=>$dataKasus));
 }
 
 function getByIdKasus($idKasus, $kode_kesatuan){
@@ -53,11 +53,11 @@ function getByIdKasus($idKasus, $kode_kesatuan){
 }
 
 function addKasusPelimpahan($dataKasus, $table){
-return $this->db->insert($table, $dataKasus);
+    return $this->db->insert($table, $dataKasus);
 }
 
 function checkNomorSuratDuplikatPelimpahan($dataKasus){
-return $this->db->get_where('tb_temp_kasus', array('no_laporanpolisi'=>$dataKasus));
+    return $this->db->get_where('tb_temp_kasus', array('no_laporanpolisi'=>$dataKasus));
 }
 
 function getByIdKasusPelimpahan($idKasus, $kode_kesatuan){
@@ -175,6 +175,36 @@ function getSuperDiagramSELRA($firstDate, $lastDate){
     ->from("tb_kasus")->count_all_results();
 
     return $res;
+}
+
+// DIAGRAM BARANG BUKTI
+function getDiagramBB($kode_kesatuan, $kategori, $firstDate, $lastDate){
+    $where = array(
+        'tb_kasus.kode_kesatuan' => $kode_kesatuan,
+        "tb_kasus.isLocked" => 1,
+        'tb_barangbukti.kategori' => $kategori,
+      );
+    $res = $this->db->select('*')
+    ->from('tb_kasus')
+    ->join('tb_barangbukti','tb_kasus.id_kasus=tb_barangbukti.id_kasus','LEFT')
+    ->where($where)
+    ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")->get();
+    
+    return $res->result_array();
+}
+
+function getSuperDiagramBB($kategori, $firstDate, $lastDate){
+    $where = array(
+        "tb_kasus.isLocked" => 1,
+        'tb_barangbukti.kategori' => $kategori,
+      );
+    $res = $this->db->select('*')
+    ->from('tb_kasus')
+    ->join('tb_barangbukti','tb_kasus.id_kasus=tb_barangbukti.id_kasus','LEFT')
+    ->where($where)
+    ->where("tb_kasus.created_at BETWEEN '$firstDate' AND '$lastDate'")->get();
+    
+    return $res->result_array();
 }
 
 // SEARCH MODUL

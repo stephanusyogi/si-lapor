@@ -217,7 +217,7 @@
         }
         xhrMessage.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xhrMessage.send("incoming_id=" + kode_kesatuan +"&outgoing_id=" +kodekesatuanFrom);
-        
+
         function scrollToBottom() {
             chatBox.scrollTop = chatBox.scrollHeight;
         }
@@ -310,7 +310,7 @@
                 if (xhrnew2.readyState === XMLHttpRequest.DONE) {
                     if (xhrnew2.status === 200) {
                         let data = xhrnew2.response;
-                        chatApp.innerHTML = data;
+                        chatBox.innerHTML = data;
                         if (!chatBox.classList.contains("active")) {
                             chatBox.scrollTop = chatBox.scrollHeight;
                         }
@@ -325,21 +325,23 @@
         headerInfoUser.innerHTML = `<div class='row'><div class='col-lg-10'><img class='mt-1' src='${srcImage}' alt='avatar'><div class='chat-about'><h3 class='my-2'>LOBI GROUP COMMUNICATION</h3></div></div></div>`;
 
         // Get Message
-        let xhrMessage = new XMLHttpRequest();
-        xhrMessage.open("POST", "<?= base_url() ?>chat/getmessagegroup", true);
-        xhrMessage.onload = () => {
-            if (xhrMessage.readyState === XMLHttpRequest.DONE) {
-                if (xhrMessage.status === 200) {
-                    let data = xhrMessage.response;
-                    chatBox.innerHTML = data;
-                    if (!chatBox.classList.contains("active")) {
-                        chatBox.scrollTop = chatBox.scrollHeight;
+        setInterval(()=>{
+            let xhrMessage = new XMLHttpRequest();
+            xhrMessage.open("POST", "<?= base_url() ?>chat/getmessagegroup", true);
+            xhrMessage.onload = () => {
+                if (xhrMessage.readyState === XMLHttpRequest.DONE) {
+                    if (xhrMessage.status === 200) {
+                        let data = xhrMessage.response;
+                        chatBox.innerHTML = data;
+                        if (!chatBox.classList.contains("active")) {
+                            chatBox.scrollTop = chatBox.scrollHeight;
+                        }
                     }
                 }
             }
-        }
-        xhrMessage.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhrMessage.send();
+            xhrMessage.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhrMessage.send();}
+        ,1000)
         
         function scrollToBottom() {
             chatBox.scrollTop = chatBox.scrollHeight;

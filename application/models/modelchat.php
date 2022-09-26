@@ -18,24 +18,25 @@ class Modelchat extends CI_Model {
                 $querymsg = $this->db->query($sqllastmsg);
                 $resmsg = $querymsg->result_array();
                 $lastmsg = count($resmsg);
+                $readDot = "";
                 if (!empty($resmsg)) {
                     for ($i=0; $i < count($resmsg); $i++) {
                         if ($resmsg[$i]['outgoing_msg_id'] == $incoming_id) {
                             if ($resmsg[$i]['isRead'] == 1) {
-                                $fontWeight = "style=''";
+                                $readDot = "";
                             } else{
-                                $fontWeight = "style='font-weight:800;'";
+                                $readDot = "<i class='fas fa-circle' style='font-size:8px;color:yellow;'></i>";
                             }
                         } else {
-                            $fontWeight = "style=''";
+                            $readDot = "";
                         } 
-                        $lastmsg = strlen($resmsg[$i]['msg']) > 20 ? "<small {$fontWeight}>".substr($resmsg[$i]['msg'],0,20)."...</small>" : "<small {$fontWeight}>".$resmsg[$i]['msg']."</small>";
+                        $lastmsg = strlen($resmsg[$i]['msg']) > 20 ? "<small>".substr($resmsg[$i]['msg'],0,20)."...</small>" : "<small>".$resmsg[$i]['msg']."</small>";
                     }   
                 }else{
                     $lastmsg = '<small>No Message</small>';
                 }
                 $namaUser = strlen($row['nama']) > 15 ? substr($row['nama'],0,15)."..." : $row['nama'];
-                $output .= "<li class='clearfix' id='userChat{$row['kode_kesatuan']}' onclick=openMessage('{$row['kode_kesatuan']}')><img src='{$srcImage}' alt='avatar'><div class='about'><div class='name' data-toggle='tooltip' data-placement='top' title='".$row['nama']."'>".$namaUser."</div><div class='kode_kesatuan text-left'>".$lastmsg."</div></div></li>";
+                $output .= "<li class='clearfix' id='userChat{$row['kode_kesatuan']}' onclick=openMessage('{$row['kode_kesatuan']}')><img src='{$srcImage}' alt='avatar'><div class='about'><div class='name' data-toggle='tooltip' data-placement='top' title='".$row['nama']."'>".$namaUser." ".$readDot."</div><div class='kode_kesatuan text-left'>".$lastmsg."</div></div></li>";
             }
         }else{
             $output .= "No users are available to chat";

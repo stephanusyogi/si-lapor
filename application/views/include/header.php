@@ -24,6 +24,8 @@
   <link rel="stylesheet" href="<?= base_url('/assets/adminlte/plugins'); ?>/toastr/toastr.min.css">
   <!-- Datatables -->
   <link rel="stylesheet" href="<?= base_url('/assets/adminlte/plugins'); ?>/datatables-bs4/css/dataTables.bootstrap4.css">
+  <!-- Magnific -->
+  <link rel="stylesheet" href="<?= base_url('assets/js/magnific-popup/'); ?>magnific-popup.css">
   <!-- Select -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
   <!-- Chart -->
@@ -98,7 +100,7 @@
 
   <!-- Preloader -->
   <div class="preloader flex-column justify-content-center align-items-center">
-    <img class="animation__shake" src="<?= base_url("assets/images/logo-ditresnarkoba-poldajatim.PNG") ?>" alt="Logo Ditresnarkoba-Poldajatim" style="width:25%;height:auto;">
+    <img class="animation__shake" src="<?= base_url("assets/images/logo-ditresnarkoba-poldajatim.png") ?>" alt="Logo Ditresnarkoba-Poldajatim" style="width:25%;height:auto;">
   </div>
 
   <!-- Navbar -->
@@ -202,6 +204,12 @@
                 <a href="<?= base_url("master-kasus") ?>" class="nav-link">
                   <i class="fas fa-file-contract nav-icon"></i>
                   <p>Data Ungkap Kasus</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="<?= base_url("master-tersangka") ?>" class="nav-link">
+                  <i class="nav-icon fas fa-id-card"></i>
+                  <p>File Identitas Tersangka</p>
                 </a>
               </li>
               <li class="nav-item">

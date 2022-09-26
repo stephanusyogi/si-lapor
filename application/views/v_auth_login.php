@@ -140,7 +140,7 @@
       cursor: pointer;
     }
   </style>
-<body class="hold-transition login-page" style="padding-top:1rem!important;">  
+<body class="hold-transition login-page" style="padding-top:1rem!important;height:unset!important;">  
 <h1><strong>SIAP</strong></h1>
 <h2><strong>Si</strong>stem <strong>A</strong>plikasi <strong>P</strong>elaporan</h2>
 <h3>Bagbinopnal Ditresnarkoba Polda Jatim</h3>

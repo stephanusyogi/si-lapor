@@ -40,12 +40,23 @@
     <section class="content">
       <div class="container-fluid px-4 py-2">
         <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER'){ ?>
-          <div class="row section-folder ">
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <label for=""><small>Cari Folder :</small></label>
+              <div class="d-flex justify-content-center">
+                  <input type="text" class="form-control" style="width:30%;" id="ccf_filter_input" onkeyup="filterSuburbs()">
+                  <button type="submit" class="btn btn-info mx-2">
+                    <i class="fa fa-search"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="row section-folder" id="suburbList">
             <?php foreach($kesatuan as $keyKesatuan){ ?>
-              <div class="col folder-jajaran mx-2 my-2 text-center">
+              <?php $choosenKesatuan = $CI->Modelkesatuan->getKesatuanByKode($keyKesatuan['kode_kesatuan']); ?>
+              <div class="col folder-jajaran mx-2 my-2 text-center" title="<?= $choosenKesatuan[0]['nama'] ?>">
                 <a href="<?= base_url() ?>file/viewFileJajaran/<?= $keyKesatuan['kode_kesatuan'] ?>"><i class="fas fa-folder"></i></a>
-                <?php $choosenKesatuan = $CI->Modelkesatuan->getKesatuanByKode($keyKesatuan['kode_kesatuan']); ?>
-                <p class="mb-0" data-toggle="tooltip" data-placement="top" title="<?= $choosenKesatuan[0]['nama'] ?>">
+                <p class="mb-0 titleFolder" data-toggle="tooltip" data-placement="top" title="<?= $choosenKesatuan[0]['nama'] ?>">
                   <?= strlen($choosenKesatuan[0]['nama']) > 18 ? substr($choosenKesatuan[0]['nama'],0,18)."..." : $choosenKesatuan[0]['nama']; ?>
                 </p>
               </div>
@@ -114,6 +125,24 @@
   </div>
   <!-- /.content-wrapper -->
   <script>
+    function filterSuburbs() {
+        // Declare variables
+        var input, filter, ul, li, about,a, title, i, txtValue;
+        input = document.getElementById('ccf_filter_input');
+        filter = input.value.toUpperCase();
+        section = document.getElementById("suburbList");
+        div = section.getElementsByTagName('div');
+        // Loop through all list items, and hide those who don't match the search query
+        for (i = 0; i < div.length; i++) {
+            title = div[i].getAttribute("title");
+            txtValue = title;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+              div[i].style.display = "";
+            } else {
+              div[i].style.display = "none";
+            }
+        }
+    }
   $(document).ready(function() {
     $(".hapus-upload-file").on("click", function (e) {
       e.preventDefault();

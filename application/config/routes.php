@@ -74,6 +74,9 @@ $route['master-kasus'] = 'data/viewMasterKasus';
 $route['matrik-kasus'] = 'data/viewMatrikKasus';
 $route['matrik-barang-bukti'] = 'data/viewMatrikBarangBukti';
 
+// Data Tersangka
+$route['master-tersangka'] = 'data/viewTersangka';
+
 // Selra
 $route['selra'] = 'data/viewSelra';
 

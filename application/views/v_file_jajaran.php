@@ -55,6 +55,10 @@
                   <?php } ?>
                   </tbody>
               </table>
+              <hr>
+            <div class="text-right">
+                <a href="<?= base_url() ?>upload-file" class="btn btn-secondary btn-sm">Kembali</a>
+            </div>
           </div>
       </div>
     </section>

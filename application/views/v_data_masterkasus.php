@@ -13,6 +13,12 @@
         text-transform: inherit!important;
         font-weight: normal!important;
     }
+    .foto-tsk {
+      width: 200px; /* You can set the dimensions to whatever you want */
+      height: 200px;
+      object-fit: cover;
+      border-radius:15px;
+    }
   </style>
   <!-- DATA -->
   <?php 
@@ -191,6 +197,14 @@
                       <?= ($display) ? $row_kasus["deskripsi_waktudantkp"]  :  "" ?>
                     </td>
                     <td>
+                      <div class="text-center">
+                      <?php if(!empty($row_kasus["file_foto"])): ?>
+                        <a class="test-popup-link" href="<?= base_url() ?>uploads/fotoTersangka/<?= $row_kasus["file_foto"] ?>"><img src="<?= base_url() ?>uploads/fotoTersangka/<?= $row_kasus["file_foto"] ?>" alt="Rounded image" class="foto-tsk"></a>
+                      <?php else: ?>
+                        <small>Belum Ada Foto</small>
+                      <?php endif; ?>
+                      </div>
+                      <hr>
                       <ul>
                         <li><strong>NAMA</strong> : <?= $row_kasus["nama"] ?></li>
                         <li><strong>ALAMAT</strong> : <?= $row_kasus["alamat"] ?></li>
@@ -239,9 +253,13 @@
                         if($display){
                           if (!empty($row_kasus["nrp_admin"])) {
                             echo $dataAdmin[0]['nama_admin'].' - NRP. '.$dataAdmin[0]['nrp']; 
-                          }else{ ?>
+                          }else{ 
+                            if($this->session->userdata('login_data_admin')['kodekesatuan'] != 'ADMINSUPER'){?>
                             <a class="btn btn-sm btn-info w-100" data-toggle="modal" data-target="#adminModal<?= $row_kasus['id_kasus']; ?>">Pilih Admin</a>
-                          <?php }
+                            <?php }else{ ?>
+                              <p>Admin Belum Dipilih</p>
+                            <?php } 
+                          }
                         }else{ 
                           echo '';
                         };
@@ -398,8 +416,30 @@
   </div>
   <!-- /.content-wrapper -->
 
+  <script src="<?= base_url() ?>assets/js/magnific-popup/jquery.magnific-popup.js"></script>
   <script>    
   $(document).ready(function() {
+    $('.test-popup-link').magnificPopup({
+      type:'image',
+      mainClass: 'mfp-with-zoom', // this class is for CSS animation below
+
+      zoom: {
+        enabled: true, // By default it's false, so don't forget to enable it
+
+        duration: 300, // duration of the effect, in milliseconds
+        easing: 'ease-in-out', // CSS transition easing function
+
+        // The "opener" function should return the element from which popup will be zoomed in
+        // and to which popup will be scaled down
+        // By defailt it looks for an image tag:
+        opener: function(openerElement) {
+          // openerElement is the element on which popup was initialized, in this case its <a> tag
+          // you don't need to add "opener" option if this code matches your needs, it's defailt one.
+          return openerElement.is('img') ? openerElement : openerElement.find('img');
+        }
+      }
+    });
+
     $(".tombol-hapus-masterkasus").on("click", function (e) {
       e.preventDefault();
       const href = $(this).attr("href");

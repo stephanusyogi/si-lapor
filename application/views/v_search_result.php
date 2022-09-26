@@ -8,6 +8,12 @@
     ul> li{
       list-style-type: none;
     }
+    .foto-tsk {
+      width: 200px; /* You can set the dimensions to whatever you want */
+      height: 200px;
+      object-fit: cover;
+      border-radius:15px;
+    }
 
   </style>
   <!-- DATA -->
@@ -33,25 +39,43 @@
             <thead>
                 <tr class="text-center">
                   <th>No</th>
-                  <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER'): ?>
-                  <th>Kesatuan</th>
+                  <?php if($kategoriPencarian == 'nolp'): ?>
+                    <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER'): ?>
+                    <th>Kesatuan</th>
+                    <?php endif; ?>   
+                    <th>No Laporan Polisi</th>
+                    <th>Tanggal Input LP</th>
+                    <th>Durasi Perkara</th>
+                    <th>Deskripsi Waktu & TKP</th>
+                    <th>Identitas Tersangka</th> 
+                    <th>Umur</th> 
+                    <th>Pendidikan</th> 
+                    <th>Pekerjaan</th> 
+                    <th>Barang Bukti</th> 
+                    <th>Modus Operandi</th> 
+                    <th>Administrator</th>
+                    <th>Keterangan Pelimpahan</th> 
+                    <th>Status SELRA</th>
+                    <th>LP Menonjol</th>
                   <?php else: ?>
-                  <th>Action</th>
-                  <?php endif; ?>   
-                  <th>No Laporan Polisi</th>
-                  <th>Tanggal Input LP</th>
-                  <th>Durasi Perkara</th>
-                  <th>Deskripsi Waktu & TKP</th>
-                  <th>Identitas Tersangka</th> 
-                  <th>Umur</th> 
-                  <th>Pendidikan</th> 
-                  <th>Pekerjaan</th> 
-                  <th>Barang Bukti</th> 
-                  <th>Modus Operandi</th> 
-                  <th>Administrator</th>
-                  <th>Keterangan Pelimpahan</th> 
-                  <th>Status SELRA</th>
-                  <th>LP Menonjol</th>
+                    <th>Identitas Tersangka</th> 
+                    <th>Umur</th> 
+                    <th>Pendidikan</th> 
+                    <th>Pekerjaan</th> 
+                    <th>Barang Bukti</th> 
+                    <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER'): ?>
+                    <th>Kesatuan</th>
+                    <?php endif; ?>   
+                    <th>No Laporan Polisi</th>
+                    <th>Tanggal Input LP</th>
+                    <th>Durasi Perkara</th>
+                    <th>Deskripsi Waktu & TKP</th>
+                    <th>Modus Operandi</th> 
+                    <th>Administrator</th>
+                    <th>Keterangan Pelimpahan</th> 
+                    <th>Status SELRA</th>
+                    <th>LP Menonjol</th>
+                  <?php endif; ?>
                 </tr>
             </thead>
             <tbody>
@@ -68,166 +92,275 @@
                   ?>
                 <tr>
                     <td class="text-center"><?= ($display) ? $no : "" ?></td>
-                    <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER'){ ?>
-                    <td class="textcenter">
-                      <?php $dataKesatuan =  $CI->Modelkesatuan->getKesatuanByKode($row_kasus['kode_kesatuan']);?>
-                      <?= ($display) ? $dataKesatuan[0]["nama"]  :  "" ?>
-                    </td>
-                    <?php }else{ ?>
-                    <td class="text-center" style="font-size:24px;">
-                      <?php if($display): ?>
-                        <?php if(!$row_kasus["isLocked"]): ?>
-                          <div data-toggle="tooltip" data-placement="top" title="Kunci Ke Database">
-                            <a class="tombol-kunci-matrik" href="<?= base_url() ?>data/lockLP/<?= $row_kasus["id_kasus"] ?>" style="cursor:pointer;"><i class="fas fa-lock" style="color:black;"></i></a>
-                          </div>
-                          <div data-toggle="tooltip" data-placement="top" title="Edit Laporan">
-                            <a href="<?= base_url("lapor-ungkap-kasus/{$row_kasus["id_kasus"]}") ?>" style="cursor:pointer;"><i class="fas fa-pen-square" style="color:green;"></i></a>
-                          </div>
+                    <?php if($kategoriPencarian == 'nolp'): ?>
+                      <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER'){ ?>
+                      <td class="textcenter">
+                        <?php $dataKesatuan =  $CI->Modelkesatuan->getKesatuanByKode($row_kasus['kode_kesatuan']);?>
+                        <?= ($display) ? $dataKesatuan[0]["nama"]  :  "" ?>
+                      </td>
+                      <?php } ?>
+                      <td><?= $display ? $row_kasus["no_laporanpolisi"] : ""; ?></td>
+                      <td><?= $display ? dateIndonesia(date('N j/n/Y', strtotime($row_kasus["created_at"]))) : ""; ?></td>
+                      <td>
+                        <?php if($display): 
+                          if(!empty($row_kasus["date_statusKasus"])):
+                            $diffSelra = date_diff(date_create($row_kasus["created_at"]), date_create($row_kasus["date_statusKasus"]));
+                            echo $diffSelra->format("%a")." Hari (SELRA)";
+                          else:
+                            $diff = date_diff(date_create($row_kasus["created_at"]), date_create(date("Y-m-d")));
+                            echo $diff->format("%a")." Hari - Hingga Hari Ini";
+                          endif; 
+                        endif; ?>
+                      </td>
+                      <td><?= ($display) ? $row_kasus["deskripsi_waktudantkp"]  :  "" ?></td>
+                      <td>
+                        <div class="text-center">
+                        <?php if(!empty($row_kasus["file_foto"])): ?>
+                          <a class="test-popup-link" href="<?= base_url() ?>uploads/fotoTersangka/<?= $row_kasus["file_foto"] ?>"><img src="<?= base_url() ?>uploads/fotoTersangka/<?= $row_kasus["file_foto"] ?>" alt="Rounded image" class="foto-tsk"></a>
                         <?php else: ?>
-                          <div data-toggle="tooltip" data-placement="top" title="Ajukan Permohonan Update">
-                            <a 
-                            <?php 
-                            $checkPermohonan =  $CI->Modelpermohonan->checkPermohonan($row_kasus['id_kasus']);
-                            if (empty($checkPermohonan)) { ?>
-                              data-toggle="modal" data-target="#permohonanModal<?= $row_kasus['id_kasus']; ?>"  
-                            <?php } else {?>
-                              href="<?= base_url() ?>daftar-permohonan-edit"
-                            <?php } ?>
-                            style="cursor:pointer;"><i class="fas fa-pen-square" style="color:green;"></i></a>
-                          </div>
+                          <small>Belum Ada Foto</small>
                         <?php endif; ?>
-                        <?php if($row_kasus['ket_pelimpahan'] != 'dilimpahkan'): ?>
-                        <div data-toggle="tooltip" data-placement="top" title="Limpahkan Kasus">
-                          <a style="cursor:pointer;" data-toggle="modal" data-target="#pelimpahanModal<?= $row_kasus['id_kasus']; ?>"><i class="fas fa-file-import" style="color:orange;"></i></a>
                         </div>
+                        <hr>
+                        <ul>
+                          <li><strong>NAMA</strong> : <?= $row_kasus["nama"] ?></li>
+                          <li><strong>ALAMAT</strong> : <?= $row_kasus["alamat"] ?></li>
+                          <li><strong>NIK</strong> : <?= $row_kasus["nik"] ?></li>
+                          <li><strong>AGAMA</strong> : <?= $row_kasus["agama"] ?></li>
+                          <li><strong>JENIS KELAMIN</strong> : <?= $row_kasus["jenis_kelamin"] ?></li>
+                          <li><strong>KEWARGANAGARAAN</strong> : <?= $row_kasus["status_kewarganegaraan"] ?></li>
+                          <li><strong>STATUS</strong> : <?= $row_kasus["status"] ?></li>
+                        </ul>
+                      </td>
+                      <td><?= $row_kasus["usia"] ?></td>
+                      <td><?= $row_kasus["pendidikan"] ?></td>
+                      <td><?= $row_kasus["pekerjaan"] ?></td>
+                      <td>
+                        <ol>
+                        <?php 
+                          $result = $CI->Modelbarangbukti->getBarangBuktiByIdTersangka($row_kasus['id_kasus'], $row_kasus['id_tersangka'])->result_array();
+                          if(!empty($result)){ 
+                            foreach ($result as $rowBB) { 
+                              if($rowBB['isDuplicate']){
+                                $duplicateTSK = $CI->Modeltersangka->getTersangkaByIdTersangka($row_kasus['id_kasus'], $rowBB['id_duplicateTSK'])->result_array();
+                                $duplicateBB = $CI->Modelbarangbukti->getBarangBuktiByIdTersangka($row_kasus['id_kasus'], $rowBB['id_duplicateTSK'])->result_array();
+                                ?>
+                              <button class="btn-info btn btn-sm">
+                                Barang bukti sama dengan tersangka a.n <?= $duplicateTSK[0]['nama'] ?> (<strong><?= $duplicateBB[0]['kategori'] ?></strong>)
+                              </button>
+                              <?php }else{ ?>
+                                <li>
+                                  <strong><?= $rowBB['nama_barangbukti'] ?></strong>
+                                  <?php if($rowBB['keterangan']) { ?>
+                                    yakni&nbsp;<?= $rowBB['keterangan'] ?>&nbsp;sejumlah&nbsp;<?= $rowBB['jumlah'] ?>&nbsp;<?= $rowBB['satuan'] ?>&nbsp;dengan berat&nbsp;<?= $rowBB['berat'] ?>&nbsp;gram.
+                                  <?php }else{ ?>
+                                    dengan berat&nbsp;<?= $rowBB['jumlah'] ?>&nbsp;<?= $rowBB['satuan'] ?>
+                                  <?php } ?>
+                                </li>
+                            <?php } } ?> 
+                          <?php } else { ?>
+                            <button class="btn btn-warning btn-sm"><strong>Belum Diketahui</strong></button>
+                          <?php } ?>
+                          </ol>
+                      </td>
+                      <td><?= $display ? $row_kasus["pasal"] : '' ?></td>
+                      <td>
+                        <?php
+                          $dataAdmin = $CI->Modeladmin->getAdminByNRP($row_kasus['nrp_admin']);
+                          if($display){
+                            if (!empty($row_kasus["nrp_admin"])) {
+                              echo $dataAdmin[0]['nama_admin'].' - NRP. '.$dataAdmin[0]['nrp']; 
+                            }else{ ?>
+                              <a class="btn btn-sm btn-info w-100" data-toggle="modal" data-target="#adminModal<?= $row_kasus['id_kasus']; ?>">Pilih Admin</a>
+                            <?php }
+                          }else{ 
+                            echo '';
+                          };
+                        ?>
+                      </td>
+                      <td class="text-center">
+                        <?php if($display): ?>
+                          <?php if($row_kasus["ket_pelimpahan"] == 'dilimpahkan'){ ?>
+                            <button class="btn btn-success btn-sm"><strong>Dilimpahkan</strong></button>
+                          <?php }else{?>
+                            <button class="btn btn-warning btn-sm"><strong>Bukan Pelimpahan</strong></button>
+                          <?php } ?>
                         <?php endif; ?>
-                        <?php if(!$row_kasus['id_kasus'] == null): ?>
-                        <div data-toggle="tooltip" data-placement="top" title="Hapus Laporan">
-                          <a class="tombol-hapus-masterkasus" href="<?= base_url("data/delKasus/{$row_kasus["id_kasus"]}") ?>" ><i class="fas fa-trash" style="color:red;"></i></a>
-                        </div>
-                        <?php endif; ?>
-                      <?php endif; ?>
-                    </td>
-                    <?php } ?>
-                    <td><?= $display ? $row_kasus["no_laporanpolisi"] : ""; ?></td>
-                    <td><?= $display ? dateIndonesia(date('N j/n/Y', strtotime($row_kasus["created_at"]))) : ""; ?></td>
-                    <td>
-                      <?php if($display): 
-                        if(!empty($row_kasus["date_statusKasus"])):
-                          $diffSelra = date_diff(date_create($row_kasus["created_at"]), date_create($row_kasus["date_statusKasus"]));
-                          echo $diffSelra->format("%a")." Hari (SELRA)";
-                        else:
-                          $diff = date_diff(date_create($row_kasus["created_at"]), date_create(date("Y-m-d")));
-                          echo $diff->format("%a")." Hari - Hingga Hari Ini";
-                        endif; 
-                      endif; ?>
-                    </td>
-                    <td>
-                      <?= ($display) ? $row_kasus["deskripsi_waktudantkp"]  :  "" ?>
-                    </td>
-                    <td>
-                      <ul>
-                        <li><strong>NAMA</strong> : <?= $row_kasus["nama"] ?></li>
-                        <li><strong>ALAMAT</strong> : <?= $row_kasus["alamat"] ?></li>
-                        <li><strong>NIK</strong> : <?= $row_kasus["nik"] ?></li>
-                        <li><strong>AGAMA</strong> : <?= $row_kasus["agama"] ?></li>
-                        <li><strong>JENIS KELAMIN</strong> : <?= $row_kasus["jenis_kelamin"] ?></li>
-                        <li><strong>KEWARGANAGARAAN</strong> : <?= $row_kasus["status_kewarganegaraan"] ?></li>
-                        <li><strong>STATUS</strong> : <?= $row_kasus["status"] ?></li>
-                      </ul>
-                    </td>
-                    <td><?= $row_kasus["usia"] ?></td>
-                    <td><?= $row_kasus["pendidikan"] ?></td>
-                    <td><?= $row_kasus["pekerjaan"] ?></td>
-                    <td>
-                      <ol>
-                      <?php 
-                        $result = $CI->Modelbarangbukti->getBarangBuktiByIdTersangka($row_kasus['id_kasus'], $row_kasus['id_tersangka'])->result_array();
-                        if(!empty($result)){ 
-                          foreach ($result as $rowBB) { 
-                            if($rowBB['isDuplicate']){
-                              $duplicateTSK = $CI->Modeltersangka->getTersangkaByIdTersangka($row_kasus['id_kasus'], $rowBB['id_duplicateTSK'])->result_array();
-                              $duplicateBB = $CI->Modelbarangbukti->getBarangBuktiByIdTersangka($row_kasus['id_kasus'], $rowBB['id_duplicateTSK'])->result_array();
-                              ?>
-                            <button class="btn-info btn btn-sm">
-                              Barang bukti sama dengan tersangka a.n <?= $duplicateTSK[0]['nama'] ?> (<strong><?= $duplicateBB[0]['kategori'] ?></strong>)
+                      </td>
+                      <td class="text-center">
+                        <?php if($display): ?>
+                          <?php if(empty($row_kasus["status_kasus"])){ ?>
+                            <button class="btn btn-warning btn-sm"><strong>Belum Diketahui</strong></button>
+                          <?php }else if ($row_kasus["status_kasus"] == 'TAHAP II'){ ?>
+                            <button class="btn btn-success btn-sm">
+                              <strong>Tahap II</strong>
+                              <?php if(!empty($row_kasus["ket_statusKasus"])): ?>
+                                  <p><strong>Keterangan :</strong>&nbsp;<?= $row_kasus["ket_statusKasus"] ?></p>
+                              <?php endif; ?>
                             </button>
-                            <?php }else{ ?>
-                              <li>
-                                <strong><?= $rowBB['nama_barangbukti'] ?></strong>
-                                <?php if($rowBB['keterangan']) { ?>
-                                  yakni&nbsp;<?= $rowBB['keterangan'] ?>&nbsp;sejumlah&nbsp;<?= $rowBB['jumlah'] ?>&nbsp;<?= $rowBB['satuan'] ?>&nbsp;dengan berat&nbsp;<?= $rowBB['berat'] ?>&nbsp;gram.
-                                <?php }else{ ?>
-                                  dengan berat&nbsp;<?= $rowBB['jumlah'] ?>&nbsp;<?= $rowBB['satuan'] ?>
-                                <?php } ?>
-                              </li>
-                          <?php } } ?> 
-                        <?php } else { ?>
-                          <button class="btn btn-warning btn-sm"><strong>Belum Diketahui</strong></button>
-                        <?php } ?>
-                        </ol>
-                    </td>
-                    <td><?= $display ? $row_kasus["pasal"] : '' ?></td>
-                    <td>
-                      <?php
-                        $dataAdmin = $CI->Modeladmin->getAdminByNRP($row_kasus['nrp_admin']);
-                        if($display){
-                          if (!empty($row_kasus["nrp_admin"])) {
-                            echo $dataAdmin[0]['nama_admin'].' - NRP. '.$dataAdmin[0]['nrp']; 
-                          }else{ ?>
-                            <a class="btn btn-sm btn-info w-100" data-toggle="modal" data-target="#adminModal<?= $row_kasus['id_kasus']; ?>">Pilih Admin</a>
-                          <?php }
-                        }else{ 
-                          echo '';
-                        };
-                      ?>
-                    </td>
-                    <td class="text-center">
-                      <?php if($display): ?>
-                        <?php if($row_kasus["ket_pelimpahan"] == 'dilimpahkan'){ ?>
-                          <button class="btn btn-success btn-sm"><strong>Dilimpahkan</strong></button>
-                        <?php }else{?>
-                          <button class="btn btn-warning btn-sm"><strong>Bukan Pelimpahan</strong></button>
-                        <?php } ?>
-                      <?php endif; ?>
-                    </td>
-                    <td class="text-center">
-                      <?php if($display): ?>
-                        <?php if(empty($row_kasus["status_kasus"])){ ?>
-                          <button class="btn btn-warning btn-sm"><strong>Belum Diketahui</strong></button>
-                        <?php }else if ($row_kasus["status_kasus"] == 'TAHAP II'){ ?>
-                          <button class="btn btn-success btn-sm">
-                            <strong>Tahap II</strong>
-                            <?php if(!empty($row_kasus["ket_statusKasus"])): ?>
-                                <p><strong>Keterangan :</strong>&nbsp;<?= $row_kasus["ket_statusKasus"] ?></p>
-                            <?php endif; ?>
-                          </button>
-                        <?php }else if($row_kasus["status_kasus"] == 'SP3'){ ?>
-                          <button class="btn btn-success btn-sm">
-                            <strong>SP3</strong>
-                            <?php if(!empty($row_kasus["ket_statusKasus"])): ?>
-                                <p><strong>Keterangan :</strong>&nbsp;<?= $row_kasus["ket_statusKasus"] ?></p>
-                            <?php endif; ?>
-                          </button>
-                        <?php }else{?>
-                          <button class="btn btn-success btn-sm">
-                            <strong>RJ</strong>
-                            <?php if(!empty($row_kasus["ket_statusKasus"])): ?>
-                                <p><strong>Keterangan :</strong>&nbsp;<?= $row_kasus["ket_statusKasus"] ?></p>
-                            <?php endif; ?>
-                          </button>
-                        <?php }?>
-                      <?php endif; ?>
-                    </td>
-                    <td class="text-center">
-                      <?php if($display): ?>
-                        <?php if($row_kasus["isKasusMenonjol"]){ ?>
-                          <button class="btn btn-success btn-sm"><strong>Kasus Menonjol</strong></button>
-                        <?php }else{?>
-                          <button class="btn btn-warning btn-sm"><strong>Bukan Kasus Menonjol</strong></button>
-                        <?php }?>
-                      <?php endif; ?>
-                    </td>
+                          <?php }else if($row_kasus["status_kasus"] == 'SP3'){ ?>
+                            <button class="btn btn-success btn-sm">
+                              <strong>SP3</strong>
+                              <?php if(!empty($row_kasus["ket_statusKasus"])): ?>
+                                  <p><strong>Keterangan :</strong>&nbsp;<?= $row_kasus["ket_statusKasus"] ?></p>
+                              <?php endif; ?>
+                            </button>
+                          <?php }else{?>
+                            <button class="btn btn-success btn-sm">
+                              <strong>RJ</strong>
+                              <?php if(!empty($row_kasus["ket_statusKasus"])): ?>
+                                  <p><strong>Keterangan :</strong>&nbsp;<?= $row_kasus["ket_statusKasus"] ?></p>
+                              <?php endif; ?>
+                            </button>
+                          <?php }?>
+                        <?php endif; ?>
+                      </td>
+                      <td class="text-center">
+                        <?php if($display): ?>
+                          <?php if($row_kasus["isKasusMenonjol"]){ ?>
+                            <button class="btn btn-success btn-sm"><strong>Kasus Menonjol</strong></button>
+                          <?php }else{?>
+                            <button class="btn btn-warning btn-sm"><strong>Bukan Kasus Menonjol</strong></button>
+                          <?php }?>
+                        <?php endif; ?>
+                      </td>
+                    <?php else: ?>
+                      <td>
+                        <div class="text-center">
+                        <?php if(!empty($row_kasus["file_foto"])): ?>
+                          <a class="test-popup-link" href="<?= base_url() ?>uploads/fotoTersangka/<?= $row_kasus["file_foto"] ?>"><img src="<?= base_url() ?>uploads/fotoTersangka/<?= $row_kasus["file_foto"] ?>" alt="Rounded image" class="foto-tsk"></a>
+                        <?php else: ?>
+                          <small>Belum Ada Foto</small>
+                        <?php endif; ?>
+                        </div>
+                        <hr>
+                        <ul>
+                          <li><strong>NAMA</strong> : <?= $row_kasus["nama"] ?></li>
+                          <li><strong>ALAMAT</strong> : <?= $row_kasus["alamat"] ?></li>
+                          <li><strong>NIK</strong> : <?= $row_kasus["nik"] ?></li>
+                          <li><strong>AGAMA</strong> : <?= $row_kasus["agama"] ?></li>
+                          <li><strong>JENIS KELAMIN</strong> : <?= $row_kasus["jenis_kelamin"] ?></li>
+                          <li><strong>KEWARGANAGARAAN</strong> : <?= $row_kasus["status_kewarganegaraan"] ?></li>
+                          <li><strong>STATUS</strong> : <?= $row_kasus["status"] ?></li>
+                        </ul>
+                      </td>
+                      <td><?= $row_kasus["usia"] ?></td>
+                      <td><?= $row_kasus["pendidikan"] ?></td>
+                      <td><?= $row_kasus["pekerjaan"] ?></td>
+                      <td>
+                        <ol>
+                        <?php 
+                          $result = $CI->Modelbarangbukti->getBarangBuktiByIdTersangka($row_kasus['id_kasus'], $row_kasus['id_tersangka'])->result_array();
+                          if(!empty($result)){ 
+                            foreach ($result as $rowBB) { 
+                              if($rowBB['isDuplicate']){
+                                $duplicateTSK = $CI->Modeltersangka->getTersangkaByIdTersangka($row_kasus['id_kasus'], $rowBB['id_duplicateTSK'])->result_array();
+                                $duplicateBB = $CI->Modelbarangbukti->getBarangBuktiByIdTersangka($row_kasus['id_kasus'], $rowBB['id_duplicateTSK'])->result_array();
+                                ?>
+                              <button class="btn-info btn btn-sm">
+                                Barang bukti sama dengan tersangka a.n <?= $duplicateTSK[0]['nama'] ?> (<strong><?= $duplicateBB[0]['kategori'] ?></strong>)
+                              </button>
+                              <?php }else{ ?>
+                                <li>
+                                  <strong><?= $rowBB['nama_barangbukti'] ?></strong>
+                                  <?php if($rowBB['keterangan']) { ?>
+                                    yakni&nbsp;<?= $rowBB['keterangan'] ?>&nbsp;sejumlah&nbsp;<?= $rowBB['jumlah'] ?>&nbsp;<?= $rowBB['satuan'] ?>&nbsp;dengan berat&nbsp;<?= $rowBB['berat'] ?>&nbsp;gram.
+                                  <?php }else{ ?>
+                                    dengan berat&nbsp;<?= $rowBB['jumlah'] ?>&nbsp;<?= $rowBB['satuan'] ?>
+                                  <?php } ?>
+                                </li>
+                            <?php } } ?> 
+                          <?php } else { ?>
+                            <button class="btn btn-warning btn-sm"><strong>Belum Diketahui</strong></button>
+                          <?php } ?>
+                          </ol>
+                      </td>
+                      <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER'){ ?>
+                      <td class="textcenter">
+                        <?php $dataKesatuan =  $CI->Modelkesatuan->getKesatuanByKode($row_kasus['kode_kesatuan']);?>
+                        <?= ($display) ? $dataKesatuan[0]["nama"]  :  "" ?>
+                      </td>
+                      <?php } ?>
+                      <td><?= $display ? $row_kasus["no_laporanpolisi"] : ""; ?></td>
+                      <td><?= $display ? dateIndonesia(date('N j/n/Y', strtotime($row_kasus["created_at"]))) : ""; ?></td>
+                      <td>
+                        <?php if($display): 
+                          if(!empty($row_kasus["date_statusKasus"])):
+                            $diffSelra = date_diff(date_create($row_kasus["created_at"]), date_create($row_kasus["date_statusKasus"]));
+                            echo $diffSelra->format("%a")." Hari (SELRA)";
+                          else:
+                            $diff = date_diff(date_create($row_kasus["created_at"]), date_create(date("Y-m-d")));
+                            echo $diff->format("%a")." Hari - Hingga Hari Ini";
+                          endif; 
+                        endif; ?>
+                      </td>
+                      <td><?= ($display) ? $row_kasus["deskripsi_waktudantkp"]  :  "" ?></td>
+                      <td><?= $display ? $row_kasus["pasal"] : '' ?></td>
+                      <td>
+                        <?php
+                          $dataAdmin = $CI->Modeladmin->getAdminByNRP($row_kasus['nrp_admin']);
+                          if($display){
+                            if (!empty($row_kasus["nrp_admin"])) {
+                              echo $dataAdmin[0]['nama_admin'].' - NRP. '.$dataAdmin[0]['nrp']; 
+                            }else{
+                              if($this->session->userdata('login_data_admin')['kodekesatuan'] != 'ADMINSUPER'){?>
+                              <a class="btn btn-sm btn-info w-100" data-toggle="modal" data-target="#adminModal<?= $row_kasus['id_kasus']; ?>">Pilih Admin</a>
+                              <?php }else{ ?>
+                                <p>Admin Belum Dipilih</p>
+                              <?php } 
+                            }
+                          }else{ 
+                            echo '';
+                          };
+                        ?>
+                      </td>
+                      <td class="text-center">
+                        <?php if($display): ?>
+                          <?php if($row_kasus["ket_pelimpahan"] == 'dilimpahkan'){ ?>
+                            <button class="btn btn-success btn-sm"><strong>Dilimpahkan</strong></button>
+                          <?php }else{?>
+                            <button class="btn btn-warning btn-sm"><strong>Bukan Pelimpahan</strong></button>
+                          <?php } ?>
+                        <?php endif; ?>
+                      </td>
+                      <td class="text-center">
+                        <?php if($display): ?>
+                          <?php if(empty($row_kasus["status_kasus"])){ ?>
+                            <button class="btn btn-warning btn-sm"><strong>Belum Diketahui</strong></button>
+                          <?php }else if ($row_kasus["status_kasus"] == 'TAHAP II'){ ?>
+                            <button class="btn btn-success btn-sm">
+                              <strong>Tahap II</strong>
+                              <?php if(!empty($row_kasus["ket_statusKasus"])): ?>
+                                  <p><strong>Keterangan :</strong>&nbsp;<?= $row_kasus["ket_statusKasus"] ?></p>
+                              <?php endif; ?>
+                            </button>
+                          <?php }else if($row_kasus["status_kasus"] == 'SP3'){ ?>
+                            <button class="btn btn-success btn-sm">
+                              <strong>SP3</strong>
+                              <?php if(!empty($row_kasus["ket_statusKasus"])): ?>
+                                  <p><strong>Keterangan :</strong>&nbsp;<?= $row_kasus["ket_statusKasus"] ?></p>
+                              <?php endif; ?>
+                            </button>
+                          <?php }else{?>
+                            <button class="btn btn-success btn-sm">
+                              <strong>RJ</strong>
+                              <?php if(!empty($row_kasus["ket_statusKasus"])): ?>
+                                  <p><strong>Keterangan :</strong>&nbsp;<?= $row_kasus["ket_statusKasus"] ?></p>
+                              <?php endif; ?>
+                            </button>
+                          <?php }?>
+                        <?php endif; ?>
+                      </td>
+                      <td class="text-center">
+                        <?php if($display): ?>
+                          <?php if($row_kasus["isKasusMenonjol"]){ ?>
+                            <button class="btn btn-success btn-sm"><strong>Kasus Menonjol</strong></button>
+                          <?php }else{?>
+                            <button class="btn btn-warning btn-sm"><strong>Bukan Kasus Menonjol</strong></button>
+                          <?php }?>
+                        <?php endif; ?>
+                      </td>
+                    <?php endif; ?>
                 </tr>
               <!-- Modal Limpahkan Kasus -->
               <div class="modal fade" id="pelimpahanModal<?= $row_kasus['id_kasus']; ?>" tabindex="-1" role="dialog" aria-labelledby="pelimpahanModalLabel" aria-hidden="true">
@@ -333,8 +466,29 @@
   </div>
   <!-- /.content-wrapper -->
   
+  <script src="<?= base_url() ?>assets/js/magnific-popup/jquery.magnific-popup.js"></script>
   <script>    
   $(document).ready(function() {
+    $('.test-popup-link').magnificPopup({
+      type:'image',
+      mainClass: 'mfp-with-zoom', // this class is for CSS animation below
+
+      zoom: {
+        enabled: true, // By default it's false, so don't forget to enable it
+
+        duration: 300, // duration of the effect, in milliseconds
+        easing: 'ease-in-out', // CSS transition easing function
+
+        // The "opener" function should return the element from which popup will be zoomed in
+        // and to which popup will be scaled down
+        // By defailt it looks for an image tag:
+        opener: function(openerElement) {
+          // openerElement is the element on which popup was initialized, in this case its <a> tag
+          // you don't need to add "opener" option if this code matches your needs, it's defailt one.
+          return openerElement.is('img') ? openerElement : openerElement.find('img');
+        }
+      }
+    });
     $(".tombol-hapus-masterkasus").on("click", function (e) {
       e.preventDefault();
       const href = $(this).attr("href");

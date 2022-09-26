@@ -7,6 +7,7 @@ class Chat extends CI_Controller {
 	protected $kode_kesatuan;
 	function __construct(){
 		parent::__construct();		
+		
     $this->session_status = $this->session->userdata('isLoggedIn_admin');
 		$this->kode_kesatuan = $this->session->userdata('login_data_admin')['kodekesatuan'];
 		
@@ -17,6 +18,11 @@ class Chat extends CI_Controller {
 	public function index(){
 		$data['title'] = "Chat App";
 		$data['menuLink'] = "chat";
+		
+		if (!$this->session_status) {
+					$this->session->set_flashdata('error', 'Your Session Has Expired!');
+		return redirect(base_url() . 'login');
+		}	
 		
 		$this->session->set_flashdata('success', 'Please Wait, Data Chat Loading...');
 		$this->load->view('include/header',$data);

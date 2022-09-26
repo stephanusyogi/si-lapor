@@ -158,8 +158,10 @@
                             <small><?= $keyPengumuman['created_at'] ?></small>
                           </button>
                         </h2>
-                        <div class="btn-action">
-                          <a href="<?= base_url() ?>pengumuman/delPengumumanTujuan/<?= $keyPengumuman['id_pengumuman_tujuan'] ?>" class="btn btn-danger btn-sm delBtn" data-toggle="tooltip" data-placement="top" title="Hapus Pengumuman"><i class="fas fa-trash"></i></a>
+                        <div class="btn-action" id="btn-action<?= $keyPengumuman['id_pengumuman'] ?>">
+                          <?php if($keyPengumuman['isRead']): ?>
+                            <a href="<?= base_url() ?>pengumuman/delPengumumanTujuan/<?= $keyPengumuman['id_pengumuman_tujuan'] ?>" class="btn btn-danger btn-sm delBtn" data-toggle="tooltip" data-placement="top" title="Hapus Pengumuman"><i class="fas fa-trash"></i></a>
+                          <?php endif; ?>
                         </div>
                       </div>
                       <div id="collapse<?= $keyPengumuman['id_pengumuman'] ?>" class="collapse" aria-labelledby="heading<?= $keyPengumuman['id_pengumuman'] ?>" data-parent="#accordion<?= $keyPengumuman['id_pengumuman'] ?>">
@@ -190,8 +192,10 @@
   <script>
   function readPengumuman(id, idTujuan){
     var titlePengumuman = document.getElementById(`titleCard${id}`);
+    var divDeletePengumuman = document.getElementById(`btn-action${id}`);
     if (titlePengumuman.classList.contains("font-weight-bold")) {
       titlePengumuman.classList.remove("font-weight-bold");
+      divDeletePengumuman.innerHTML = `<a href="<?= base_url() ?>pengumuman/delPengumumanTujuan/${idTujuan}" class="btn btn-danger btn-sm delBtn" data-toggle="tooltip" data-placement="top" title="Hapus Pengumuman"><i class="fas fa-trash"></i></a>`;
       
       var xhrPengumuman = new XMLHttpRequest();
       xhrPengumuman.open("POST", `<?= base_url() ?>pengumuman/bacaPengumuman/${idTujuan}`, true);

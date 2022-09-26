@@ -57,13 +57,21 @@ class Admin extends CI_Controller {
 		$nrp = $this->input->post('nrp');
 		$notelp = $this->input->post('notelp');
 		$password = $this->input->post('password');
+		$newPassword = '';
+
+		$res = $this->Modeladmin->getAdminById($idAdmin);
+		if ($password == null) {
+			$newPassword = $res[0]['password'];
+		} else {
+			$newPassword = password_hash($password, PASSWORD_DEFAULT);
+		}
 
 		$dataAdmin = array(
 			'kode_kesatuan' => $kode_kesatuan,
 			'nama_admin' => $nama_admin,
 			'nrp' => $nrp,
 			'notelp' => $notelp,
-			'password' => password_hash($password, PASSWORD_DEFAULT),
+			'password' => $newPassword,
 		);
 
 		$this->Modeladmin->updateAdmin($dataAdmin, $idAdmin);

@@ -1346,7 +1346,45 @@ class Data extends CI_Controller {
 
 	}
 
+	// IDENTITAS TERSANGKA
+	public function viewTersangka(){
+		if ($this->kode_kesatuan == 'ADMINSUPER') {
+			$res = $this->Modeltersangka->getSuperTersangkaByKodeKesatuan();
+		} else {
+			$res = $this->Modeltersangka->getTersangkaByKodeKesatuan($this->kode_kesatuan);	
+		}
+		
 
+		$data['title'] = "Master File Identitas Tersangka";
+		$data['menuLink'] = "master-tersangka";
+		$data['dataKasus'] = $res;
+
+		$this->load->view('include/header',$data);
+		$this->load->view('v_data_tersangka',$data);
+		$this->load->view('include/footer',$data);
+	}
+	
+	public function uploadFoto($id_tersangka){
+		$time = time();
+		$file_name = $_FILES['file'];
+		
+		// Move uploaded file to a temp location
+		$uploadDir = $_SERVER['DOCUMENT_ROOT'].'/si-lapor/uploads/fotoTersangka/';
+		$uploadFile = $uploadDir . $time . " - " . basename($_FILES['file']['name']);
+		
+    if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadFile)){
+			$namafile = [
+				'file_foto' => $time. " - " .$file_name['name'],
+			];
+			$this->Modeltersangka->uploadFoto($id_tersangka, $namafile);
+			$this->session->set_flashdata('success', 'Foto Tersangka berhasil diupload!');
+		}else{
+			echo "Possible file upload attack!\n";
+      $this->session->set_flashdata('error', 'Foto gagal diupload!');
+		}
+		
+		redirect(base_url("master-tersangka"));
+	}
 
 	// Date Modul
 	function rangeMonth($dateBefore, $dateAfter) {

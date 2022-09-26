@@ -102,12 +102,12 @@
                               <div class="form-group ">
                                 <label for="">Ubah Password :</label>
                                 <div class="input-group">
-                                  <input type="password" id="passwordEdit" name="password" class="form-control" autocomplete="off" placeholder="Masukkan Password Admin">
+                                  <input type="password" id="passwordEdit<?= $row_admin['id_admin'] ?>" name="password" class="form-control" autocomplete="off" placeholder="Masukkan Password Admin">
                                   <div class="input-group-append">
                                     <div class="input-group-text">
                                       <script>
-                                          function pswVisibiltyEdit(){
-                                            var x = document.getElementById("passwordEdit");
+                                          function pswVisibiltyEdit(<?= $row_admin['id_admin'] ?>){
+                                            var x = document.getElementById("passwordEdit<?= $row_admin['id_admin'] ?>");
                                             if (x.type === "password") {
                                               x.type = "text";
                                             } else {
@@ -115,7 +115,7 @@
                                             }
                                           }
                                       </script>
-                                      <span class="fas fa-eye" onclick="pswVisibiltyEdit()"></span>
+                                      <span class="fas fa-eye" onclick="pswVisibiltyEdit(<?= $row_admin['id_admin'] ?>)"></span>
                                     </div>
                                   </div>
                                 </div>

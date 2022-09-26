@@ -43,6 +43,17 @@ class Modeladmin extends CI_Model{
 		$query = $this->db->get();   
 		return $query->result_array();
 	}
+
+	function getAdminById($id){
+		$where = array(
+			'tb_admin.id_admin' => $id,
+		);
+		$this->db->select('*')
+		->from('tb_admin')
+		->where($where);
+		$query = $this->db->get();   
+		return $query->result_array();
+	}
 	
 	function getAdminToday(){
 		$begin = date('Y-m-d 00:00:00');

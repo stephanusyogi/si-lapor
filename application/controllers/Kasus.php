@@ -27,8 +27,8 @@ class Kasus extends CI_Controller {
 			redirect(base_url('404_override'));
 		}
 
-        $data['title'] = "Lapor Ungkap Kasus";
-        $data['menuLink'] = "lapor-ungkap-kasus";
+		$data['title'] = "Lapor Ungkap Kasus";
+		$data['menuLink'] = "lapor-ungkap-kasus";
 
 		$this->load->view('include/header',$data);
 		$this->load->view('v_kasus_laporkasus',$data);

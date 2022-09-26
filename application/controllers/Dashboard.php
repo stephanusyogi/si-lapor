@@ -26,6 +26,8 @@ class Dashboard extends CI_Controller {
 		
 		$date = $this->rangeYear(date("Y-m-d", strtotime("-1 month")));
 		$tahunDiagram = date("Y");
+		// Month Array for Diagram
+		$monthArray = array("january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december");
 		// Check Admin Level
 		if ($this->kode_kesatuan == 'ADMINSUPER') {
 
@@ -37,76 +39,46 @@ class Dashboard extends CI_Controller {
 				"jumlahKasusMenonjol" => $this->Modelkasus->getSuperKasusMenonjol(),
 				"jumlahLoginToday" => count($this->Modeladmin->getAdminToday()),
 			);
-
-			$dataDiagram = array(
-				"Jan" => array(
-					'KSS' => $this->Modelkasus->getSuperDiagramKasus(date ('Y-m-d', strtotime ('first day of january this year')), date ('Y-m-d', strtotime ('last day of january this year'))),
-					'TSK' => $this->Modelkasus->getSuperDiagramTSK(date ('Y-m-d', strtotime ('first day of january this year')), date ('Y-m-d', strtotime ('last day of january this year'))),
-					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA(date ('Y-m-d', strtotime ('first day of january this year')), date ('Y-m-d', strtotime ('last day of january this year'))),
-				),
-				"Feb" => array(
-					'KSS' => $this->Modelkasus->getSuperDiagramKasus(date ('Y-m-d', strtotime ('first day of february this year')), date ('Y-m-d', strtotime ('last day of february this year'))),
-					'TSK' => $this->Modelkasus->getSuperDiagramTSK(date ('Y-m-d', strtotime ('first day of february this year')), date ('Y-m-d', strtotime ('last day of february this year'))),
-					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA(date ('Y-m-d', strtotime ('first day of february this year')), date ('Y-m-d', strtotime ('last day of february this year'))),
-				),
-				"Mar" => array(
-					'KSS' => $this->Modelkasus->getSuperDiagramKasus(date ('Y-m-d', strtotime ('first day of march this year')), date ('Y-m-d', strtotime ('last day of march this year'))),
-					'TSK' => $this->Modelkasus->getSuperDiagramTSK(date ('Y-m-d', strtotime ('first day of march this year')), date ('Y-m-d', strtotime ('last day of march this year'))),
-					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA(date ('Y-m-d', strtotime ('first day of march this year')), date ('Y-m-d', strtotime ('last day of march this year'))),
-				),
-				"Apr" => array(
-					'KSS' => $this->Modelkasus->getSuperDiagramKasus(date ('Y-m-d', strtotime ('first day of april this year')), date ('Y-m-d', strtotime ('last day of april this year'))),
-					'TSK' => $this->Modelkasus->getSuperDiagramTSK(date ('Y-m-d', strtotime ('first day of april this year')), date ('Y-m-d', strtotime ('last day of april this year'))),
-					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA(date ('Y-m-d', strtotime ('first day of april this year')), date ('Y-m-d', strtotime ('last day of april this year'))),
-				),
-				"Mei" => array(
-					'KSS' => $this->Modelkasus->getSuperDiagramKasus(date ('Y-m-d', strtotime ('first day of may this year')), date ('Y-m-d', strtotime ('last day of may this year'))),
-					'TSK' => $this->Modelkasus->getSuperDiagramTSK(date ('Y-m-d', strtotime ('first day of may this year')), date ('Y-m-d', strtotime ('last day of may this year'))),
-					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA(date ('Y-m-d', strtotime ('first day of may this year')), date ('Y-m-d', strtotime ('last day of may this year'))),
-				),
-				"Jun" => array(
-					'KSS' => $this->Modelkasus->getSuperDiagramKasus(date ('Y-m-d', strtotime ('first day of june this year')), date ('Y-m-d', strtotime ('last day of june this year'))),
-					'TSK' => $this->Modelkasus->getSuperDiagramTSK(date ('Y-m-d', strtotime ('first day of june this year')), date ('Y-m-d', strtotime ('last day of june this year'))),
-					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA(date ('Y-m-d', strtotime ('first day of june this year')), date ('Y-m-d', strtotime ('last day of june this year'))),
-				),
-				"Jul" => array(
-					'KSS' => $this->Modelkasus->getSuperDiagramKasus(date ('Y-m-d', strtotime ('first day of july this year')), date ('Y-m-d', strtotime ('last day of july this year'))),
-					'TSK' => $this->Modelkasus->getSuperDiagramTSK(date ('Y-m-d', strtotime ('first day of july this year')), date ('Y-m-d', strtotime ('last day of july this year'))),
-					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA(date ('Y-m-d', strtotime ('first day of july this year')), date ('Y-m-d', strtotime ('last day of july this year'))),
-				),
-				"Agu" => array(
-					'KSS' => $this->Modelkasus->getSuperDiagramKasus(date ('Y-m-d', strtotime ('first day of august this year')), date ('Y-m-d', strtotime ('last day of august this year'))),
-					'TSK' => $this->Modelkasus->getSuperDiagramTSK(date ('Y-m-d', strtotime ('first day of august this year')), date ('Y-m-d', strtotime ('last day of august this year'))),
-					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA(date ('Y-m-d', strtotime ('first day of august this year')), date ('Y-m-d', strtotime ('last day of august this year'))),
-				),
-				"Sep" => array(
-					'KSS' => $this->Modelkasus->getSuperDiagramKasus(date ('Y-m-d', strtotime ('first day of september this year')), date ('Y-m-d', strtotime ('last day of september this year'))),
-					'TSK' => $this->Modelkasus->getSuperDiagramTSK(date ('Y-m-d', strtotime ('first day of september this year')), date ('Y-m-d', strtotime ('last day of september this year'))),
-					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA(date ('Y-m-d', strtotime ('first day of september this year')), date ('Y-m-d', strtotime ('last day of september this year'))),
-				),
-				"Okt" => array(
-					'KSS' => $this->Modelkasus->getSuperDiagramKasus(date ('Y-m-d', strtotime ('first day of october this year')), date ('Y-m-d', strtotime ('last day of october this year'))),
-					'TSK' => $this->Modelkasus->getSuperDiagramTSK(date ('Y-m-d', strtotime ('first day of october this year')), date ('Y-m-d', strtotime ('last day of october this year'))),
-					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA(date ('Y-m-d', strtotime ('first day of october this year')), date ('Y-m-d', strtotime ('last day of october this year'))),
-				),
-				"Nov" => array(
-					'KSS' => $this->Modelkasus->getSuperDiagramKasus(date ('Y-m-d', strtotime ('first day of november this year')), date ('Y-m-d', strtotime ('last day of november this year'))),
-					'TSK' => $this->Modelkasus->getSuperDiagramTSK(date ('Y-m-d', strtotime ('first day of november this year')), date ('Y-m-d', strtotime ('last day of november this year'))),
-					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA(date ('Y-m-d', strtotime ('first day of november this year')), date ('Y-m-d', strtotime ('last day of november this year'))),
-				),
-				"Des" => array(
-					'KSS' => $this->Modelkasus->getSuperDiagramKasus(date ('Y-m-d', strtotime ('first day of december this year')), date ('Y-m-d', strtotime ('last day of december this year'))),
-					'TSK' => $this->Modelkasus->getSuperDiagramTSK(date ('Y-m-d', strtotime ('first day of december this year')), date ('Y-m-d', strtotime ('last day of december this year'))),
-					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA(date ('Y-m-d', strtotime ('first day of december this year')), date ('Y-m-d', strtotime ('last day of december this year'))),
-				),
-			);
+			// Diagram General
+			$dataDiagram = array();
+			foreach($monthArray as $month){
+				$dataDiagram[$month] = array(
+					'KSS' => $this->Modelkasus->getSuperDiagramKasus(date ('Y-m-d', strtotime ("first day of {$month} this year")), date ('Y-m-d', strtotime ("last day of {$month} this year"))),
+					'TSK' => $this->Modelkasus->getSuperDiagramTSK(date ('Y-m-d', strtotime ("first day of {$month} this year")), date ('Y-m-d', strtotime ("last day of {$month} this year"))),
+					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA(date ('Y-m-d', strtotime ("first day of {$month} this year")), date ('Y-m-d', strtotime ("last day of {$month} this year"))),
+				);
+			}
+			// Diagram Barang Bukti
+			$kategoriBB = array("Ganja","Tembakau Gorilla","Hashish","Opium","Morphin","Heroin/Putaw","Kokain","Exstacy/Carnophen","Sabu","GOL IV","Daftar G","Kosmetik","Jamu");
+			$dataDiagramBB = array();
+			foreach ($monthArray as $month) {
+				$dataTempBB = array();
+				foreach($kategoriBB as $kategori) {
+					$jumlahBerat = 0;
+					$resBB = $this->Modelkasus->getSuperDiagramBB($kategori, date ('Y-m-d', strtotime ("first day of {$month} this year")), date ('Y-m-d', strtotime ("last day of {$month} this year")));
+					if (!empty($resBB)) {
+						foreach ($resBB as $keybb) {
+							$jumlahBerat += $keybb['jumlah'];
+						}
+						$beratSatuan = $jumlahBerat;
+					}else{
+						$beratSatuan = $jumlahBerat;
+					}
+					$dataTempBB[$kategori] = $beratSatuan;
+				}
+				$dataDiagramBB[$month] = $dataTempBB; 
+			}
 
 			$data['title'] = "Dashboard";
 			$data['menuLink'] = "dashboard";
 			$data['dataDashboard'] = $dataDashboard;
 
+			// Data Diagram General
 			$data['dataDiagram'] = $dataDiagram;
+			// Data Diagram BB
+			$data['dataDiagramBB'] = $dataDiagramBB;
 			$data['tahunDiagram'] = $tahunDiagram;
+			$data['btnExitSort'] = false;
 
 		} else {
 
@@ -127,69 +99,36 @@ class Dashboard extends CI_Controller {
 				"jumlahTersangka" => $this->Modelkasus->getTersangkaDashboard($this->kode_kesatuan),
 				"jumlahKasusSelesai" => $this->Modelkasus->getKasusSelesaiDashboard($this->kode_kesatuan),
 			);
+			// Diagram General
+			$dataDiagram = array();
+			foreach($monthArray as $month){
+				$dataDiagram[$month] = array(
+					'KSS' => $this->Modelkasus->getDiagramKasus($this->kode_kesatuan, date ('Y-m-d', strtotime ("first day of {$month} this year")), date ('Y-m-d', strtotime ("last day of {$month} this year"))),
+					'TSK' => $this->Modelkasus->getDiagramTSK($this->kode_kesatuan, date ('Y-m-d', strtotime ("first day of {$month} this year")), date ('Y-m-d', strtotime ("last day of {$month} this year"))),
+					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, date ('Y-m-d', strtotime ("first day of {$month} this year")), date ('Y-m-d', strtotime ("last day of {$month} this year"))),
+				);
+			}
 
-			$dataDiagram = array(
-				"Jan" => array(
-					'KSS' => $this->Modelkasus->getDiagramKasus($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of january this year')), date ('Y-m-d', strtotime ('last day of january this year'))),
-					'TSK' => $this->Modelkasus->getDiagramTSK($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of january this year')), date ('Y-m-d', strtotime ('last day of january this year'))),
-					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of january this year')), date ('Y-m-d', strtotime ('last day of january this year'))),
-				),
-				"Feb" => array(
-					'KSS' => $this->Modelkasus->getDiagramKasus($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of february this year')), date ('Y-m-d', strtotime ('last day of february this year'))),
-					'TSK' => $this->Modelkasus->getDiagramTSK($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of february this year')), date ('Y-m-d', strtotime ('last day of february this year'))),
-					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of february this year')), date ('Y-m-d', strtotime ('last day of february this year'))),
-				),
-				"Mar" => array(
-					'KSS' => $this->Modelkasus->getDiagramKasus($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of march this year')), date ('Y-m-d', strtotime ('last day of march this year'))),
-					'TSK' => $this->Modelkasus->getDiagramTSK($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of march this year')), date ('Y-m-d', strtotime ('last day of march this year'))),
-					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of march this year')), date ('Y-m-d', strtotime ('last day of march this year'))),
-				),
-				"Apr" => array(
-					'KSS' => $this->Modelkasus->getDiagramKasus($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of april this year')), date ('Y-m-d', strtotime ('last day of april this year'))),
-					'TSK' => $this->Modelkasus->getDiagramTSK($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of april this year')), date ('Y-m-d', strtotime ('last day of april this year'))),
-					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of april this year')), date ('Y-m-d', strtotime ('last day of april this year'))),
-				),
-				"Mei" => array(
-					'KSS' => $this->Modelkasus->getDiagramKasus($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of may this year')), date ('Y-m-d', strtotime ('last day of may this year'))),
-					'TSK' => $this->Modelkasus->getDiagramTSK($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of may this year')), date ('Y-m-d', strtotime ('last day of may this year'))),
-					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of may this year')), date ('Y-m-d', strtotime ('last day of may this year'))),
-				),
-				"Jun" => array(
-					'KSS' => $this->Modelkasus->getDiagramKasus($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of june this year')), date ('Y-m-d', strtotime ('last day of june this year'))),
-					'TSK' => $this->Modelkasus->getDiagramTSK($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of june this year')), date ('Y-m-d', strtotime ('last day of june this year'))),
-					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of june this year')), date ('Y-m-d', strtotime ('last day of june this year'))),
-				),
-				"Jul" => array(
-					'KSS' => $this->Modelkasus->getDiagramKasus($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of july this year')), date ('Y-m-d', strtotime ('last day of july this year'))),
-					'TSK' => $this->Modelkasus->getDiagramTSK($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of july this year')), date ('Y-m-d', strtotime ('last day of july this year'))),
-					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of july this year')), date ('Y-m-d', strtotime ('last day of july this year'))),
-				),
-				"Agu" => array(
-					'KSS' => $this->Modelkasus->getDiagramKasus($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of august this year')), date ('Y-m-d', strtotime ('last day of august this year'))),
-					'TSK' => $this->Modelkasus->getDiagramTSK($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of august this year')), date ('Y-m-d', strtotime ('last day of august this year'))),
-					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of august this year')), date ('Y-m-d', strtotime ('last day of august this year'))),
-				),
-				"Sep" => array(
-					'KSS' => $this->Modelkasus->getDiagramKasus($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of september this year')), date ('Y-m-d', strtotime ('last day of september this year'))),
-					'TSK' => $this->Modelkasus->getDiagramTSK($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of september this year')), date ('Y-m-d', strtotime ('last day of september this year'))),
-					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of september this year')), date ('Y-m-d', strtotime ('last day of september this year'))),
-				),
-				"Okt" => array(
-					'KSS' => $this->Modelkasus->getDiagramKasus($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of october this year')), date ('Y-m-d', strtotime ('last day of october this year'))),
-					'TSK' => $this->Modelkasus->getDiagramTSK($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of october this year')), date ('Y-m-d', strtotime ('last day of october this year'))),
-					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of october this year')), date ('Y-m-d', strtotime ('last day of october this year'))),
-				),
-				"Nov" => array(
-					'KSS' => $this->Modelkasus->getDiagramKasus($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of november this year')), date ('Y-m-d', strtotime ('last day of november this year'))),
-					'TSK' => $this->Modelkasus->getDiagramTSK($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of november this year')), date ('Y-m-d', strtotime ('last day of november this year'))),
-					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of november this year')), date ('Y-m-d', strtotime ('last day of november this year'))),
-				),
-				"Des" => array(
-					'KSS' => $this->Modelkasus->getDiagramKasus($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of december this year')), date ('Y-m-d', strtotime ('last day of december this year'))),
-					'TSK' => $this->Modelkasus->getDiagramTSK($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of december this year')), date ('Y-m-d', strtotime ('last day of december this year'))),
-					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, date ('Y-m-d', strtotime ('first day of december this year')), date ('Y-m-d', strtotime ('last day of december this year'))),
-				),
-			);
+			// Diagram Barang Bukti
+			$kategoriBB = array("Ganja","Tembakau Gorilla","Hashish","Opium","Morphin","Heroin/Putaw","Kokain","Exstacy/Carnophen","Sabu","GOL IV","Daftar G","Kosmetik","Jamu");
+			$dataDiagramBB = array();
+			foreach ($monthArray as $month) {
+				$dataTempBB = array();
+				foreach($kategoriBB as $kategori) {
+					$jumlahBerat = 0;
+					$resBB = $this->Modelkasus->getDiagramBB($this->kode_kesatuan, $kategori, date ('Y-m-d', strtotime ("first day of {$month} this year")), date ('Y-m-d', strtotime ("last day of {$month} this year")));
+					if (!empty($resBB)) {
+						foreach ($resBB as $keybb) {
+							$jumlahBerat += $keybb['jumlah'];
+						}
+						$beratSatuan = $jumlahBerat;
+					}else{
+						$beratSatuan = $jumlahBerat;
+					}
+					$dataTempBB[$kategori] = $beratSatuan;
+				}
+				$dataDiagramBB[$month] = $dataTempBB; 
+			}
 
 			$data['title'] = "Dashboard";
 			$data['menuLink'] = "dashboard";
@@ -197,10 +136,15 @@ class Dashboard extends CI_Controller {
 			// Notification If Case TSK / BB Empty
 			$data['displayTSK'] = $displayTSK;
 			$data['displayBB'] = $displayBB;
-			
+			// Data Diagram General
 			$data['dataDiagram'] = $dataDiagram;
+			// Data Diagram BB
+			$data['dataDiagramBB'] = $dataDiagramBB;
 			$data['tahunDiagram'] = $tahunDiagram;
+			$data['btnExitSort'] = false;
 		}
+
+		$data['viewDiagramByDate'] = false;
 
 		$this->load->view('include/header', $data);
 		$this->load->view('v_dashboard', $data);
@@ -235,8 +179,9 @@ class Dashboard extends CI_Controller {
 
 	public function viewDiagramByDate(){
 		$tahunDiagram = $this->input->post('tahunDiagram');
-		$startDate = date ('Y-m-d',strtotime ("first day of january {$tahunDiagram}"));
-		$endDate = date ('Y-m-d',strtotime ("last day of december {$tahunDiagram}"));
+
+		// Month Array for Diagram
+		$monthArray = array("january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december");
 
 		if ($this->kode_kesatuan == 'ADMINSUPER') {
 
@@ -249,75 +194,45 @@ class Dashboard extends CI_Controller {
 				"jumlahLoginToday" => count($this->Modeladmin->getAdminToday()),
 			);
 
-			$dataDiagram = array(
-				"Jan" => array(
-					'KSS' => $this->Modelkasus->getSuperDiagramKasus($startDate, $endDate),
-					'TSK' => $this->Modelkasus->getSuperDiagramTSK($startDate, $endDate),
-					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA($startDate, $endDate),
-				),
-				"Feb" => array(
-					'KSS' => $this->Modelkasus->getSuperDiagramKasus($startDate, $endDate),
-					'TSK' => $this->Modelkasus->getSuperDiagramTSK($startDate, $endDate),
-					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA($startDate, $endDate),
-				),
-				"Mar" => array(
-					'KSS' => $this->Modelkasus->getSuperDiagramKasus($startDate, $endDate),
-					'TSK' => $this->Modelkasus->getSuperDiagramTSK($startDate, $endDate),
-					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA($startDate, $endDate),
-				),
-				"Apr" => array(
-					'KSS' => $this->Modelkasus->getSuperDiagramKasus($startDate, $endDate),
-					'TSK' => $this->Modelkasus->getSuperDiagramTSK($startDate, $endDate),
-					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA($startDate, $endDate),
-				),
-				"Mei" => array(
-					'KSS' => $this->Modelkasus->getSuperDiagramKasus($startDate, $endDate),
-					'TSK' => $this->Modelkasus->getSuperDiagramTSK($startDate, $endDate),
-					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA($startDate, $endDate),
-				),
-				"Jun" => array(
-					'KSS' => $this->Modelkasus->getSuperDiagramKasus($startDate, $endDate),
-					'TSK' => $this->Modelkasus->getSuperDiagramTSK($startDate, $endDate),
-					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA($startDate, $endDate),
-				),
-				"Jul" => array(
-					'KSS' => $this->Modelkasus->getSuperDiagramKasus($startDate, $endDate),
-					'TSK' => $this->Modelkasus->getSuperDiagramTSK($startDate, $endDate),
-					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA($startDate, $endDate),
-				),
-				"Agu" => array(
-					'KSS' => $this->Modelkasus->getSuperDiagramKasus($startDate, $endDate),
-					'TSK' => $this->Modelkasus->getSuperDiagramTSK($startDate, $endDate),
-					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA($startDate, $endDate),
-				),
-				"Sep" => array(
-					'KSS' => $this->Modelkasus->getSuperDiagramKasus($startDate, $endDate),
-					'TSK' => $this->Modelkasus->getSuperDiagramTSK($startDate, $endDate),
-					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA($startDate, $endDate),
-				),
-				"Okt" => array(
-					'KSS' => $this->Modelkasus->getSuperDiagramKasus($startDate, $endDate),
-					'TSK' => $this->Modelkasus->getSuperDiagramTSK($startDate, $endDate),
-					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA($startDate, $endDate),
-				),
-				"Nov" => array(
-					'KSS' => $this->Modelkasus->getSuperDiagramKasus($startDate, $endDate),
-					'TSK' => $this->Modelkasus->getSuperDiagramTSK($startDate, $endDate),
-					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA($startDate, $endDate),
-				),
-				"Des" => array(
-					'KSS' => $this->Modelkasus->getSuperDiagramKasus($startDate, $endDate),
-					'TSK' => $this->Modelkasus->getSuperDiagramTSK($startDate, $endDate),
-					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA($startDate, $endDate),
-				),
-			);
+			// Diagram General
+			$dataDiagram = array();
+			foreach($monthArray as $month){
+				$dataDiagram[$month] = array(
+					'KSS' => $this->Modelkasus->getSuperDiagramKasus(date ('Y-m-d', strtotime ("first day of {$month} {$tahunDiagram}")), date ('Y-m-d', strtotime ("last day of {$month} {$tahunDiagram}"))),
+					'TSK' => $this->Modelkasus->getSuperDiagramTSK(date ('Y-m-d', strtotime ("first day of {$month} {$tahunDiagram}")), date ('Y-m-d', strtotime ("last day of {$month} {$tahunDiagram}"))),
+					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA(date ('Y-m-d', strtotime ("first day of {$month} {$tahunDiagram}r")), date ('Y-m-d', strtotime ("last day of {$month} {$tahunDiagram}"))),
+				);
+			}
+			// Diagram Barang Bukti
+			$kategoriBB = array("Ganja","Tembakau Gorilla","Hashish","Opium","Morphin","Heroin/Putaw","Kokain","Exstacy/Carnophen","Sabu","GOL IV","Daftar G","Kosmetik","Jamu");
+			$dataDiagramBB = array();
+			foreach ($monthArray as $month) {
+				$dataTempBB = array();
+				foreach($kategoriBB as $kategori) {
+					$jumlahBerat = 0;
+					$resBB = $this->Modelkasus->getSuperDiagramBB($kategori, date ('Y-m-d', strtotime ("first day of {$month} {$tahunDiagram}")), date ('Y-m-d', strtotime ("last day of {$month} {$tahunDiagram}")));
+					if (!empty($resBB)) {
+						foreach ($resBB as $keybb) {
+							$jumlahBerat += $keybb['jumlah'];
+						}
+						$beratSatuan = $jumlahBerat;
+					}else{
+						$beratSatuan = $jumlahBerat;
+					}
+					$dataTempBB[$kategori] = $beratSatuan;
+				}
+				$dataDiagramBB[$month] = $dataTempBB; 
+			}
 
 			$data['title'] = "Dashboard";
 			$data['menuLink'] = "dashboard";
 			$data['dataDashboard'] = $dataDashboard;
 
 			$data['dataDiagram'] = $dataDiagram;
+			$data['dataDiagramBB'] = $dataDiagramBB;
 			$data['tahunDiagram'] = $tahunDiagram;
+
+			$data['btnExitSort'] = true;
 
 		} else {
 
@@ -339,68 +254,35 @@ class Dashboard extends CI_Controller {
 				"jumlahKasusSelesai" => $this->Modelkasus->getKasusSelesaiDashboard($this->kode_kesatuan),
 			);
 
-			$dataDiagram = array(
-				"Jan" => array(
-					'KSS' => $this->Modelkasus->getDiagramKasus($this->kode_kesatuan, $startDate, $endDate),
-					'TSK' => $this->Modelkasus->getDiagramTSK($this->kode_kesatuan, $startDate, $endDate),
-					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, $startDate, $endDate),
-				),
-				"Feb" => array(
-					'KSS' => $this->Modelkasus->getDiagramKasus($this->kode_kesatuan, $startDate, $endDate),
-					'TSK' => $this->Modelkasus->getDiagramTSK($this->kode_kesatuan, $startDate, $endDate),
-					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, $startDate, $endDate),
-				),
-				"Mar" => array(
-					'KSS' => $this->Modelkasus->getDiagramKasus($this->kode_kesatuan, $startDate, $endDate),
-					'TSK' => $this->Modelkasus->getDiagramTSK($this->kode_kesatuan, $startDate, $endDate),
-					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, $startDate, $endDate),
-				),
-				"Apr" => array(
-					'KSS' => $this->Modelkasus->getDiagramKasus($this->kode_kesatuan, $startDate, $endDate),
-					'TSK' => $this->Modelkasus->getDiagramTSK($this->kode_kesatuan, $startDate, $endDate),
-					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, $startDate, $endDate),
-				),
-				"Mei" => array(
-					'KSS' => $this->Modelkasus->getDiagramKasus($this->kode_kesatuan, $startDate, $endDate),
-					'TSK' => $this->Modelkasus->getDiagramTSK($this->kode_kesatuan, $startDate, $endDate),
-					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, $startDate, $endDate),
-				),
-				"Jun" => array(
-					'KSS' => $this->Modelkasus->getDiagramKasus($this->kode_kesatuan, $startDate, $endDate),
-					'TSK' => $this->Modelkasus->getDiagramTSK($this->kode_kesatuan, $startDate, $endDate),
-					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, $startDate, $endDate),
-				),
-				"Jul" => array(
-					'KSS' => $this->Modelkasus->getDiagramKasus($this->kode_kesatuan, $startDate, $endDate),
-					'TSK' => $this->Modelkasus->getDiagramTSK($this->kode_kesatuan, $startDate, $endDate),
-					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, $startDate, $endDate),
-				),
-				"Agu" => array(
-					'KSS' => $this->Modelkasus->getDiagramKasus($this->kode_kesatuan, $startDate, $endDate),
-					'TSK' => $this->Modelkasus->getDiagramTSK($this->kode_kesatuan, $startDate, $endDate),
-					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, $startDate, $endDate),
-				),
-				"Sep" => array(
-					'KSS' => $this->Modelkasus->getDiagramKasus($this->kode_kesatuan, $startDate, $endDate),
-					'TSK' => $this->Modelkasus->getDiagramTSK($this->kode_kesatuan, $startDate, $endDate),
-					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, $startDate, $endDate),
-				),
-				"Okt" => array(
-					'KSS' => $this->Modelkasus->getDiagramKasus($this->kode_kesatuan, $startDate, $endDate),
-					'TSK' => $this->Modelkasus->getDiagramTSK($this->kode_kesatuan, $startDate, $endDate),
-					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, $startDate, $endDate),
-				),
-				"Nov" => array(
-					'KSS' => $this->Modelkasus->getDiagramKasus($this->kode_kesatuan, $startDate, $endDate),
-					'TSK' => $this->Modelkasus->getDiagramTSK($this->kode_kesatuan, $startDate, $endDate),
-					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, $startDate, $endDate),
-				),
-				"Des" => array(
-					'KSS' => $this->Modelkasus->getDiagramKasus($this->kode_kesatuan, $startDate, $endDate),
-					'TSK' => $this->Modelkasus->getDiagramTSK($this->kode_kesatuan, $startDate, $endDate),
-					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, $startDate, $endDate),
-				),
-			);
+			// Diagram General
+			$dataDiagram = array();
+			foreach($monthArray as $month){
+				$dataDiagram[$month] = array(
+					'KSS' => $this->Modelkasus->getDiagramKasus($this->kode_kesatuan, date ('Y-m-d', strtotime ("first day of {$month} {$tahunDiagram}")), date ('Y-m-d', strtotime ("last day of {$month} {$tahunDiagram}"))),
+					'TSK' => $this->Modelkasus->getDiagramTSK($this->kode_kesatuan, date ('Y-m-d', strtotime ("first day of {$month} {$tahunDiagram}")), date ('Y-m-d', strtotime ("last day of {$month} {$tahunDiagram}"))),
+					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, date ('Y-m-d', strtotime ("first day of {$month} {$tahunDiagram}r")), date ('Y-m-d', strtotime ("last day of {$month} {$tahunDiagram}"))),
+				);
+			}
+			// Diagram Barang Bukti
+			$kategoriBB = array("Ganja","Tembakau Gorilla","Hashish","Opium","Morphin","Heroin/Putaw","Kokain","Exstacy/Carnophen","Sabu","GOL IV","Daftar G","Kosmetik","Jamu");
+			$dataDiagramBB = array();
+			foreach ($monthArray as $month) {
+				$dataTempBB = array();
+				foreach($kategoriBB as $kategori) {
+					$jumlahBerat = 0;
+					$resBB = $this->Modelkasus->getDiagramBB($this->kode_kesatuan,$kategori, date ('Y-m-d', strtotime ("first day of {$month} {$tahunDiagram}")), date ('Y-m-d', strtotime ("last day of {$month} {$tahunDiagram}")));
+					if (!empty($resBB)) {
+						foreach ($resBB as $keybb) {
+							$jumlahBerat += $keybb['jumlah'];
+						}
+						$beratSatuan = $jumlahBerat;
+					}else{
+						$beratSatuan = $jumlahBerat;
+					}
+					$dataTempBB[$kategori] = $beratSatuan;
+				}
+				$dataDiagramBB[$month] = $dataTempBB; 
+			}
 
 			$data['title'] = "Dashboard";
 			$data['menuLink'] = "dashboard";
@@ -410,8 +292,13 @@ class Dashboard extends CI_Controller {
 			$data['displayBB'] = $displayBB;
 			
 			$data['dataDiagram'] = $dataDiagram;
+			$data['dataDiagramBB'] = $dataDiagramBB;
 			$data['tahunDiagram'] = $tahunDiagram;
+
+			$data['btnExitSort'] = true;
 		}
+
+		$data['viewDiagramByDate'] = true;
 
 		$this->load->view('include/header', $data);
 		$this->load->view('v_dashboard', $data);
@@ -420,9 +307,12 @@ class Dashboard extends CI_Controller {
 	}
 
 	public function viewSearch($kategoriPencarian){
+		$kesatuan = $this->Modeldata->getKesatuan($this->kode_kesatuan);
+
 		$data['title'] = "Pencarian Data";
 		$data['menuLink'] = "dashboard";
 		$data['kategoriPencarian'] = $kategoriPencarian;
+		$data['kesatuan'] = $kesatuan;
 		
 		$this->load->view('include/header', $data);
 		$this->load->view('v_search', $data);
@@ -442,6 +332,11 @@ class Dashboard extends CI_Controller {
 			$kode_lp = $this->session->userdata('login_data_admin')['kode_lp'];
 			$namasatuan = $this->session->userdata('login_data_admin')['nama'];
 			$kodekesatuan = $this->kode_kesatuan;
+
+			if ($this->kode_kesatuan == 'ADMINSUPER') {
+				$kode_lp = $_POST['kode_kesatuan'];
+				$namasatuan = $_POST['kode_kesatuan'];
+			}
 			
 			if ($kesatuan == 'polres') {
 				$noLP = "LP/A/{$nosurat}/{$bulansurat}/{$tahunsurat}/SPKT.{$kode_lp}/POLDA JAWA TIMUR";
@@ -473,6 +368,7 @@ class Dashboard extends CI_Controller {
 		$data['menuLink'] = "dashboard";
 		$data['dataKasus'] = $res;
 		$data['kesatuan'] = $kesatuan;
+		$data['kategoriPencarian'] = $kategoriPencarian;
 
 		$this->session->set_flashdata('success', 'Pencarian data sedang diproses!');
 		$this->load->view('include/header', $data);

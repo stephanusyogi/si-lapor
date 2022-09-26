@@ -31,7 +31,7 @@
         </div>
         <!-- Form Informasi Umum Kasus -->
         <form action="<?= base_url() ?>kasus/updateKasus/<?= $dataKasus['id_kasus'] ?>" method="post">
-          <h4>Kesatuan :</h4>
+          <h4>Format Laporan Polisi :</h4>
           <select id="kesatuan" name="kesatuan" class="form-control" style="width:20%;">
             <option value="polres" <?= strpos($dataKasus['no_laporanpolisi'], 'POLSEK') ? '' : 'selected'?>>Polres</option>
             <option value="polsek" <?= strpos($dataKasus['no_laporanpolisi'], 'POLSEK') ? 'selected' : ''?>>Polsek</option>
