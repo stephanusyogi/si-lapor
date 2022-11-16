@@ -47,18 +47,18 @@
       <hr class="my-2">
       <div class="row">
         <div class="col-md-10">
-          <a class="btn btn-primary btn-sm mt-1 mx-1" data-toggle="modal" data-target="#sortModal"><span><i class="fas fa-filter"></i> </span>Sort by Date</a>
+          <a class="btn btn-primary btn-sm mt-1 mx-1" data-toggle="modal" data-target="#sortModal"><span><i class="fas fa-filter"></i> </span>Sort</a>
           <?php if($btnExitSort): ?>
-            <a class="btn btn-danger btn-sm mt-1 mx-1" href="<?= base_url('master-kasus')?>">Exit From Sort View by Date</a>
+            <a class="btn btn-danger btn-sm mt-1 mx-1" href="<?= base_url('master-kasus')?>">Exit From Sort View</a>
           <?php endif; ?>
         </div>
         <div class="col-md-2 text-right">
-          <a class="btn btn-success btn-sm mt-1" href="<?= base_url('export-opsi/kasusMaster') ?>"><span><i class="fas fa-print"></i> </span>Export</a>
+          <!-- <a class="btn btn-success btn-sm mt-1" href="<?= base_url('export-opsi/kasusMaster') ?>"><span><i class="fas fa-print"></i> </span>Export</a> -->
         </div>
       </div>
       <!-- Modal Sort Date -->
       <div class="modal fade" id="sortModal" tabindex="-1" role="dialog" aria-labelledby="sortModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
+          <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
               <div class="modal-content">
                   <div class="modal-header">
                       <h5 class="modal-title" id="sortModalLabel">Sort by Date</h5>
@@ -71,8 +71,20 @@
                         <div class="section-date row">
                           <div class="col-md-12">
                             <div id="formDateSettings">
-                              <div class="formDate d-flex">
-                                  <div class="form-group">
+                              <div class="formDate row">
+                                <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER'){ ?>
+                                  <?php $kesatuan = $CI->Modeldata->getKesatuan($this->session->userdata('login_data_admin')['kodekesatuan']); ?>
+                                    <div class="form-group col-md-4">
+                                      <label for="kode_kesatuan">Pilih kesatuan / jajaran :</label>
+                                      <select name="kode_kesatuan" class="form-control" data-live-search="true" required>
+                                        <option value="all">All</option>
+                                        <?php foreach ($kesatuan as $keyKesatuan) { ?>
+                                          <option value="<?= $keyKesatuan['kode_kesatuan'] ?>"><?= $keyKesatuan['nama'] ?></option>
+                                        <?php } ?>
+                                      </select>
+                                    </div>
+                                  <?php } ?>
+                                  <div class="form-group col-md-4">
                                     <label>Pilih Tanggal Awal</label>
                                     <div class="input-group date" id="tanggalAwalHarian" data-target-input="nearest">
                                       <input type="text" name="tanggalAwal" class="form-control datetimepicker-input" data-target="#tanggalAwalHarian" placeholder="Pilih Tanggal Awal" required autocomplete="off"/>
@@ -81,7 +93,7 @@
                                       </div>
                                     </div>
                                   </div>
-                                  <div class="form-group mx-2">
+                                  <div class="form-group col-md-4">
                                     <label>Pilih Tanggal Akhir</label>
                                     <div class="input-group date" id="tanggalAkhirHarian" data-target-input="nearest">
                                       <input type="text" name="tanggalAkhir" class="form-control datetimepicker-input" data-target="#tanggalAkhirHarian" placeholder="Pilih Tanggal Akhir" autocomplete="off"/>
@@ -280,7 +292,7 @@
                     <td class="text-center">
                       <?php if($display): ?>
                         <?php if(empty($row_kasus["status_kasus"])){ ?>
-                          <button class="btn btn-warning btn-sm"><strong>Belum Diketahui</strong></button>
+                          <button class="btn btn-warning btn-sm"><strong>Sedang Proses</strong></button>
                         <?php }else if ($row_kasus["status_kasus"] == 'TAHAP II'){ ?>
                           <button class="btn btn-success btn-sm">
                             <strong>Tahap II</strong>

@@ -36,6 +36,7 @@
                         <option value="Kokain">Kokain</option>
                         <option value="Exstacy/Carnophen">Exstacy/Carnophen</option>
                         <option value="Sabu">Sabu</option>
+                        <option value="GOL III">GOL III</option>
                         <option value="GOL IV">GOL IV</option>
                     </optgroup>
                     <optgroup label="Okerbaya">
@@ -161,12 +162,19 @@
                 inputBerat = '';
                 break;
                 
-            case 'GOL IV' :
             case 'Daftar G' :
                 valNamaBarangBukti = this.value;
                 valSatuan = 'butir';
                 statusInput = 'readonly';
                 inputSatuan = `<label for="satuan">Satuan</label><input class="form-control" type="text" name="satuan" id="satuan" placeholder="Masukkan Satuan Barang Bukti" value="${valSatuan}" required ${statusInput}>`;
+                inputKeterangan = `<label for="keterangan">Keterangan</label><input type="text" class="form-control" name="keterangan" id="keterangan" placeholder="Masukkan Keterangan"  autocomplete="off" required>`;
+                inputBerat = ``;
+                break;
+                
+            case 'GOL III' :
+            case 'GOL IV' :
+                valNamaBarangBukti = this.value;
+                inputSatuan = `<label for="satuan">Satuan</label><select class="form-control" name="satuan" id="satuan"><option value="gram">gram</option><option value="butir">butir</option></select>`;
                 inputKeterangan = `<label for="keterangan">Keterangan</label><input type="text" class="form-control" name="keterangan" id="keterangan" placeholder="Masukkan Keterangan"  autocomplete="off" required>`;
                 inputBerat = ``;
                 break;

@@ -34,7 +34,7 @@
                 <?php endif; ?>
               </div>
               <div class="col-md-2 text-right">
-                  <a class="btn btn-success btn-sm mt-1" href="<?= base_url('export-opsi/pelimpahanRiwayat') ?>"><span><i class="fas fa-print"></i> </span>Export</a>
+                  <!-- <a class="btn btn-success btn-sm mt-1" href="<?= base_url('export-opsi/pelimpahanRiwayat') ?>"><span><i class="fas fa-print"></i> </span>Export</a> -->
               </div>
             </div>
             <!-- Modal Sort Date -->

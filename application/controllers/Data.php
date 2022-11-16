@@ -23,8 +23,6 @@ class Data extends CI_Controller {
 		$this->load->model('Modelpermohonan');
 	}
 
-
-
 	//  MASTER KASUS MODUL
 	public function viewMasterKasus(){
 		
@@ -61,6 +59,7 @@ class Data extends CI_Controller {
 	}
 
   public function viewMasterKasusByDate(){
+		$nama_kesatuan = $this->input->post('kode_kesatuan');
 		$tanggalAwal = $this->input->post('tanggalAwal');
 		$tanggalAkhir = $this->input->post('tanggalAkhir');
 		$firstDate = '';
@@ -78,28 +77,40 @@ class Data extends CI_Controller {
 			$dateNow = $this->dateIndonesia(date('N j/n/Y', strtotime($firstDate))).' - '.$this->dateIndonesia(date('N j/n/Y', strtotime($lastDate)));	
 		}
 
-		if ($this->kode_kesatuan == 'ADMINSUPER') {
-
-			$res = $this->Modeldata->getSuperKasus($firstDate, $lastDate);
-	
-			$data['title'] = "Data Ungkap Kasus";
-			$data['menuLink'] = "master-kasus";
-			$data['dataKasus'] = $res;
-			$data['dateNow'] = $dateNow;
-
-		} else {
-
-			$res = $this->Modeldata->getKasusByKodeKesatuan($this->kode_kesatuan, $firstDate, $lastDate);
-			$kesatuan = $this->Modeldata->getKesatuan($this->kode_kesatuan);
-	
-			$data['title'] = "Data Ungkap Kasus";
-			$data['menuLink'] = "master-kasus";
-			$data['dataKasus'] = $res;
-			$data['kesatuan'] = $kesatuan;
-			$data['dateNow'] = $dateNow;
-
-		}
 		
+		if ($nama_kesatuan == 'all'){
+			$res = $this->Modeldata->getSuperKasus($firstDate, $lastDate);
+		
+			$data['title'] = "Data Ungkap Kasus";
+			$data['menuLink'] = "master-kasus";
+			$data['dataKasus'] = $res;
+			$data['dateNow'] = $dateNow;
+		}else{
+			if ($this->kode_kesatuan == 'ADMINSUPER') {
+	
+				$res = $this->Modeldata->getKasusByKodeKesatuan($nama_kesatuan, $firstDate, $lastDate);
+				$kesatuan = $this->Modeldata->getKesatuan($nama_kesatuan);
+		
+				$data['title'] = "Data Ungkap Kasus";
+				$data['menuLink'] = "master-kasus";
+				$data['dataKasus'] = $res;
+				$data['kesatuan'] = $kesatuan;
+				$data['dateNow'] = $dateNow;
+
+			} else {
+	
+				$res = $this->Modeldata->getKasusByKodeKesatuan($this->kode_kesatuan, $firstDate, $lastDate);
+				$kesatuan = $this->Modeldata->getKesatuan($this->kode_kesatuan);
+		
+				$data['title'] = "Data Ungkap Kasus";
+				$data['menuLink'] = "master-kasus";
+				$data['dataKasus'] = $res;
+				$data['kesatuan'] = $kesatuan;
+				$data['dateNow'] = $dateNow;
+	
+			}
+		}
+
 		$data['btnExitSort'] = true;
 	
 		$this->load->view('include/header',$data);
@@ -178,8 +189,6 @@ class Data extends CI_Controller {
 	}
 
 
-
-
 	// MATRIK KASUS MODUL	
   public function viewMatrikKasus(){
 		$date = $this->rangeMonth(date("Y-m-d", strtotime("-1 month")), date("Y-m-d", strtotime("+1 month")));
@@ -206,9 +215,8 @@ class Data extends CI_Controller {
 			$tkpInstrumen = array("Hotel/Villa/Kos","Ruko/Gedung/Mall/Pabrik","Tempat Umum","Pemukiman/Pondok","Diskotik/Tempat Karaoke","Terminal/Bandara/Pelabuhan","Rumah Tahanan");
 			$tkp = array();
 			
-			$bbInstrumen = array("Ganja","Tembakau Gorilla","Hashish","Opium","Morphin","Heroin/Putaw","Kokain","Exstacy/Carnophen","Sabu","GOL IV","Daftar G","Kosmetik","Jamu");
+			$bbInstrumen = array("Ganja","Tembakau Gorilla","Hashish","Opium","Morphin","Heroin/Putaw","Kokain","Exstacy/Carnophen","Sabu", "GOL III","GOL IV","Daftar G","Kosmetik","Jamu");
 			$bb = array();
-			
 
 			foreach ($kesatuan as $keyKesatuan) {
 
@@ -228,15 +236,33 @@ class Data extends CI_Controller {
 				foreach ($tkpInstrumen as $keyTkpInstrumen) {
 					$tkp[$keyTkpInstrumen] = $this->Modeldata->getCountWithOneCondition($keyKesatuan['kode_kesatuan'], "tb_tersangka.pekerjaan", $keyTkpInstrumen, $date['start'], $date['end']);
 				};
-
 				foreach ($bbInstrumen as $keyBbInstrumen) {
 					$jumlahBerat = 0;
+					$berat_gram = 0;
+					$berat_butir = 0;
 					$res = $this->Modeldata->getBeratBB($keyKesatuan['kode_kesatuan'], $keyBbInstrumen, $date['start'], $date['end'])->result_array();
 					if (!empty($res)) {
-						foreach ($res as $keybb) {
-							$jumlahBerat += $keybb['jumlah'];
+						if($keyBbInstrumen === 'GOL IV' || $keyBbInstrumen === 'GOL III'){
+							foreach ($res as $keybb) {
+								if ($keybb['satuan'] == 'gram') {
+									$berat_gram += (float)$keybb['jumlah'];
+								} else {
+									$berat_butir += (float)$keybb['jumlah'];
+								}
+							}
+							if ($berat_gram != 0 && $berat_butir != 0) {
+								$beratSatuan = $berat_gram." gram & ".$berat_butir." butir";
+							}elseif ($berat_gram == 0) {
+								$beratSatuan = $berat_butir." butir";
+							}else{
+								$beratSatuan = $berat_gram." gram";
+							}
+						}else{
+							foreach ($res as $keybb) {
+								$jumlahBerat += $keybb['jumlah'];
+							}
+							$beratSatuan = "{$jumlahBerat} {$res[0]['satuan']}";
 						}
-						$beratSatuan = "{$jumlahBerat} {$res[0]['satuan']}";
 					}else{
 						$beratSatuan = $jumlahBerat;
 					}
@@ -274,39 +300,57 @@ class Data extends CI_Controller {
 			$bbTotal = array();
 			
 			foreach ($statusInstrumen as $keyStatusInstrumen) {
-				$status[$keyStatusInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.status", $keyStatusInstrumen, $date['start'], $date['end']);
+				$statusTotal[$keyStatusInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.status", $keyStatusInstrumen, $date['start'], $date['end']);
 			};
 			foreach ($usiaInstrumen as $keyUsiaInstrumen) {
-				$usia[$keyUsiaInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.kategori_usia", $keyUsiaInstrumen, $date['start'], $date['end']);
+				$usiaTotal[$keyUsiaInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.kategori_usia", $keyUsiaInstrumen, $date['start'], $date['end']);
 			};
 			foreach ($pendidikanInstrumen as $keyPendidikanInstrumen) {
-				$pendidikan[$keyPendidikanInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.pendidikan", $keyPendidikanInstrumen, $date['start'], $date['end']);
+				$pendidikanTotal[$keyPendidikanInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.pendidikan", $keyPendidikanInstrumen, $date['start'], $date['end']);
 			};
 			foreach ($pekerjaanInstrumen as $keyPekerjaanInstrumen) {
-				$pekerjaan[$keyPekerjaanInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.pekerjaan", $keyPekerjaanInstrumen, $date['start'], $date['end']);
+				$pekerjaanTotal[$keyPekerjaanInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.pekerjaan", $keyPekerjaanInstrumen, $date['start'], $date['end']);
 			};
 			foreach ($tkpInstrumen as $keyTkpInstrumen) {
-				$tkp[$keyTkpInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.pekerjaan", $keyTkpInstrumen, $date['start'], $date['end']);
+				$tkpTotal[$keyTkpInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.pekerjaan", $keyTkpInstrumen, $date['start'], $date['end']);
 			};
-
 			foreach ($bbInstrumen as $keyBbInstrumen) {
 				$jumlahBerat = 0;
+				$berat_gram = 0;
+				$berat_butir = 0;
 				$res = $this->Modeldata->getSuperBeratBB($keyBbInstrumen, $date['start'], $date['end'])->result_array();
 				if (!empty($res)) {
-					foreach ($res as $keybb) {
-						$jumlahBerat += $keybb['jumlah'];
+					if($keyBbInstrumen === 'GOL IV' || $keyBbInstrumen === 'GOL III'){
+						foreach ($res as $keybb) {
+							if ($keybb['satuan'] == 'gram') {
+								$berat_gram += (float)$keybb['jumlah'];
+							} else {
+								$berat_butir += (float)$keybb['jumlah'];
+							}
+						}
+						if ($berat_gram != 0 && $berat_butir != 0) {
+							$beratSatuan = $berat_gram." gram & ".$berat_butir." butir";
+						}elseif ($berat_gram == 0) {
+							$beratSatuan = $berat_butir." butir";
+						}else{
+							$beratSatuan = $berat_gram." gram";
+						}
+					}else{
+						foreach ($res as $keybb) {
+							$jumlahBerat += $keybb['jumlah'];
+						}
+						$beratSatuan = "{$jumlahBerat} {$res[0]['satuan']}";
 					}
-					$beratSatuan = "{$jumlahBerat} {$res[0]['satuan']}";
 				}else{
 					$beratSatuan = $jumlahBerat;
 				}
-				$bb[$keyBbInstrumen] = $beratSatuan;
+				$bbTotal[$keyBbInstrumen] = $beratSatuan;
 			};
 
 			$totalMatrik = array(
 				"KSS" => $this->Modeldata->getSuperKSS($date['start'], $date['end']),
 				"TSK" => $this->Modeldata->getSuperTSK($date['start'], $date['end']),
-				"StatusTSK" => $status,
+				"StatusTSK" => $statusTotal,
 				"KEWARGANEGARAAN" => array(
 					"WNA" => array(
 						"LK" => $this->Modeldata->getSuperKewarganegaraanJenisKelamin("WNA", "LK", $date['start'], $date['end']),
@@ -317,11 +361,11 @@ class Data extends CI_Controller {
 						"PR" => $this->Modeldata->getSuperKewarganegaraanJenisKelamin("WNI", "PR", $date['start'], $date['end']),
 					),
 				),
-				"USIA" => $usia,
-				"PENDIDIKAN" => $pendidikan,
-				"PEKERJAAAN" => $pekerjaan,
-				"TKP" => $tkp,
-				"BARANGBUKTI" => $bb,
+				"USIA" => $usiaTotal,
+				"PENDIDIKAN" => $pendidikanTotal,
+				"PEKERJAAAN" => $pekerjaanTotal,
+				"TKP" => $tkpTotal,
+				"BARANGBUKTI" => $bbTotal,
 			);
 
 			$data['title'] = "Rekap Ungkap Kasus";
@@ -353,16 +397,35 @@ class Data extends CI_Controller {
 			foreach ($tkp as $key) {
 				$tkp[$key] = $this->Modeldata->getCountWithOneCondition($this->kode_kesatuan, "tb_tersangka.pekerjaan", $key, $date['start'], $date['end']);
 			};
-			$bb = array("Ganja","Tembakau Gorilla","Hashish","Opium","Morphin","Heroin/Putaw","Kokain","Exstacy/Carnophen","Sabu","GOL IV","Daftar G","Kosmetik","Jamu");
+			$bb = array("Ganja","Tembakau Gorilla","Hashish","Opium","Morphin","Heroin/Putaw","Kokain","Exstacy/Carnophen","Sabu","GOL III", "GOL IV","Daftar G","Kosmetik","Jamu");
 
 			foreach ($bb as $key) {
 				$jumlahBerat = 0;
+				$berat_gram = 0;
+				$berat_butir = 0;
 				$res = $this->Modeldata->getBeratBB($this->kode_kesatuan, $key, $date['start'], $date['end'])->result_array();
 				if (!empty($res)) {
-					foreach ($res as $keybb) {
-						$jumlahBerat += $keybb['jumlah'];
+					if($key === 'GOL IV' || $key === 'GOL III'){
+						foreach ($res as $keybb) {
+							if ($keybb['satuan'] == 'gram') {
+								$berat_gram += (float)$keybb['jumlah'];
+							} else {
+								$berat_butir += (float)$keybb['jumlah'];
+							}
+						}
+						if ($berat_gram != 0 && $berat_butir != 0) {
+							$beratSatuan = $berat_gram." gram & ".$berat_butir." butir";
+						}elseif ($berat_gram == 0) {
+							$beratSatuan = $berat_butir." butir";
+						}else{
+							$beratSatuan = $berat_gram." gram";
+						}
+					}else{
+						foreach ($res as $keybb) {
+							$jumlahBerat += $keybb['jumlah'];
+						}
+						$beratSatuan = "{$jumlahBerat} {$res[0]['satuan']}";
 					}
-					$beratSatuan = "{$jumlahBerat} {$res[0]['satuan']}";
 				}else{
 					$beratSatuan = $jumlahBerat;
 				}
@@ -443,7 +506,7 @@ class Data extends CI_Controller {
 			$tkpInstrumen = array("Hotel/Villa/Kos","Ruko/Gedung/Mall/Pabrik","Tempat Umum","Pemukiman/Pondok","Diskotik/Tempat Karaoke","Terminal/Bandara/Pelabuhan","Rumah Tahanan");
 			$tkp = array();
 			
-			$bbInstrumen = array("Ganja","Tembakau Gorilla","Hashish","Opium","Morphin","Heroin/Putaw","Kokain","Exstacy/Carnophen","Sabu","GOL IV","Daftar G","Kosmetik","Jamu");
+			$bbInstrumen = array("Ganja","Tembakau Gorilla","Hashish","Opium","Morphin","Heroin/Putaw","Kokain","Exstacy/Carnophen","Sabu","GOL III","GOL IV","Daftar G","Kosmetik","Jamu");
 			$bb = array();
 			
 
@@ -465,15 +528,33 @@ class Data extends CI_Controller {
 				foreach ($tkpInstrumen as $keyTkpInstrumen) {
 					$tkp[$keyTkpInstrumen] = $this->Modeldata->getCountWithOneCondition($keyKesatuan['kode_kesatuan'], "tb_tersangka.pekerjaan", $keyTkpInstrumen, $firstDate, $lastDate);
 				};
-
 				foreach ($bbInstrumen as $keyBbInstrumen) {
 					$jumlahBerat = 0;
+					$berat_gram = 0;
+					$berat_butir = 0;
 					$res = $this->Modeldata->getBeratBB($keyKesatuan['kode_kesatuan'], $keyBbInstrumen, $firstDate, $lastDate)->result_array();
 					if (!empty($res)) {
-						foreach ($res as $keybb) {
-							$jumlahBerat += $keybb['jumlah'];
+						if($keyBbInstrumen === 'GOL IV' || $keyBbInstrumen === 'GOL III'){
+							foreach ($res as $keybb) {
+								if ($keybb['satuan'] == 'gram') {
+									$berat_gram += (float)$keybb['jumlah'];
+								} else {
+									$berat_butir += (float)$keybb['jumlah'];
+								}
+							}
+							if ($berat_gram != 0 && $berat_butir != 0) {
+								$beratSatuan = $berat_gram." gram & ".$berat_butir." butir";
+							}elseif ($berat_gram == 0) {
+								$beratSatuan = $berat_butir." butir";
+							}else{
+								$beratSatuan = $berat_gram." gram";
+							}
+						}else{
+							foreach ($res as $keybb) {
+								$jumlahBerat += $keybb['jumlah'];
+							}
+							$beratSatuan = "{$jumlahBerat} {$res[0]['satuan']}";
 						}
-						$beratSatuan = "{$jumlahBerat} {$res[0]['satuan']}";
 					}else{
 						$beratSatuan = $jumlahBerat;
 					}
@@ -511,39 +592,57 @@ class Data extends CI_Controller {
 			$bbTotal = array();
 			
 			foreach ($statusInstrumen as $keyStatusInstrumen) {
-				$status[$keyStatusInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.status", $keyStatusInstrumen, $firstDate, $lastDate);
+				$statusTotal[$keyStatusInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.status", $keyStatusInstrumen, $firstDate, $lastDate);
 			};
 			foreach ($usiaInstrumen as $keyUsiaInstrumen) {
-				$usia[$keyUsiaInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.kategori_usia", $keyUsiaInstrumen, $firstDate, $lastDate);
+				$usiaTotal[$keyUsiaInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.kategori_usia", $keyUsiaInstrumen, $firstDate, $lastDate);
 			};
 			foreach ($pendidikanInstrumen as $keyPendidikanInstrumen) {
-				$pendidikan[$keyPendidikanInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.pendidikan", $keyPendidikanInstrumen, $firstDate, $lastDate);
+				$pendidikanTotal[$keyPendidikanInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.pendidikan", $keyPendidikanInstrumen, $firstDate, $lastDate);
 			};
 			foreach ($pekerjaanInstrumen as $keyPekerjaanInstrumen) {
-				$pekerjaan[$keyPekerjaanInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.pekerjaan", $keyPekerjaanInstrumen, $firstDate, $lastDate);
+				$pekerjaanTotal[$keyPekerjaanInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.pekerjaan", $keyPekerjaanInstrumen, $firstDate, $lastDate);
 			};
 			foreach ($tkpInstrumen as $keyTkpInstrumen) {
-				$tkp[$keyTkpInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.pekerjaan", $keyTkpInstrumen, $firstDate, $lastDate);
+				$tkpTotal[$keyTkpInstrumen] = $this->Modeldata->getSuperCountWithOneCondition("tb_tersangka.pekerjaan", $keyTkpInstrumen, $firstDate, $lastDate);
 			};
-
 			foreach ($bbInstrumen as $keyBbInstrumen) {
 				$jumlahBerat = 0;
+				$berat_gram = 0;
+				$berat_butir = 0;
 				$res = $this->Modeldata->getSuperBeratBB($keyBbInstrumen, $firstDate, $lastDate)->result_array();
 				if (!empty($res)) {
-					foreach ($res as $keybb) {
-						$jumlahBerat += $keybb['jumlah'];
+					if($keyBbInstrumen === 'GOL IV' || $keyBbInstrumen === 'GOL III'){
+						foreach ($res as $keybb) {
+							if ($keybb['satuan'] == 'gram') {
+								$berat_gram += (float)$keybb['jumlah'];
+							} else {
+								$berat_butir += (float)$keybb['jumlah'];
+							}
+						}
+						if ($berat_gram != 0 && $berat_butir != 0) {
+							$beratSatuan = $berat_gram." gram & ".$berat_butir." butir";
+						}elseif ($berat_gram == 0) {
+							$beratSatuan = $berat_butir." butir";
+						}else{
+							$beratSatuan = $berat_gram." gram";
+						}
+					}else{
+						foreach ($res as $keybb) {
+							$jumlahBerat += $keybb['jumlah'];
+						}
+						$beratSatuan = "{$jumlahBerat} {$res[0]['satuan']}";
 					}
-					$beratSatuan = "{$jumlahBerat} {$res[0]['satuan']}";
 				}else{
 					$beratSatuan = $jumlahBerat;
 				}
-				$bb[$keyBbInstrumen] = $beratSatuan;
+				$bbTotal[$keyBbInstrumen] = $beratSatuan;
 			};
 
 			$totalMatrik = array(
 				"KSS" => $this->Modeldata->getSuperKSS($firstDate, $lastDate),
 				"TSK" => $this->Modeldata->getSuperTSK($firstDate, $lastDate),
-				"StatusTSK" => $status,
+				"StatusTSK" => $statusTotal,
 				"KEWARGANEGARAAN" => array(
 					"WNA" => array(
 						"LK" => $this->Modeldata->getSuperKewarganegaraanJenisKelamin("WNA", "LK", $firstDate, $lastDate),
@@ -554,11 +653,11 @@ class Data extends CI_Controller {
 						"PR" => $this->Modeldata->getSuperKewarganegaraanJenisKelamin("WNI", "PR", $firstDate, $lastDate),
 					),
 				),
-				"USIA" => $usia,
-				"PENDIDIKAN" => $pendidikan,
-				"PEKERJAAAN" => $pekerjaan,
-				"TKP" => $tkp,
-				"BARANGBUKTI" => $bb,
+				"USIA" => $usiaTotal,
+				"PENDIDIKAN" => $pendidikanTotal,
+				"PEKERJAAAN" => $pekerjaanTotal,
+				"TKP" => $tkpTotal,
+				"BARANGBUKTI" => $bbTotal,
 			);
 
 			$data['title'] = "Rekap Ungkap Kasus";
@@ -590,15 +689,34 @@ class Data extends CI_Controller {
 			foreach ($tkp as $key) {
 				$tkp[$key] = $this->Modeldata->getCountWithOneCondition($this->kode_kesatuan, "tb_tersangka.pekerjaan", $key, $firstDate, $lastDate);
 			};
-			$bb = array("Ganja","Tembakau Gorilla","Hashish","Opium","Morphin","Heroin/Putaw","Kokain","Exstacy/Carnophen","Sabu","GOL IV","Daftar G","Kosmetik","Jamu");
+			$bb = array("Ganja","Tembakau Gorilla","Hashish","Opium","Morphin","Heroin/Putaw","Kokain","Exstacy/Carnophen","Sabu","GOL III", "GOL IV","Daftar G","Kosmetik","Jamu");
 			foreach ($bb as $key) {
 				$jumlahBerat = 0;
+				$berat_gram = 0;
+				$berat_butir = 0;
 				$res = $this->Modeldata->getBeratBB($this->kode_kesatuan, $key, $firstDate, $lastDate)->result_array();
 				if (!empty($res)) {
-					foreach ($res as $keybb) {
-						$jumlahBerat += $keybb['jumlah'];
+					if($key === 'GOL IV' || $key === 'GOL III'){
+						foreach ($res as $keybb) {
+							if ($keybb['satuan'] == 'gram') {
+								$berat_gram += (float)$keybb['jumlah'];
+							} else {
+								$berat_butir += (float)$keybb['jumlah'];
+							}
+						}
+						if ($berat_gram != 0 && $berat_butir != 0) {
+							$beratSatuan = $berat_gram." gram & ".$berat_butir." butir";
+						}elseif ($berat_gram == 0) {
+							$beratSatuan = $berat_butir." butir";
+						}else{
+							$beratSatuan = $berat_gram." gram";
+						}
+					}else{
+						foreach ($res as $keybb) {
+							$jumlahBerat += $keybb['jumlah'];
+						}
+						$beratSatuan = "{$jumlahBerat} {$res[0]['satuan']}";
 					}
-					$beratSatuan = "{$jumlahBerat} {$res[0]['satuan']}";
 				}else{
 					$beratSatuan = $jumlahBerat;
 				}
@@ -641,16 +759,17 @@ class Data extends CI_Controller {
 	}
 
 
-
-
 	// MATRIK BARANG BUKTI MODUL
   public function viewMatrikBarangBukti(){
 		$date = $this->rangeMonth(date("Y-m-d", strtotime("-1 month")), date("Y-m-d", strtotime("+1 month")));
 		$dateNow = $this->dateIndonesia(date('N j/n/Y', strtotime($date['start']))).' - '.$this->dateIndonesia(date('N j/n/Y', strtotime($date['end'])));
 
-		$kategoriBB = array("Ganja","Tembakau Gorilla","Hashish","Opium","Morphin","Heroin/Putaw","Kokain","Exstacy/Carnophen","Sabu","GOL IV","Daftar G","Kosmetik","Jamu");
+		$kategoriBB = array("Ganja","Tembakau Gorilla","Hashish","Opium","Morphin","Heroin/Putaw","Kokain","Exstacy/Carnophen","Sabu","Daftar G","Kosmetik","Jamu");
 		$statusTSK = array("Penanam", "Produksi", "Bandar", "Pengedar", "Pengguna");
 		$data = array();
+
+		$kategoriBBGol = array("GOL IV", "GOL III");
+		$dataGol = array();
 		
 		if ($this->kode_kesatuan == 'ADMINSUPER') {
 			foreach($kategoriBB as $kategori) {
@@ -697,7 +816,52 @@ class Data extends CI_Controller {
 					);
 				};
 				$data[$kategori] = $dataStatusTSK; 
-				
+			}
+			// Khusus GOL IV & GOL III
+			foreach($kategoriBBGol as $kategoriGol) {
+				// DATA
+				$dataStatusTSKGol = array();
+				foreach ($statusTSK as $keyStatusTSK) {
+					$dataStatusTSKGol[$keyStatusTSK] = array(
+						"JML_KSS" => $this->Modeldata->getSuperBBJumlahKSS($kategoriGol, $keyStatusTSK, $date['start'], $date['end']),
+						"JML_TSK" => $this->Modeldata->getSuperBBJumlahTSK($kategoriGol, $keyStatusTSK, $date['start'], $date['end']),
+						"JML_SelesaiKSS" => $this->Modeldata->getSuperBBSelesaiKSS($kategoriGol, $keyStatusTSK, $date['start'], $date['end']),
+						"WNILK" => $this->Modeldata->getSuperBBKewarganegaraanJK($kategoriGol, $keyStatusTSK, 'WNI', 'LK', $date['start'], $date['end']),
+						"WNIPR" => $this->Modeldata->getSuperBBKewarganegaraanJK($kategoriGol, $keyStatusTSK, 'WNI', 'PR', $date['start'], $date['end']),
+						"WNALK" => $this->Modeldata->getSuperBBKewarganegaraanJK($kategoriGol, $keyStatusTSK, 'WNA', 'LK', $date['start'], $date['end']),
+						"WNAPR" => $this->Modeldata->getSuperBBKewarganegaraanJK($kategoriGol, $keyStatusTSK, 'WNA', 'PR', $date['start'], $date['end']),
+						"USIA14" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.kategori_usia' ,'<14', $date['start'], $date['end']),
+						"USIA1518" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK,'tb_tersangka.kategori_usia' , '15-18', $date['start'], $date['end']),
+						"USIA1924" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK,'tb_tersangka.kategori_usia' , '19-24', $date['start'], $date['end']),
+						"USIA2564" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.kategori_usia' ,'25-64', $date['start'], $date['end']),
+						"USIA65" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.kategori_usia' ,'65', $date['start'], $date['end']),
+						"PND_TIDAKSEKOLAH" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'Tidak Sekolah', $date['start'], $date['end']),
+						"PND_SD" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'SD', $date['start'], $date['end']),
+						"PND_SMP" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'SMP', $date['start'], $date['end']),
+						"PND_SMA" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'SMA', $date['start'], $date['end']),
+						"PND_PT" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'PT', $date['start'], $date['end']),
+						"PND_BELUMDIKETAHUI" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'Belum Diketahui', $date['start'], $date['end']),
+						"PKR_PELAJAR" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Pelajar', $date['start'], $date['end']),
+						"PKR_MAHASISWA" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Mahasiswa', $date['start'], $date['end']),
+						"PKR_SWASTA" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Swasta', $date['start'], $date['end']),
+						"PKR_BURUHKARYAWAN" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Buruh/Karyawan', $date['start'], $date['end']),
+						"PKR_PETANINELAYAN" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Petani/Nelayan', $date['start'], $date['end']),
+						"PKR_PEDAGANG" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Pedagang', $date['start'], $date['end']),
+						"PKR_WIRASWASTAPENGUSAHA" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Wiraswasta/Pengusaha', $date['start'], $date['end']),
+						"PKR_SOPIRTUKANGOJEK" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Sopir/TukangOjek', $date['start'], $date['end']),
+						"PKR_IKUTORANGTUA" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Ikut Orang Tua', $date['start'], $date['end']),
+						"PKR_IBURUMAHTANGGA" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Ibu Rumah Tangga', $date['start'], $date['end']),
+						"PKR_TIDAKKERJA" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Tidak Kerja', $date['start'], $date['end']),
+						"PKR_NOTARIS" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Notaris', $date['start'], $date['end']),
+						"PKR_TNI" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'TNI', $date['start'], $date['end']),
+						"PKR_POLRI" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'POLRI', $date['start'], $date['end']),
+						"PKR_PNS" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'PNS', $date['start'], $date['end']),
+						"PKR_PEMBANTU" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'PEMBANTU', $date['start'], $date['end']),
+						"PKR_NAPI" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'NAPI', $date['start'], $date['end']),
+						"JML_BERAT_BB" => $this->Modeldata->getSuperBBJumlahBerat($kategoriGol, $keyStatusTSK, $date['start'], $date['end']),
+					);
+				};
+				$dataGol[$kategoriGol] = $dataStatusTSKGol; 
 			}
 		} else {
 			foreach($kategoriBB as $kategori) {
@@ -745,11 +909,58 @@ class Data extends CI_Controller {
 				};
 				$data[$kategori] = $dataStatusTSK; 
 			}
+			// Khusus GOL IV & GOL III
+			foreach($kategoriBBGol as $kategoriGol) {
+				// DATA
+				$dataStatusTSKGol = array();
+				foreach ($statusTSK as $keyStatusTSK) {
+					$dataStatusTSKGol[$keyStatusTSK] = array(
+						"JML_KSS" => $this->Modeldata->getBBJumlahKSS($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, $date['start'], $date['end']),
+						"JML_TSK" => $this->Modeldata->getBBJumlahTSK($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, $date['start'], $date['end']),
+						"JML_SelesaiKSS" => $this->Modeldata->getBBSelesaiKSS($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, $date['start'], $date['end']),
+						"WNILK" => $this->Modeldata->getBBKewarganegaraanJK($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'WNI', 'LK', $date['start'], $date['end']),
+						"WNIPR" => $this->Modeldata->getBBKewarganegaraanJK($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'WNI', 'PR', $date['start'], $date['end']),
+						"WNALK" => $this->Modeldata->getBBKewarganegaraanJK($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'WNA', 'LK', $date['start'], $date['end']),
+						"WNAPR" => $this->Modeldata->getBBKewarganegaraanJK($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'WNA', 'PR', $date['start'], $date['end']),
+						"USIA14" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.kategori_usia' ,'<14', $date['start'], $date['end']),
+						"USIA1518" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK,'tb_tersangka.kategori_usia' , '15-18', $date['start'], $date['end']),
+						"USIA1924" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK,'tb_tersangka.kategori_usia' , '19-24', $date['start'], $date['end']),
+						"USIA2564" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.kategori_usia' ,'25-64', $date['start'], $date['end']),
+						"USIA65" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.kategori_usia' ,'65', $date['start'], $date['end']),
+						"PND_TIDAKSEKOLAH" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'Tidak Sekolah', $date['start'], $date['end']),
+						"PND_SD" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'SD', $date['start'], $date['end']),
+						"PND_SMP" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'SMP', $date['start'], $date['end']),
+						"PND_SMA" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'SMA', $date['start'], $date['end']),
+						"PND_PT" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'PT', $date['start'], $date['end']),
+						"PND_BELUMDIKETAHUI" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'Belum Diketahui', $date['start'], $date['end']),
+						"PKR_PELAJAR" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Pelajar', $date['start'], $date['end']),
+						"PKR_MAHASISWA" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Mahasiswa', $date['start'], $date['end']),
+						"PKR_SWASTA" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Swasta', $date['start'], $date['end']),
+						"PKR_BURUHKARYAWAN" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Buruh/Karyawan', $date['start'], $date['end']),
+						"PKR_PETANINELAYAN" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Petani/Nelayan', $date['start'], $date['end']),
+						"PKR_PEDAGANG" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Pedagang', $date['start'], $date['end']),
+						"PKR_WIRASWASTAPENGUSAHA" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Wiraswasta/Pengusaha', $date['start'], $date['end']),
+						"PKR_SOPIRTUKANGOJEK" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Sopir/TukangOjek', $date['start'], $date['end']),
+						"PKR_IKUTORANGTUA" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Ikut Orang Tua', $date['start'], $date['end']),
+						"PKR_IBURUMAHTANGGA" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Ibu Rumah Tangga', $date['start'], $date['end']),
+						"PKR_TIDAKKERJA" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Tidak Kerja', $date['start'], $date['end']),
+						"PKR_NOTARIS" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Notaris', $date['start'], $date['end']),
+						"PKR_TNI" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'TNI', $date['start'], $date['end']),
+						"PKR_POLRI" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'POLRI', $date['start'], $date['end']),
+						"PKR_PNS" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'PNS', $date['start'], $date['end']),
+						"PKR_PEMBANTU" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'PEMBANTU', $date['start'], $date['end']),
+						"PKR_NAPI" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'NAPI', $date['start'], $date['end']),
+						"JML_BERAT_BB" => $this->Modeldata->getBBJumlahBerat($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, $date['start'], $date['end']),
+					);
+				};
+				$dataGol[$kategoriGol] = $dataStatusTSKGol; 
+			}
 		}
-		
+
 		$data['title'] = "Matrik Ungkap Kasus";
 		$data['menuLink'] = "matrik-barang-bukti";
 		$data['dataMatrik'] = $data;
+		$data['dataMatrikGol'] = $dataGol;
 		$data['dateNow'] = $dateNow;
 		
 		$data['btnExitSort'] = false;
@@ -778,9 +989,12 @@ class Data extends CI_Controller {
 			$dateNow = $this->dateIndonesia(date('N j/n/Y', strtotime($firstDate))).' - '.$this->dateIndonesia(date('N j/n/Y', strtotime($lastDate)));	
 		}
 
-		$kategoriBB = array("Ganja","Tembakau Gorilla","Hashish","Opium","Morphin","Heroin/Putaw","Kokain","Exstacy/Carnophen","Sabu","GOL IV","Daftar G","Kosmetik","Jamu");
+		$kategoriBB = array("Ganja","Tembakau Gorilla","Hashish","Opium","Morphin","Heroin/Putaw","Kokain","Exstacy/Carnophen","Sabu","Daftar G","Kosmetik","Jamu");
 		$statusTSK = array("Penanam", "Produksi", "Bandar", "Pengedar", "Pengguna");
 		$data = array();
+		
+		$kategoriBBGol = array("GOL IV", "GOL III");
+		$dataGol = array();
 
 		if ($nama_kesatuan == 'all') {
 			foreach($kategoriBB as $kategori) {
@@ -828,10 +1042,57 @@ class Data extends CI_Controller {
 				};
 				$data[$kategori] = $dataStatusTSK; 
 			}
+			// Khusus GOL IV & GOL III
+			foreach($kategoriBBGol as $kategoriGol) {
+				// DATA
+				$dataStatusTSKGol = array();
+				foreach ($statusTSK as $keyStatusTSK) {
+					$dataStatusTSKGol[$keyStatusTSK] = array(
+						"JML_KSS" => $this->Modeldata->getSuperBBJumlahKSS($kategoriGol, $keyStatusTSK, $firstDate, $lastDate),
+						"JML_TSK" => $this->Modeldata->getSuperBBJumlahTSK($kategoriGol, $keyStatusTSK, $firstDate, $lastDate),
+						"JML_SelesaiKSS" => $this->Modeldata->getSuperBBSelesaiKSS($kategoriGol, $keyStatusTSK, $firstDate, $lastDate),
+						"WNILK" => $this->Modeldata->getSuperBBKewarganegaraanJK($kategoriGol, $keyStatusTSK, 'WNI', 'LK', $firstDate, $lastDate),
+						"WNIPR" => $this->Modeldata->getSuperBBKewarganegaraanJK($kategoriGol, $keyStatusTSK, 'WNI', 'PR', $firstDate, $lastDate),
+						"WNALK" => $this->Modeldata->getSuperBBKewarganegaraanJK($kategoriGol, $keyStatusTSK, 'WNA', 'LK', $firstDate, $lastDate),
+						"WNAPR" => $this->Modeldata->getSuperBBKewarganegaraanJK($kategoriGol, $keyStatusTSK, 'WNA', 'PR', $firstDate, $lastDate),
+						"USIA14" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.kategori_usia' ,'<14', $firstDate, $lastDate),
+						"USIA1518" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK,'tb_tersangka.kategori_usia' , '15-18', $firstDate, $lastDate),
+						"USIA1924" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK,'tb_tersangka.kategori_usia' , '19-24', $firstDate, $lastDate),
+						"USIA2564" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.kategori_usia' ,'25-64', $firstDate, $lastDate),
+						"USIA65" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.kategori_usia' ,'65', $firstDate, $lastDate),
+						"PND_TIDAKSEKOLAH" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'Tidak Sekolah', $firstDate, $lastDate),
+						"PND_SD" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'SD', $firstDate, $lastDate),
+						"PND_SMP" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'SMP', $firstDate, $lastDate),
+						"PND_SMA" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'SMA', $firstDate, $lastDate),
+						"PND_PT" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'PT', $firstDate, $lastDate),
+						"PND_BELUMDIKETAHUI" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'Belum Diketahui', $firstDate, $lastDate),
+						"PKR_PELAJAR" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Pelajar', $firstDate, $lastDate),
+						"PKR_MAHASISWA" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Mahasiswa', $firstDate, $lastDate),
+						"PKR_SWASTA" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Swasta', $firstDate, $lastDate),
+						"PKR_BURUHKARYAWAN" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Buruh/Karyawan', $firstDate, $lastDate),
+						"PKR_PETANINELAYAN" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Petani/Nelayan', $firstDate, $lastDate),
+						"PKR_PEDAGANG" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Pedagang', $firstDate, $lastDate),
+						"PKR_WIRASWASTAPENGUSAHA" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Wiraswasta/Pengusaha', $firstDate, $lastDate),
+						"PKR_SOPIRTUKANGOJEK" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Sopir/TukangOjek', $firstDate, $lastDate),
+						"PKR_IKUTORANGTUA" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Ikut Orang Tua', $firstDate, $lastDate),
+						"PKR_IBURUMAHTANGGA" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Ibu Rumah Tangga', $firstDate, $lastDate),
+						"PKR_TIDAKKERJA" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Tidak Kerja', $firstDate, $lastDate),
+						"PKR_NOTARIS" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Notaris', $firstDate, $lastDate),
+						"PKR_TNI" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'TNI', $firstDate, $lastDate),
+						"PKR_POLRI" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'POLRI', $firstDate, $lastDate),
+						"PKR_PNS" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'PNS', $firstDate, $lastDate),
+						"PKR_PEMBANTU" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'PEMBANTU', $firstDate, $lastDate),
+						"PKR_NAPI" => $this->Modeldata->getSuperBBMatrikInstrumen($kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'NAPI', $firstDate, $lastDate),
+						"JML_BERAT_BB" => $this->Modeldata->getSuperBBJumlahBerat($kategoriGol, $keyStatusTSK, $firstDate, $lastDate),
+					);
+				};
+				$dataGol[$kategoriGol] = $dataStatusTSKGol; 
+			}
 			
 			$data['title'] = "Matrik Ungkap Kasus";
 			$data['menuLink'] = "matrik-barang-bukti";
 			$data['dataMatrik'] = $data;
+			$data['dataMatrikGol'] = $dataGol;
 			$data['dateNow'] = $dateNow;
 			$data['btnExitSort'] = true;
 
@@ -840,7 +1101,6 @@ class Data extends CI_Controller {
 			$this->load->view('include/footer',$data);
 		} else {
 			if ($this->kode_kesatuan == 'ADMINSUPER') {
-	
 				foreach($kategoriBB as $kategori) {
 						// DATA
 						$dataStatusTSK = array();
@@ -886,10 +1146,57 @@ class Data extends CI_Controller {
 						};
 						$data[$kategori] = $dataStatusTSK; 
 				}
+				// Khusus GOL IV & GOL III
+				foreach($kategoriBBGol as $kategoriGol) {
+					// DATA
+					$dataStatusTSKGol = array();
+					foreach ($statusTSK as $keyStatusTSK) {
+						$dataStatusTSKGol[$keyStatusTSK] = array(
+							"JML_KSS" => $this->Modeldata->getBBJumlahKSS($nama_kesatuan, $kategoriGol, $keyStatusTSK, $firstDate, $lastDate),
+							"JML_TSK" => $this->Modeldata->getBBJumlahTSK($nama_kesatuan, $kategoriGol, $keyStatusTSK, $firstDate, $lastDate),
+							"JML_SelesaiKSS" => $this->Modeldata->getBBSelesaiKSS($nama_kesatuan, $kategoriGol, $keyStatusTSK, $firstDate, $lastDate),
+							"WNILK" => $this->Modeldata->getBBKewarganegaraanJK($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'WNI', 'LK', $firstDate, $lastDate),
+							"WNIPR" => $this->Modeldata->getBBKewarganegaraanJK($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'WNI', 'PR', $firstDate, $lastDate),
+							"WNALK" => $this->Modeldata->getBBKewarganegaraanJK($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'WNA', 'LK', $firstDate, $lastDate),
+							"WNAPR" => $this->Modeldata->getBBKewarganegaraanJK($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'WNA', 'PR', $firstDate, $lastDate),
+							"USIA14" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.kategori_usia' ,'<14', $firstDate, $lastDate),
+							"USIA1518" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK,'tb_tersangka.kategori_usia' , '15-18', $firstDate, $lastDate),
+							"USIA1924" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK,'tb_tersangka.kategori_usia' , '19-24', $firstDate, $lastDate),
+							"USIA2564" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.kategori_usia' ,'25-64', $firstDate, $lastDate),
+							"USIA65" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.kategori_usia' ,'65', $firstDate, $lastDate),
+							"PND_TIDAKSEKOLAH" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'Tidak Sekolah', $firstDate, $lastDate),
+							"PND_SD" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'SD', $firstDate, $lastDate),
+							"PND_SMP" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'SMP', $firstDate, $lastDate),
+							"PND_SMA" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'SMA', $firstDate, $lastDate),
+							"PND_PT" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'PT', $firstDate, $lastDate),
+							"PND_BELUMDIKETAHUI" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'Belum Diketahui', $firstDate, $lastDate),
+							"PKR_PELAJAR" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Pelajar', $firstDate, $lastDate),
+							"PKR_MAHASISWA" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Mahasiswa', $firstDate, $lastDate),
+							"PKR_SWASTA" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Swasta', $firstDate, $lastDate),
+							"PKR_BURUHKARYAWAN" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Buruh/Karyawan', $firstDate, $lastDate),
+							"PKR_PETANINELAYAN" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Petani/Nelayan', $firstDate, $lastDate),
+							"PKR_PEDAGANG" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Pedagang', $firstDate, $lastDate),
+							"PKR_WIRASWASTAPENGUSAHA" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Wiraswasta/Pengusaha', $firstDate, $lastDate),
+							"PKR_SOPIRTUKANGOJEK" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Sopir/TukangOjek', $firstDate, $lastDate),
+							"PKR_IKUTORANGTUA" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Ikut Orang Tua', $firstDate, $lastDate),
+							"PKR_IBURUMAHTANGGA" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Ibu Rumah Tangga', $firstDate, $lastDate),
+							"PKR_TIDAKKERJA" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Tidak Kerja', $firstDate, $lastDate),
+							"PKR_NOTARIS" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Notaris', $firstDate, $lastDate),
+							"PKR_TNI" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'TNI', $firstDate, $lastDate),
+							"PKR_POLRI" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'POLRI', $firstDate, $lastDate),
+							"PKR_PNS" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'PNS', $firstDate, $lastDate),
+							"PKR_PEMBANTU" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'PEMBANTU', $firstDate, $lastDate),
+							"PKR_NAPI" => $this->Modeldata->getBBMatrikInstrumen($nama_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'NAPI', $firstDate, $lastDate),
+							"JML_BERAT_BB" => $this->Modeldata->getBBJumlahBerat($nama_kesatuan, $kategoriGol, $keyStatusTSK, $firstDate, $lastDate),
+						);
+					};
+					$dataGol[$kategoriGol] = $dataStatusTSKGol; 
+				}
 				
 				$data['title'] = "Matrik Ungkap Kasus";
 				$data['menuLink'] = "matrik-barang-bukti";
 				$data['dataMatrik'] = $data;
+				$data['dataMatrikGol'] = $dataGol;
 				$data['kesatuanChoosen'] = $nama_kesatuan;
 				$data['dateNow'] = $dateNow;
 				$data['btnExitSort'] = true;
@@ -899,7 +1206,6 @@ class Data extends CI_Controller {
 				$this->load->view('include/footer',$data);
 	
 			} else {
-	
 				foreach($kategoriBB as $kategori) {
 						// DATA
 						$dataStatusTSK = array();
@@ -945,10 +1251,57 @@ class Data extends CI_Controller {
 						};
 						$data[$kategori] = $dataStatusTSK; 
 				}
+				// Khusus GOL IV & GOL III
+				foreach($kategoriBBGol as $kategoriGol) {
+					// DATA
+					$dataStatusTSKGol = array();
+					foreach ($statusTSK as $keyStatusTSK) {
+						$dataStatusTSKGol[$keyStatusTSK] = array(
+							"JML_KSS" => $this->Modeldata->getBBJumlahKSS($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, $firstDate, $lastDate),
+							"JML_TSK" => $this->Modeldata->getBBJumlahTSK($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, $firstDate, $lastDate),
+							"JML_SelesaiKSS" => $this->Modeldata->getBBSelesaiKSS($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, $firstDate, $lastDate),
+							"WNILK" => $this->Modeldata->getBBKewarganegaraanJK($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'WNI', 'LK', $firstDate, $lastDate),
+							"WNIPR" => $this->Modeldata->getBBKewarganegaraanJK($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'WNI', 'PR', $firstDate, $lastDate),
+							"WNALK" => $this->Modeldata->getBBKewarganegaraanJK($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'WNA', 'LK', $firstDate, $lastDate),
+							"WNAPR" => $this->Modeldata->getBBKewarganegaraanJK($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'WNA', 'PR', $firstDate, $lastDate),
+							"USIA14" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.kategori_usia' ,'<14', $firstDate, $lastDate),
+							"USIA1518" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK,'tb_tersangka.kategori_usia' , '15-18', $firstDate, $lastDate),
+							"USIA1924" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK,'tb_tersangka.kategori_usia' , '19-24', $firstDate, $lastDate),
+							"USIA2564" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.kategori_usia' ,'25-64', $firstDate, $lastDate),
+							"USIA65" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.kategori_usia' ,'65', $firstDate, $lastDate),
+							"PND_TIDAKSEKOLAH" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'Tidak Sekolah', $firstDate, $lastDate),
+							"PND_SD" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'SD', $firstDate, $lastDate),
+							"PND_SMP" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'SMP', $firstDate, $lastDate),
+							"PND_SMA" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'SMA', $firstDate, $lastDate),
+							"PND_PT" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'PT', $firstDate, $lastDate),
+							"PND_BELUMDIKETAHUI" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pendidikan' ,'Belum Diketahui', $firstDate, $lastDate),
+							"PKR_PELAJAR" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Pelajar', $firstDate, $lastDate),
+							"PKR_MAHASISWA" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Mahasiswa', $firstDate, $lastDate),
+							"PKR_SWASTA" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Swasta', $firstDate, $lastDate),
+							"PKR_BURUHKARYAWAN" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Buruh/Karyawan', $firstDate, $lastDate),
+							"PKR_PETANINELAYAN" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Petani/Nelayan', $firstDate, $lastDate),
+							"PKR_PEDAGANG" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Pedagang', $firstDate, $lastDate),
+							"PKR_WIRASWASTAPENGUSAHA" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Wiraswasta/Pengusaha', $firstDate, $lastDate),
+							"PKR_SOPIRTUKANGOJEK" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Sopir/TukangOjek', $firstDate, $lastDate),
+							"PKR_IKUTORANGTUA" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Ikut Orang Tua', $firstDate, $lastDate),
+							"PKR_IBURUMAHTANGGA" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Ibu Rumah Tangga', $firstDate, $lastDate),
+							"PKR_TIDAKKERJA" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Tidak Kerja', $firstDate, $lastDate),
+							"PKR_NOTARIS" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'Notaris', $firstDate, $lastDate),
+							"PKR_TNI" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'TNI', $firstDate, $lastDate),
+							"PKR_POLRI" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'POLRI', $firstDate, $lastDate),
+							"PKR_PNS" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'PNS', $firstDate, $lastDate),
+							"PKR_PEMBANTU" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'PEMBANTU', $firstDate, $lastDate),
+							"PKR_NAPI" => $this->Modeldata->getBBMatrikInstrumen($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, 'tb_tersangka.pekerjaan' ,'NAPI', $firstDate, $lastDate),
+							"JML_BERAT_BB" => $this->Modeldata->getBBJumlahBerat($this->kode_kesatuan, $kategoriGol, $keyStatusTSK, $firstDate, $lastDate),
+						);
+					};
+					$dataGol[$kategoriGol] = $dataStatusTSKGol; 
+				}
 				
 				$data['title'] = "Matrik Ungkap Kasus";
 				$data['menuLink'] = "matrik-barang-bukti";
 				$data['dataMatrik'] = $data;
+				$data['dataMatrikGol'] = $dataGol;
 				$data['dateNow'] = $dateNow;
 				$data['btnExitSort'] = true;
 
@@ -961,7 +1314,6 @@ class Data extends CI_Controller {
 	}
 
 
-
 	// SELRA MODUL
   public function viewSelra(){
 
@@ -969,60 +1321,60 @@ class Data extends CI_Controller {
 		$dateNow = $this->dateIndonesia(date('N j/n/Y', strtotime($date['start']))).' - '.$this->dateIndonesia(date('N j/n/Y', strtotime($date['end'])));
 
 		if ($this->kode_kesatuan == 'ADMINSUPER') {
-	
-			$matrikCCCT = array(
-				"CC" => array(
-					"Kasus" => count($this->Modeldata->getSuperSelraCC($date['start'], $date['end'])),
-					"Tersangka" => count($this->Modeldata->getSuperSelraCCTersangka($date['start'], $date['end'])),
-				),
-				"CT" => array(
-					"Kasus" => count($this->Modeldata->getSuperSelraCT($date['start'], $date['end'])),
-					"Tersangka" => count($this->Modeldata->getSuperSelraCTTersangka($date['start'], $date['end'])),
-				),
-			);
 			
 			$addMatrikSelra = array();
 			$kesatuan = $this->Modelkesatuan->getKesatuan();
-
+			
 			foreach ($kesatuan as $keyKesatuan) {
 				$addMatrikSelra[$keyKesatuan['kode_kesatuan']] = array(
-					"SP3" => count($this->Modeldata->getMatrikSelra($keyKesatuan['kode_kesatuan'],$date['start'], $date['end'], "SP3")),
-					"RJ" => count($this->Modeldata->getMatrikSelra($keyKesatuan['kode_kesatuan'],$date['start'], $date['end'], "RJ")),
-					"TAHAPII" => count($this->Modeldata->getMatrikSelra($keyKesatuan['kode_kesatuan'],$date['start'], $date['end'], "TAHAP II")),
-					"BELUMDIKETAHUI" => count($this->Modeldata->getMatrikSelra($keyKesatuan['kode_kesatuan'],$date['start'], $date['end'], " ")),
+					"CT" => $this->Modeldata->getKSS($keyKesatuan['kode_kesatuan'],$date['start'], $date['end']),
+					"CC" => array(
+						"Total" =>  count($this->Modeldata->getSelraCC($keyKesatuan['kode_kesatuan'],$date['start'], $date['end'])),
+						"SP3" => count($this->Modeldata->getMatrikSelra($keyKesatuan['kode_kesatuan'],$date['start'], $date['end'], "SP3")),
+						"RJ" => count($this->Modeldata->getMatrikSelra($keyKesatuan['kode_kesatuan'],$date['start'], $date['end'], "RJ")),
+						"TAHAPII" => count($this->Modeldata->getMatrikSelra($keyKesatuan['kode_kesatuan'],$date['start'], $date['end'], "TAHAP II")),	
+					),
+					"SEDANGPROSES" => count($this->Modeldata->getMatrikSelra($keyKesatuan['kode_kesatuan'],$date['start'], $date['end'], " ")),
+					"PRESENTASE" => $this->persentaseSelra(count($this->Modeldata->getSelraCC($keyKesatuan['kode_kesatuan'],$date['start'], $date['end'])), $this->Modeldata->getKSS($keyKesatuan['kode_kesatuan'],$date['start'], $date['end']))
 				);
 			}
 			
 			$matrikSelra = array(
 				$addMatrikSelra,
 				"TOTAL" => array(
-					"SP3" => count($this->Modeldata->getTotalMatrikSelra($date['start'], $date['end'], "SP3")),
-					"RJ" => count($this->Modeldata->getTotalMatrikSelra($date['start'], $date['end'], "RJ")),
-					"TAHAPII" => count($this->Modeldata->getTotalMatrikSelra($date['start'], $date['end'], "TAHAP II")),
-					"BELUMDIKETAHUI" => count($this->Modeldata->getTotalMatrikSelra($date['start'], $date['end'], " ")),
-				),
+					"CT" => $this->Modeldata->getSuperKSS($date['start'], $date['end']),
+					"CC" => array(
+						"Total" =>  count($this->Modeldata->getSuperSelraCC($date['start'], $date['end'])),
+						"SP3" => count($this->Modeldata->getTotalMatrikSelra($date['start'], $date['end'], "SP3")),
+						"RJ" => count($this->Modeldata->getTotalMatrikSelra($date['start'], $date['end'], "RJ")),
+						"TAHAPII" => count($this->Modeldata->getTotalMatrikSelra($date['start'], $date['end'], "TAHAP II")),	
+					),
+					"SEDANGPROSES" => count($this->Modeldata->getTotalMatrikSelra($date['start'], $date['end'], " ")),
+					"PRESENTASE" => $this->persentaseSelra(count($this->Modeldata->getSuperSelraCC($date['start'], $date['end'])), $this->Modeldata->getSuperKSS($date['start'], $date['end']))
+				)
 			);
 
 			$data['title'] = "Data Selesai Perkara";
 			$data['menuLink'] = "selra";
 			$data['dateNow'] = $dateNow;
-			$data['dataKasus'] = $matrikCCCT;
-			$data['matrikSelra'] = $matrikSelra[0];
+			$data['matrikSelra'] = $matrikSelra;
 			$data['totalMatrikSelra'] = $matrikSelra['TOTAL'];
 			$data['dataCC'] = $this->Modeldata->getSuperSelraCC($date['start'], $date['end']);
 			$data['dataCT'] = $this->Modeldata->getSuperSelraCT($date['start'], $date['end']);
+			$data['orderDate'] = false;
 			
 		} else {
-	
+			
 			$matrikCCCT = array(
+				"CT" => $this->Modeldata->getKSS($this->kode_kesatuan,$date['start'], $date['end']),
 				"CC" => array(
-					"Kasus" => count($this->Modeldata->getSelraCC($this->kode_kesatuan,$date['start'], $date['end'])),
-					"Tersangka" => count($this->Modeldata->getSelraCCTersangka($this->kode_kesatuan,$date['start'], $date['end'])),
+					"Total" =>  count($this->Modeldata->getSelraCC($this->kode_kesatuan,$date['start'], $date['end'])),
+					"SP3" => count($this->Modeldata->getMatrikSelra($this->kode_kesatuan,$date['start'], $date['end'], "SP3")),
+					"RJ" => count($this->Modeldata->getMatrikSelra($this->kode_kesatuan,$date['start'], $date['end'], "RJ")),
+					"TAHAPII" => count($this->Modeldata->getMatrikSelra($this->kode_kesatuan,$date['start'], $date['end'], "TAHAP II")),	
 				),
-				"CT" => array(
-					"Kasus" => count($this->Modeldata->getSelraCT($this->kode_kesatuan,$date['start'], $date['end'])),
-					"Tersangka" => count($this->Modeldata->getSelraCTTersangka($this->kode_kesatuan,$date['start'], $date['end'])),
-				),
+				"SEDANGPROSES" => count($this->Modeldata->getMatrikSelra($this->kode_kesatuan,$date['start'], $date['end'], " ")),
+				"PRESENTASE" => $this->persentaseSelra(count($this->Modeldata->getSelraCC($this->kode_kesatuan,$date['start'], $date['end'])), $this->Modeldata->getKSS($this->kode_kesatuan,$date['start'], $date['end']))
 			);
 
 			$matrikSelra = array(
@@ -1039,6 +1391,7 @@ class Data extends CI_Controller {
 			$data['dataCC'] = $this->Modeldata->getSelraCC($this->kode_kesatuan,$date['start'], $date['end']);
 			$data['dataCT'] = $this->Modeldata->getSelraCT($this->kode_kesatuan,$date['start'], $date['end']);
 			$data['dateNow'] = $dateNow;
+			$data['orderDate'] = false;
 		}
 		
 		$data['btnExitSort'] = false;
@@ -1069,76 +1422,82 @@ class Data extends CI_Controller {
 		}
 
 		if ($nama_kesatuan == 'all') {
-
-			$matrikCCCT = array(
-				"CC" => array(
-					"Kasus" => count($this->Modeldata->getSuperSelraCC($firstDate, $lastDate)),
-					"Tersangka" => count($this->Modeldata->getSuperSelraCCTersangka($firstDate, $lastDate)),
-				),
-				"CT" => array(
-					"Kasus" => count($this->Modeldata->getSuperSelraCT($firstDate, $lastDate)),
-					"Tersangka" => count($this->Modeldata->getSuperSelraCCTersangka($firstDate, $lastDate)),
-				),
-			);
 			
 			$addMatrikSelra = array();
 			$kesatuan = $this->Modelkesatuan->getKesatuan();
-
+			
 			foreach ($kesatuan as $keyKesatuan) {
 				$addMatrikSelra[$keyKesatuan['kode_kesatuan']] = array(
-					"SP3" => count($this->Modeldata->getMatrikSelra($keyKesatuan['kode_kesatuan'],$firstDate, $lastDate, "SP3")),
-					"RJ" => count($this->Modeldata->getMatrikSelra($keyKesatuan['kode_kesatuan'],$firstDate, $lastDate, "RJ")),
-					"TAHAPII" => count($this->Modeldata->getMatrikSelra($keyKesatuan['kode_kesatuan'],$firstDate, $lastDate, "TAHAP II")),
-					"BELUMDIKETAHUI" => count($this->Modeldata->getMatrikSelra($keyKesatuan['kode_kesatuan'],$firstDate, $lastDate, " ")),
+					"CT" => $this->Modeldata->getKSS($keyKesatuan['kode_kesatuan'],$firstDate, $lastDate),
+					"CC" => array(
+						"Total" =>  count($this->Modeldata->getSelraCC($keyKesatuan['kode_kesatuan'],$firstDate, $lastDate)),
+						"SP3" => count($this->Modeldata->getMatrikSelra($keyKesatuan['kode_kesatuan'],$firstDate, $lastDate, "SP3")),
+						"RJ" => count($this->Modeldata->getMatrikSelra($keyKesatuan['kode_kesatuan'],$firstDate, $lastDate, "RJ")),
+						"TAHAPII" => count($this->Modeldata->getMatrikSelra($keyKesatuan['kode_kesatuan'],$firstDate, $lastDate, "TAHAP II")),	
+					),
+					"SEDANGPROSES" => count($this->Modeldata->getMatrikSelra($keyKesatuan['kode_kesatuan'],$firstDate, $lastDate, " ")),
+					"PRESENTASE" => $this->persentaseSelra(count($this->Modeldata->getSelraCC($keyKesatuan['kode_kesatuan'],$firstDate, $lastDate)), $this->Modeldata->getKSS($keyKesatuan['kode_kesatuan'],$firstDate, $lastDate))
 				);
 			}
 			
 			$matrikSelra = array(
 				$addMatrikSelra,
 				"TOTAL" => array(
-					"SP3" => count($this->Modeldata->getTotalMatrikSelra($firstDate, $lastDate, "SP3")),
-					"RJ" => count($this->Modeldata->getTotalMatrikSelra($firstDate, $lastDate, "RJ")),
-					"TAHAPII" => count($this->Modeldata->getTotalMatrikSelra($firstDate, $lastDate, "TAHAP II")),
-					"BELUMDIKETAHUI" => count($this->Modeldata->getTotalMatrikSelra($firstDate, $lastDate, " ")),
-				),
+					"CT" => $this->Modeldata->getSuperKSS($firstDate, $lastDate),
+					"CC" => array(
+						"Total" =>  count($this->Modeldata->getSuperSelraCC($firstDate, $lastDate)),
+						"SP3" => count($this->Modeldata->getTotalMatrikSelra($firstDate, $lastDate, "SP3")),
+						"RJ" => count($this->Modeldata->getTotalMatrikSelra($firstDate, $lastDate, "RJ")),
+						"TAHAPII" => count($this->Modeldata->getTotalMatrikSelra($firstDate, $lastDate, "TAHAP II")),	
+					),
+					"SEDANGPROSES" => count($this->Modeldata->getTotalMatrikSelra($firstDate, $lastDate, " ")),
+					"PRESENTASE" => $this->persentaseSelra(count($this->Modeldata->getSuperSelraCC($firstDate, $lastDate)), $this->Modeldata->getSuperKSS($firstDate, $lastDate))
+				)
 			);
 	
 			$data['title'] = "Data Selesai Perkara";
 			$data['menuLink'] = "selra";
-			$data['dataKasus'] = $matrikCCCT;
-			$data['matrikSelra'] = $matrikSelra[0];
+			$data['matrikSelra'] = $matrikSelra;
 			$data['totalMatrikSelra'] = $matrikSelra['TOTAL'];
 			$data['dataCC'] = $this->Modeldata->getSuperSelraCC($firstDate, $lastDate);
 			$data['dataCT'] = $this->Modeldata->getSuperSelraCT($firstDate, $lastDate);
 			$data['dateNow'] = $dateNow;
+			$data['orderDate'] = false;
 
 		} else {
 
 			if ($this->kode_kesatuan == 'ADMINSUPER') {
-	
-				$matrikCCCT = array(
+				$addMatrikSelra[$nama_kesatuan] = array(
+					"CT" => $this->Modeldata->getKSS($nama_kesatuan,$firstDate, $lastDate),
 					"CC" => array(
-						"Kasus" => count($this->Modeldata->getSelraCC($nama_kesatuan, $firstDate, $lastDate)),
-						"Tersangka" => count($this->Modeldata->getSelraCCTersangka($nama_kesatuan, $firstDate, $lastDate)),
+						"Total" =>  count($this->Modeldata->getSelraCC($nama_kesatuan,$firstDate, $lastDate)),
+						"SP3" => count($this->Modeldata->getMatrikSelra($nama_kesatuan,$firstDate, $lastDate, "SP3")),
+						"RJ" => count($this->Modeldata->getMatrikSelra($nama_kesatuan,$firstDate, $lastDate, "RJ")),
+						"TAHAPII" => count($this->Modeldata->getMatrikSelra($nama_kesatuan,$firstDate, $lastDate, "TAHAP II")),	
 					),
-					"CT" => array(
-						"Kasus" => count($this->Modeldata->getSelraCT($nama_kesatuan, $firstDate, $lastDate)),
-						"Tersangka" => count($this->Modeldata->getSelraCTTersangka($nama_kesatuan, $firstDate, $lastDate)),
-					),
+					"SEDANGPROSES" => count($this->Modeldata->getMatrikSelra($nama_kesatuan,$firstDate, $lastDate, " ")),
+					"PRESENTASE" => $this->persentaseSelra(count($this->Modeldata->getSelraCC($nama_kesatuan,$firstDate, $lastDate)), $this->Modeldata->getKSS($nama_kesatuan,$firstDate, $lastDate))
 				);
 				
-				$matrikSelra = array();
-				$matrikSelra[$nama_kesatuan] = array(
-					"SP3" => count($this->Modeldata->getMatrikSelra($nama_kesatuan,$firstDate, $lastDate, "SP3")),
-					"RJ" => count($this->Modeldata->getMatrikSelra($nama_kesatuan,$firstDate, $lastDate, "RJ")),
-					"TAHAPII" => count($this->Modeldata->getMatrikSelra($nama_kesatuan,$firstDate, $lastDate, "TAHAP II")),
-					"BELUMDIKETAHUI" => count($this->Modeldata->getMatrikSelra($nama_kesatuan,$firstDate, $lastDate, " ")),
+				$matrikSelra = array(
+					$addMatrikSelra,
+					"TOTAL" => array(
+						"CT" => count($this->Modeldata->getSuperKasus($firstDate, $lastDate)),
+						"CC" => array(
+							"Total" =>  count($this->Modeldata->getSuperSelraCC($firstDate, $lastDate)),
+							"SP3" => count($this->Modeldata->getTotalMatrikSelra($firstDate, $lastDate, "SP3")),
+							"RJ" => count($this->Modeldata->getTotalMatrikSelra($firstDate, $lastDate, "RJ")),
+							"TAHAPII" => count($this->Modeldata->getTotalMatrikSelra($firstDate, $lastDate, "TAHAP II")),	
+						),
+						"SEDANGPROSES" => count($this->Modeldata->getTotalMatrikSelra($firstDate, $lastDate, " ")),
+						"PRESENTASE" => $this->persentaseSelra(count($this->Modeldata->getSuperSelraCC($firstDate, $lastDate)), count($this->Modeldata->getSuperKasus($firstDate, $lastDate)))
+					)
 				);
 		
 				$data['title'] = "Data Selesai Perkara";
 				$data['menuLink'] = "selra";
-				$data['dataKasus'] = $matrikCCCT;
 				$data['matrikSelra'] = $matrikSelra;
+				$data['totalMatrikSelra'] = $matrikSelra['TOTAL'];
 				$data['kesatuanChoosen'] = $nama_kesatuan;
 				$data['dataCC'] = $this->Modeldata->getSelraCC($nama_kesatuan, $firstDate, $lastDate);
 				$data['dataCT'] = $this->Modeldata->getSelraCT($nama_kesatuan, $firstDate, $lastDate);
@@ -1146,17 +1505,19 @@ class Data extends CI_Controller {
 				$data['orderDate'] = true;
 	
 			} else {
+			
 				$matrikCCCT = array(
+					"CT" => $this->Modeldata->getKSS($this->kode_kesatuan,$firstDate, $lastDate),
 					"CC" => array(
-						"Kasus" => count($this->Modeldata->getSelraCC($this->kode_kesatuan, $firstDate, $lastDate)),
-						"Tersangka" => count($this->Modeldata->getSelraCCTersangka($this->kode_kesatuan, $firstDate, $lastDate)),
+						"Total" =>  count($this->Modeldata->getSelraCC($this->kode_kesatuan,$firstDate, $lastDate)),
+						"SP3" => count($this->Modeldata->getMatrikSelra($this->kode_kesatuan,$firstDate, $lastDate, "SP3")),
+						"RJ" => count($this->Modeldata->getMatrikSelra($this->kode_kesatuan,$firstDate, $lastDate, "RJ")),
+						"TAHAPII" => count($this->Modeldata->getMatrikSelra($this->kode_kesatuan,$firstDate, $lastDate, "TAHAP II")),	
 					),
-					"CT" => array(
-						"Kasus" => count($this->Modeldata->getSelraCT($this->kode_kesatuan, $firstDate, $lastDate)),
-						"Tersangka" => count($this->Modeldata->getSelraCTTersangka($this->kode_kesatuan, $firstDate, $lastDate)),
-					),
+					"SEDANGPROSES" => count($this->Modeldata->getMatrikSelra($this->kode_kesatuan,$firstDate, $lastDate, " ")),
+					"PRESENTASE" => $this->persentaseSelra(count($this->Modeldata->getSelraCC($this->kode_kesatuan,$firstDate, $lastDate)), $this->Modeldata->getKSS($this->kode_kesatuan,$firstDate, $lastDate))
 				);
-
+	
 				$matrikSelra = array(
 					"SP3" => count($this->Modeldata->getMatrikSelra($this->kode_kesatuan,$firstDate, $lastDate, "SP3")),
 					"RJ" => count($this->Modeldata->getMatrikSelra($this->kode_kesatuan,$firstDate, $lastDate, "RJ")),
@@ -1171,6 +1532,7 @@ class Data extends CI_Controller {
 				$data['dataCC'] = $this->Modeldata->getSelraCC($this->kode_kesatuan, $firstDate, $lastDate);
 				$data['dataCT'] = $this->Modeldata->getSelraCT($this->kode_kesatuan, $firstDate, $lastDate);
 				$data['dateNow'] = $dateNow;
+				$data['orderDate'] = false;
 	
 			}
 
@@ -1184,6 +1546,7 @@ class Data extends CI_Controller {
 		
 
 	}
+
 
 	// KASUS MENONJOL MODUL
   public function viewKasusMenonjol(){
@@ -1366,6 +1729,7 @@ class Data extends CI_Controller {
 
 	}
 
+
 	// IDENTITAS TERSANGKA
 	public function viewTersangka(){
 		if ($this->kode_kesatuan == 'ADMINSUPER') {
@@ -1405,6 +1769,7 @@ class Data extends CI_Controller {
 		
 		redirect(base_url("master-tersangka"));
 	}
+
 
 	// Date Modul
 	function rangeMonth($dateBefore, $dateAfter) {
@@ -1452,6 +1817,15 @@ class Data extends CI_Controller {
 		$tanggal_baru = $pisah_tanggal[0]." ".$nama_bulan[$pisah_tanggal[1]]." ".$pisah_tanggal[2];
 
 		return $hari_baru.", ".$tanggal_baru;
+	}
+
+	function persentaseSelra($total_cc, $total_ct){
+		if ($total_cc == 0) {
+			return '0%';
+		} else {
+			$percent = ($total_cc / $total_ct) * 100;
+			return round($percent).'%';
+		}
 	}
 }
 

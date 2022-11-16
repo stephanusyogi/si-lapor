@@ -36,6 +36,9 @@
         <div class="row">
             <div class="col-md-10">
                 <a class="btn btn-primary btn-sm mt-1 mx-1" data-toggle="modal" data-target="#sortModal"><span><i class="fas fa-filter"></i> </span>Sort by Date</a>
+                <?php if($btnExitSort): ?>
+                    <a class="btn btn-danger btn-sm mt-1 mx-1" href="<?= base_url('kasus-menonjol')?>">Exit From Sort View</a>
+                <?php endif; ?>
             </div>
             <div class="col-md-2 text-right">
                 <a class="btn btn-success btn-sm mt-1" href="<?= base_url('export-opsi/kasusmenonjol') ?>"><span><i class="fas fa-print"></i> </span>Export</a>
@@ -46,7 +49,7 @@
             <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="sortModalLabel">Sort by Date</h5>
+                        <h5 class="modal-title" id="sortModalLabel">Sort</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -105,8 +108,8 @@
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr class="text-center">
-                        <th>Laporan Kasus Menonjol</th>
-                        <th>Laporan Kasus Bukan Menonjol</th>
+                        <th>Total Laporan Kasus Menonjol</th>
+                        <th>Total Laporan Kasus Bukan Menonjol</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -171,69 +174,73 @@
             <div class="tab-content" id="myTabContent">
                 <!-- Kasus Menonjol -->
                 <div class="tab-pane fade show active py-3" id="menonjol" role="tabpanel" aria-labelledby="menonjol-tab">
-                    <table class="table-pelimpahan table datatable table-bordered table-striped" style="width:100%">
-                        <thead>
-                            <tr class="text-center">
-                              <th>No</th>
-                              <th>Kesatuan</th>
-                              <th>No Laporan Polisi</th>
-                              <th>Tanggal Input LP</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <?php if(isset($dataMenonjol)){ ?>
-                            <?php 
-                            $no = 1;
-                            foreach ($dataMenonjol as $rowMenonjol) { 
-                            ?>
-                            <tr>
-                                <td class="text-center"><?= $no ?></td>
-                                <td><?= $rowMenonjol["kode_kesatuan"]; ?></td>
-                                <td><?= $rowMenonjol["no_laporanpolisi"]; ?></td>
-                                <td><?= dateIndonesia(date('N j/n/Y', strtotime($rowMenonjol["created_at"]))) ?></td>
-                            </tr>
-                            <?php $no++; } ?>
-                        <?php }else{?>
-                                <tr>
-                                    <td colspan="1" style="text-align:center;"><p style="color:grey;font-size:18px;">Data Kasus Menonjol Belum Tersedia</p></td>
+                    <div class="table-responsive">
+                        <table class="table-pelimpahan table datatable table-bordered table-striped" style="width:100%">
+                            <thead>
+                                <tr class="text-center">
+                                <th>No</th>
+                                <th>Kesatuan</th>
+                                <th>No Laporan Polisi</th>
+                                <th>Tanggal Input LP</th>
                                 </tr>
-                        <?php } ?>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                            <?php if(isset($dataMenonjol)){ ?>
+                                <?php 
+                                $no = 1;
+                                foreach ($dataMenonjol as $rowMenonjol) { 
+                                ?>
+                                <tr>
+                                    <td class="text-center"><?= $no ?></td>
+                                    <td><?= $rowMenonjol["kode_kesatuan"]; ?></td>
+                                    <td><?= $rowMenonjol["no_laporanpolisi"]; ?></td>
+                                    <td><?= dateIndonesia(date('N j/n/Y', strtotime($rowMenonjol["created_at"]))) ?></td>
+                                </tr>
+                                <?php $no++; } ?>
+                            <?php }else{?>
+                                    <tr>
+                                        <td colspan="1" style="text-align:center;"><p style="color:grey;font-size:18px;">Data Kasus Menonjol Belum Tersedia</p></td>
+                                    </tr>
+                            <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <!-- Kasus Bukan Menonjol -->
                 <div class="tab-pane fade py-3" id="bukanmenonjol" role="tabpanel" aria-labelledby="bukanmenonjol-tab">
-                    <table class="table-pelimpahan table datatable table-bordered table-striped" style="width:100%">
-                        <thead>
-                            <tr class="text-center">
-                              <th>No</th>
-                              <th>Kesatuan</th>
-                              <th>No Laporan Polisi</th>
-                              <th>Tanggal Input LP</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <?php if(isset($dataBukanMenonjol)){ ?>
-                            <?php 
-                            $no = 1;
-                            foreach ($dataBukanMenonjol as $rowBukanMenonjol) { 
-                            ?>
-                            <tr>
-                                <td class="text-center"><?= $no ?></td>
-                                <td><?php
-                                $result = $CI->Modelkesatuan->getKesatuanByKode($rowBukanMenonjol["kode_kesatuan"]);
-                                echo $result[0]['nama']; ?></td>
-                                <td><?= $rowBukanMenonjol["no_laporanpolisi"]; ?></td>
-                                <td><?= dateIndonesia(date('N j/n/Y', strtotime($rowBukanMenonjol["created_at"]))) ?></td>
-                            </tr>
-                            <?php $no++; } ?>
-                        <?php }else{?>
-                                <tr>
-                                    <td colspan="1" style="text-align:center;"><p style="color:grey;font-size:18px;">Data Selra Belum Tersedia</p></td>
+                    <div class="table-responsive">
+                        <table class="table-pelimpahan table datatable table-bordered table-striped" style="width:100%">
+                            <thead>
+                                <tr class="text-center">
+                                <th>No</th>
+                                <th>Kesatuan</th>
+                                <th>No Laporan Polisi</th>
+                                <th>Tanggal Input LP</th>
                                 </tr>
-                        <?php } ?>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                            <?php if(isset($dataBukanMenonjol)){ ?>
+                                <?php 
+                                $no = 1;
+                                foreach ($dataBukanMenonjol as $rowBukanMenonjol) { 
+                                ?>
+                                <tr>
+                                    <td class="text-center"><?= $no ?></td>
+                                    <td><?php
+                                    $result = $CI->Modelkesatuan->getKesatuanByKode($rowBukanMenonjol["kode_kesatuan"]);
+                                    echo $result[0]['nama']; ?></td>
+                                    <td><?= $rowBukanMenonjol["no_laporanpolisi"]; ?></td>
+                                    <td><?= dateIndonesia(date('N j/n/Y', strtotime($rowBukanMenonjol["created_at"]))) ?></td>
+                                </tr>
+                                <?php $no++; } ?>
+                            <?php }else{?>
+                                    <tr>
+                                        <td colspan="1" style="text-align:center;"><p style="color:grey;font-size:18px;">Data Selra Belum Tersedia</p></td>
+                                    </tr>
+                            <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         <?php }else{ ?>
@@ -269,75 +276,79 @@
             <div class="tab-content" id="myTabContent">
                 <!-- Kasus Menonjol -->
                 <div class="tab-pane fade show active py-3" id="menonjol" role="tabpanel" aria-labelledby="menonjol-tab">
-                    <table class="table-pelimpahan table datatable table-bordered table-striped" style="width:100%">
-                        <thead>
-                            <tr class="text-center">
+                    <div class="table-responsive">
+                        <table class="table-pelimpahan table datatable table-bordered table-striped" style="width:100%">
+                            <thead>
+                                <tr class="text-center">
+                                    <th>No</th>
+                                    <th>Action</th>
+                                    <th>No Laporan Polisi</th>
+                                    <th>Tanggal Input LP</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <?php if(isset($dataMenonjol)){ ?>
+                                <?php 
+                                $no = 1;
+                                foreach ($dataMenonjol as $rowMenonjol) { 
+                                ?>
+                                <tr>
+                                    <td class="text-center"><?= $no ?></td>
+                                    <td class="text-center">
+                                    <div data-toggle="tooltip" data-placement="top" title="Batalkan Kasus Menonjol">
+                                        <a class="tombol-batal-menonjol btn btn-primary btn-sm" href="<?= base_url("data/batalKasusMenonjol/{$rowMenonjol["id_kasus"]}") ?>"><i class="fas fa-file-archive"></i></a>
+                                    </div>
+                                    </td>
+                                    <td><?= $rowMenonjol["no_laporanpolisi"]; ?></td>
+                                    <td><?= dateIndonesia(date('N j/n/Y', strtotime($rowMenonjol["created_at"]))) ?></td>
+                                </tr>
+                                <?php $no++; } ?>
+                            <?php }else{?>
+                                    <tr>
+                                        <td colspan="1" style="text-align:center;"><p style="color:grey;font-size:18px;">Data Kasus Menonjol Belum Tersedia</p></td>
+                                    </tr>
+                            <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Kasus Bukan Menonjol -->
+                <div class="tab-pane fade py-3" id="bukanmenonjol" role="tabpanel" aria-labelledby="bukanmenonjol-tab">
+                    <div class="table-responsive">
+                        <table class="table-pelimpahan table datatable table-bordered table-striped" style="width:100%">
+                            <thead>
+                                <tr class="text-center">
                                 <th>No</th>
                                 <th>Action</th>
                                 <th>No Laporan Polisi</th>
                                 <th>Tanggal Input LP</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <?php if(isset($dataMenonjol)){ ?>
-                            <?php 
-                            $no = 1;
-                            foreach ($dataMenonjol as $rowMenonjol) { 
-                            ?>
-                            <tr>
-                                <td class="text-center"><?= $no ?></td>
-                                <td class="text-center">
-                                  <div data-toggle="tooltip" data-placement="top" title="Batalkan Kasus Menonjol">
-                                    <a class="tombol-batal-menonjol btn btn-primary btn-sm" href="<?= base_url("data/batalKasusMenonjol/{$rowMenonjol["id_kasus"]}") ?>"><i class="fas fa-file-archive"></i></a>
-                                  </div>
-                                </td>
-                                <td><?= $rowMenonjol["no_laporanpolisi"]; ?></td>
-                                <td><?= dateIndonesia(date('N j/n/Y', strtotime($rowMenonjol["created_at"]))) ?></td>
-                            </tr>
-                            <?php $no++; } ?>
-                        <?php }else{?>
-                                <tr>
-                                    <td colspan="1" style="text-align:center;"><p style="color:grey;font-size:18px;">Data Kasus Menonjol Belum Tersedia</p></td>
                                 </tr>
-                        <?php } ?>
-                        </tbody>
-                    </table>
-                </div>
-                <!-- Kasus Bukan Menonjol -->
-                <div class="tab-pane fade py-3" id="bukanmenonjol" role="tabpanel" aria-labelledby="bukanmenonjol-tab">
-                    <table class="table-pelimpahan table datatable table-bordered table-striped" style="width:100%">
-                        <thead>
-                            <tr class="text-center">
-                            <th>No</th>
-                            <th>Action</th>
-                            <th>No Laporan Polisi</th>
-                            <th>Tanggal Input LP</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <?php if(isset($dataBukanMenonjol)){ ?>
-                            <?php 
-                            $no = 1;
-                            foreach ($dataBukanMenonjol as $rowBukanMenonjol) { 
-                            ?>
-                            <tr>
-                                <td class="text-center"><?= $no ?></td>
-                                <td class="text-center">
-                                  <div data-toggle="tooltip" data-placement="top" title="Ubah ke Kasus Menonjol">
-                                    <a class="tombol-kasus-menonjol btn btn-primary btn-sm" href="<?= base_url("data/updateKasusMenonjol/{$rowBukanMenonjol["id_kasus"]}") ?>"><i class="fas fa-file-archive"></i></a>
-                                  </div>
-                                </td>
-                                <td><?= $rowBukanMenonjol["no_laporanpolisi"]; ?></td>
-                                <td><?= dateIndonesia(date('N j/n/Y', strtotime($rowBukanMenonjol["created_at"]))) ?></td>
-                            </tr>
-                            <?php $no++; } ?>
-                        <?php }else{?>
+                            </thead>
+                            <tbody>
+                            <?php if(isset($dataBukanMenonjol)){ ?>
+                                <?php 
+                                $no = 1;
+                                foreach ($dataBukanMenonjol as $rowBukanMenonjol) { 
+                                ?>
                                 <tr>
-                                    <td colspan="1" style="text-align:center;"><p style="color:grey;font-size:18px;">Data Kasus Menonjol Belum Tersedia</p></td>
+                                    <td class="text-center"><?= $no ?></td>
+                                    <td class="text-center">
+                                    <div data-toggle="tooltip" data-placement="top" title="Ubah ke Kasus Menonjol">
+                                        <a class="tombol-kasus-menonjol btn btn-primary btn-sm" href="<?= base_url("data/updateKasusMenonjol/{$rowBukanMenonjol["id_kasus"]}") ?>"><i class="fas fa-file-archive"></i></a>
+                                    </div>
+                                    </td>
+                                    <td><?= $rowBukanMenonjol["no_laporanpolisi"]; ?></td>
+                                    <td><?= dateIndonesia(date('N j/n/Y', strtotime($rowBukanMenonjol["created_at"]))) ?></td>
                                 </tr>
-                        <?php } ?>
-                        </tbody>
-                    </table>
+                                <?php $no++; } ?>
+                            <?php }else{?>
+                                    <tr>
+                                        <td colspan="1" style="text-align:center;"><p style="color:grey;font-size:18px;">Data Kasus Menonjol Belum Tersedia</p></td>
+                                    </tr>
+                            <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         <?php } ?>

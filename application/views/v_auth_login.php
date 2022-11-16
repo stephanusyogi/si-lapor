@@ -146,7 +146,7 @@
 <div class="container text-center">
   <h1><strong>SIAP</strong></h1>
   <h2><strong>Si</strong>stem <strong>A</strong>plikasi <strong>P</strong>elaporan</h2>
-  <h3>Bagbinopnal Ditresnarkoba Polda Jatim</h3>
+  <h3>Bagbinopsnal Ditresnarkoba Polda Jatim</h3>
 </div>
 <div class="login-box">
   <div class="login-logo">

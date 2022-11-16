@@ -268,7 +268,7 @@
                                       yakni&nbsp;<?= $rowBB['keterangan'] ?>&nbsp;sejumlah&nbsp;<?= $rowBB['jumlah'] ?>&nbsp;<?= $rowBB['satuan'] ?>&nbsp;dengan berat&nbsp;<?= $rowBB['berat'] ?>&nbsp;gram.
                                     <?php } ?>
                                   <?php }else{ ?>
-                                      sejumlah&nbsp;<?= $rowBB['jumlah'] ?>&nbsp;<?= $rowBB['satuan'] ?>
+                                    <?= ($rowBB['keterangan']) ? " ( {$rowBB['keterangan']} )" : '' ?>&nbsp;sejumlah&nbsp;<?= $rowBB['jumlah'] ?>&nbsp;<?= $rowBB['satuan'] ?>
                                   <?php } ?>
                                 </li>
                               <?php }else{ 

@@ -41,7 +41,7 @@
         <?php endif; ?>
         <!-- Small boxes (Stat box) -->
         <div class="row">
-          <div class="col-lg-4 col-6">
+          <div class="col-md-4">
             <!-- small box -->
             <div class="small-box bg-info">
               <div class="inner">
@@ -56,7 +56,7 @@
             </div>
           </div>
           <!-- ./col -->
-          <div class="col-lg-4 col-6">
+          <div class="col-md-4">
             <!-- small box -->
             <div class="small-box bg-success">
               <div class="inner">
@@ -71,7 +71,7 @@
             </div>
           </div>
           <!-- ./col -->
-          <div class="col-lg-4 col-6">
+          <div class="col-md-4">
             <!-- small box -->
             <div class="small-box bg-secondary">
               <div class="inner">
@@ -85,57 +85,54 @@
               <a href="<?= base_url('selra') ?>" class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
+          <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER'): ?>
+            <!-- Small boxes (Stat box) -->
+              <div class="col-md-4">
+                <!-- small box -->
+                <div class="small-box bg-dark">
+                  <div class="inner">
+                    <h3><?= $dataDashboard['jumlahAdmin'] ?></h3>
+
+                    <p>ADMINISTRATOR</p>
+                  </div>
+                  <div class="icon">
+                    <i class="ion ion-happy"></i>
+                  </div>
+                  <a href="<?= base_url('data-admin') ?>" class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+              </div>
+              <!-- ./col -->
+              <div class="col-md-4">
+                <!-- small box -->
+                <div class="small-box bg-danger">
+                  <div class="inner">
+                    <h3><?= $dataDashboard['jumlahKasusMenonjol'] ?></h3>
+
+                    <p>KASUS MENONJOL</p>
+                  </div>
+                  <div class="icon">
+                    <i class="ion ion-clipboard"></i>
+                  </div>
+                  <a href="<?= base_url('kasus-menonjol') ?>" class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+              </div>
+              <!-- ./col -->
+              <div class="col-md-4">
+                <!-- small box -->
+                <div class="small-box bg-warning">
+                  <div class="inner">
+                    <h3><?= $dataDashboard['jumlahLoginToday'] ?></h3>
+
+                    <p>ADMIN LOGIN TODAY</p>
+                  </div>
+                  <div class="icon">
+                    <i class="ion ion-clock"></i>
+                  </div>
+                  <a href="<?= base_url('data-admin') ?>" class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+              </div>
+          <?php endif; ?>
         </div>
-        <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER'): ?>
-          <!-- Small boxes (Stat box) -->
-          <div class="row">
-            <div class="col-lg-4 col-6">
-              <!-- small box -->
-              <div class="small-box bg-dark">
-                <div class="inner">
-                  <h3><?= $dataDashboard['jumlahAdmin'] ?></h3>
-
-                  <p>ADMINISTRATOR</p>
-                </div>
-                <div class="icon">
-                  <i class="ion ion-happy"></i>
-                </div>
-                <a href="<?= base_url('data-admin') ?>" class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
-              </div>
-            </div>
-            <!-- ./col -->
-            <div class="col-lg-4 col-6">
-              <!-- small box -->
-              <div class="small-box bg-danger">
-                <div class="inner">
-                  <h3><?= $dataDashboard['jumlahKasusMenonjol'] ?></h3>
-
-                  <p>KASUS MENONJOL</p>
-                </div>
-                <div class="icon">
-                  <i class="ion ion-clipboard"></i>
-                </div>
-                <a href="<?= base_url('kasus-menonjol') ?>" class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
-              </div>
-            </div>
-            <!-- ./col -->
-            <div class="col-lg-4 col-6">
-              <!-- small box -->
-              <div class="small-box bg-warning">
-                <div class="inner">
-                  <h3><?= $dataDashboard['jumlahLoginToday'] ?></h3>
-
-                  <p>ADMIN LOGIN TODAY</p>
-                </div>
-                <div class="icon">
-                  <i class="ion ion-clock"></i>
-                </div>
-                <a href="<?= base_url('data-admin') ?>" class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
-              </div>
-            </div>
-          
-          </div>
-        <?php endif; ?>
         <!-- Main row -->
         <div class="row">
           <div class="diagramTren my-2 px-2 py-2 w-100" id="<?= ($viewDiagramByDate) ? 'scrollToContent' : '' ?>">
@@ -225,7 +222,22 @@
               </div>
               <div class="chartCard" title="GOL IV">
                 <div class="chartBox">
-                  <canvas class="chart mt-2" id="GolChart" height="100" ></canvas>
+                  <canvas class="chart mt-2" id="GolIVGram" height="100" ></canvas>
+                </div>
+              </div>
+              <div class="chartCard" title="GOL IV">
+                <div class="chartBox">
+                  <canvas class="chart mt-2" id="GolIVButir" height="100" ></canvas>
+                </div>
+              </div>
+              <div class="chartCard" title="GOL III">
+                <div class="chartBox">
+                  <canvas class="chart mt-2" id="GolIIIGram" height="100" ></canvas>
+                </div>
+              </div>
+              <div class="chartCard" title="GOL III">
+                <div class="chartBox">
+                  <canvas class="chart mt-2" id="GolIIIButir" height="100" ></canvas>
                 </div>
               </div>
               <div class="chartCard" title="Daftar G">

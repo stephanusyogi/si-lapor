@@ -1,6 +1,6 @@
 
 <script>
-$(document).ready(function(){
+// $(document).ready(function(){
     // KSS
     var arrayJumlahKSS = {
         "Penanam" : parseInt(document.getElementsByClassName('PenanamKSS<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText),
@@ -351,35 +351,38 @@ $(document).ready(function(){
     };
     document.getElementsByClassName('JML_NAPI<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText =  arrayJumlahNAPI["Penanam"] +  arrayJumlahNAPI["Produksi"] +  arrayJumlahNAPI["Bandar"] +  arrayJumlahNAPI["Pengedar"] +  arrayJumlahNAPI["Pengguna"];
     
-    // JUMLAH BERAT BB
-    var arrayJumlahBERAT_BB = {
-        "Penanam" : parseFloat(document.getElementsByClassName('PenanamBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[0]),
-        "PenanamSatuan" : document.getElementsByClassName('PenanamBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[1],
-        "Produksi" : parseFloat(document.getElementsByClassName('ProduksiBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[0]),
-        "ProduksiSatuan" : document.getElementsByClassName('ProduksiBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[1],
-        "Bandar" : parseFloat(document.getElementsByClassName('BandarBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[0]),
-        "BandarSatuan" : document.getElementsByClassName('BandarBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[1],
-        "Pengedar" : parseFloat(document.getElementsByClassName('PengedarBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[0]),
-        "PengedarSatuan" : document.getElementsByClassName('PengedarBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[1],
-        "Pengguna" : parseFloat(document.getElementsByClassName('PenggunaBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[0]),
-        "PenggunaSatuan" : document.getElementsByClassName('PenggunaBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[1],
-    };
-    var satuanBerat = '';
-    if (arrayJumlahBERAT_BB["PenanamSatuan"]) {
-        satuanBerat = arrayJumlahBERAT_BB["PenanamSatuan"];
-    } else if (arrayJumlahBERAT_BB["ProduksiSatuan"]){
-        satuanBerat = arrayJumlahBERAT_BB["ProduksiSatuan"];
-    } else if (arrayJumlahBERAT_BB["BandarSatuan"]){
-        satuanBerat = arrayJumlahBERAT_BB["BandarSatuan"];
-    } else if (arrayJumlahBERAT_BB["PengedarSatuan"]){
-        satuanBerat = arrayJumlahBERAT_BB["PengedarSatuan"];
-    }else if(arrayJumlahBERAT_BB["PenggunaSatuan"]){
-        satuanBerat = arrayJumlahBERAT_BB["PenggunaSatuan"];
-    }else{
-        satuanBerat = '';
-    }
-    var totalBerat = arrayJumlahBERAT_BB["Penanam"] +  arrayJumlahBERAT_BB["Produksi"] +  arrayJumlahBERAT_BB["Bandar"] +  arrayJumlahBERAT_BB["Pengedar"] +  arrayJumlahBERAT_BB["Pengguna"];
-    document.getElementsByClassName('JML_BERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText =  totalBerat + ` ${satuanBerat}`;
 
-});
+// });
+
+// JUMLAH BERAT BB
+var arrayJumlahBERAT_BB = {
+    "Penanam" : parseFloat(document.getElementsByClassName('PenanamBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[0]),
+    "PenanamSatuan" : document.getElementsByClassName('PenanamBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[1],
+    "Produksi" : parseFloat(document.getElementsByClassName('ProduksiBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[0]),
+    "ProduksiSatuan" : document.getElementsByClassName('ProduksiBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[1],
+    "Bandar" : parseFloat(document.getElementsByClassName('BandarBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[0]),
+    "BandarSatuan" : document.getElementsByClassName('BandarBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[1],
+    "Pengedar" : parseFloat(document.getElementsByClassName('PengedarBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[0]),
+    "PengedarSatuan" : document.getElementsByClassName('PengedarBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[1],
+    "Pengguna" : parseFloat(document.getElementsByClassName('PenggunaBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[0]),
+    "PenggunaSatuan" : document.getElementsByClassName('PenggunaBERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText.split(" ")[1],
+};
+
+var satuanBerat = '';
+if (arrayJumlahBERAT_BB["PenanamSatuan"] != undefined) {
+    satuanBerat = arrayJumlahBERAT_BB["PenanamSatuan"];
+} else if (arrayJumlahBERAT_BB["ProduksiSatuan"] != undefined){
+    satuanBerat = arrayJumlahBERAT_BB["ProduksiSatuan"];
+} else if (arrayJumlahBERAT_BB["BandarSatuan"] != undefined){
+    satuanBerat = arrayJumlahBERAT_BB["BandarSatuan"];
+} else if (arrayJumlahBERAT_BB["PengedarSatuan"] != undefined){
+    satuanBerat = arrayJumlahBERAT_BB["PengedarSatuan"];
+}else if(arrayJumlahBERAT_BB["PenggunaSatuan"] != undefined){
+    satuanBerat = arrayJumlahBERAT_BB["PenggunaSatuan"];
+}else{
+    satuanBerat = '';
+}
+var totalBerat = arrayJumlahBERAT_BB["Penanam"] +  arrayJumlahBERAT_BB["Produksi"] +  arrayJumlahBERAT_BB["Bandar"] +  arrayJumlahBERAT_BB["Pengedar"] +  arrayJumlahBERAT_BB["Pengguna"];
+
+document.getElementsByClassName('JML_BERAT_BB<?= str_replace(['/', ' '],'',$kategori) ?>')[0].innerText =  totalBerat + ` ${satuanBerat}`;
 </script>

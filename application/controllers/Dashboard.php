@@ -69,6 +69,35 @@ class Dashboard extends CI_Controller {
 				$dataDiagramBB[$month] = $dataTempBB; 
 			}
 
+			// Diagram Khusus GOL III & IV
+			$kategoriBBGol = array("GOL III", "GOL IV");
+			$dataDiagramBBGol = array();
+			foreach ($monthArray as $month) {
+				$dataTempBBGol = array();
+				foreach($kategoriBBGol as $kategoriGol) {
+					$berat_gram = 0;
+					$berat_butir = 0;
+					$resBBGol = $this->Modelkasus->getSuperDiagramBB($kategoriGol, date ('Y-m-d', strtotime ("first day of {$month} this year")), date ('Y-m-d', strtotime ("last day of {$month} this year")));
+					if (!empty($resBBGol)) {
+						foreach ($resBBGol as $keybbGol) {
+							if ($keybbGol['satuan'] == 'gram') {
+								$berat_gram += (float)$keybbGol['jumlah'];
+							} else {
+								$berat_butir += (float)$keybbGol['jumlah'];
+							}
+						}
+					}else{
+						$berat_gram = 0;
+						$berat_butir = 0;
+					}
+					$dataTempBBGol[$kategoriGol] = array(
+						"Gram" => $berat_gram,
+						"Butir" => $berat_butir,
+					);
+				}
+				$dataDiagramBBGol[$month] = $dataTempBBGol; 
+			}
+
 			$data['title'] = "Dashboard";
 			$data['menuLink'] = "dashboard";
 			$data['dataDashboard'] = $dataDashboard;
@@ -77,6 +106,7 @@ class Dashboard extends CI_Controller {
 			$data['dataDiagram'] = $dataDiagram;
 			// Data Diagram BB
 			$data['dataDiagramBB'] = $dataDiagramBB;
+			$data['dataDiagramBBGol'] = $dataDiagramBBGol;
 			$data['tahunDiagram'] = $tahunDiagram;
 
 		} else {
@@ -129,6 +159,35 @@ class Dashboard extends CI_Controller {
 				$dataDiagramBB[$month] = $dataTempBB; 
 			}
 
+			// Diagram Khusus GOL III & IV
+			$kategoriBBGol = array("GOL III", "GOL IV");
+			$dataDiagramBBGol = array();
+			foreach ($monthArray as $month) {
+				$dataTempBBGol = array();
+				foreach($kategoriBBGol as $kategoriGol) {
+					$berat_gram = 0;
+					$berat_butir = 0;
+					$resBBGol = $this->Modelkasus->getDiagramBB($this->kode_kesatuan, $kategoriGol, date ('Y-m-d', strtotime ("first day of {$month} this year")), date ('Y-m-d', strtotime ("last day of {$month} this year")));
+					if (!empty($resBBGol)) {
+						foreach ($resBBGol as $keybbGol) {
+							if ($keybbGol['satuan'] == 'gram') {
+								$berat_gram += (float)$keybbGol['jumlah'];
+							} else {
+								$berat_butir += (float)$keybbGol['jumlah'];
+							}
+						}
+					}else{
+						$berat_gram = 0;
+						$berat_butir = 0;
+					}
+					$dataTempBBGol[$kategoriGol] = array(
+						"Gram" => $berat_gram,
+						"Butir" => $berat_butir,
+					);
+				}
+				$dataDiagramBBGol[$month] = $dataTempBBGol; 
+			}
+
 			$data['title'] = "Dashboard";
 			$data['menuLink'] = "dashboard";
 			$data['dataDashboard'] = $dataDashboard;
@@ -139,6 +198,7 @@ class Dashboard extends CI_Controller {
 			$data['dataDiagram'] = $dataDiagram;
 			// Data Diagram BB
 			$data['dataDiagramBB'] = $dataDiagramBB;
+			$data['dataDiagramBBGol'] = $dataDiagramBBGol;
 			$data['tahunDiagram'] = $tahunDiagram;
 		}
 
@@ -202,6 +262,7 @@ class Dashboard extends CI_Controller {
 					'SELRA' => $this->Modelkasus->getSuperDiagramSELRA(date ('Y-m-d', strtotime ("first day of {$month} {$tahunDiagram}r")), date ('Y-m-d', strtotime ("last day of {$month} {$tahunDiagram}"))),
 				);
 			}
+
 			// Diagram Barang Bukti
 			$kategoriBB = array("Ganja","Tembakau Gorilla","Hashish","Opium","Morphin","Heroin/Putaw","Kokain","Exstacy/Carnophen","Sabu","GOL IV","Daftar G","Kosmetik","Jamu");
 			$dataDiagramBB = array();
@@ -222,6 +283,35 @@ class Dashboard extends CI_Controller {
 				}
 				$dataDiagramBB[$month] = $dataTempBB; 
 			}
+			
+			// Diagram Khusus GOL III & IV
+			$kategoriBBGol = array("GOL III", "GOL IV");
+			$dataDiagramBBGol = array();
+			foreach ($monthArray as $month) {
+				$dataTempBBGol = array();
+				foreach($kategoriBBGol as $kategoriGol) {
+					$berat_gram = 0;
+					$berat_butir = 0;
+					$resBBGol = $this->Modelkasus->getSuperDiagramBB($kategoriGol, date ('Y-m-d', strtotime ("first day of {$month} {$tahunDiagram}")), date ('Y-m-d', strtotime ("last day of {$month} {$tahunDiagram}")));
+					if (!empty($resBBGol)) {
+						foreach ($resBBGol as $keybbGol) {
+							if ($keybbGol['satuan'] == 'gram') {
+								$berat_gram += (float)$keybbGol['jumlah'];
+							} else {
+								$berat_butir += (float)$keybbGol['jumlah'];
+							}
+						}
+					}else{
+						$berat_gram = 0;
+						$berat_butir = 0;
+					}
+					$dataTempBBGol[$kategoriGol] = array(
+						"Gram" => $berat_gram,
+						"Butir" => $berat_butir,
+					);
+				}
+				$dataDiagramBBGol[$month] = $dataTempBBGol; 
+			}
 
 			$data['title'] = "Dashboard";
 			$data['menuLink'] = "dashboard";
@@ -229,6 +319,7 @@ class Dashboard extends CI_Controller {
 
 			$data['dataDiagram'] = $dataDiagram;
 			$data['dataDiagramBB'] = $dataDiagramBB;
+			$data['dataDiagramBBGol'] = $dataDiagramBBGol;
 			$data['tahunDiagram'] = $tahunDiagram;
 
 			$data['btnExitSort'] = true;
@@ -262,6 +353,7 @@ class Dashboard extends CI_Controller {
 					'SELRA' => $this->Modelkasus->getDiagramSELRA($this->kode_kesatuan, date ('Y-m-d', strtotime ("first day of {$month} {$tahunDiagram}r")), date ('Y-m-d', strtotime ("last day of {$month} {$tahunDiagram}"))),
 				);
 			}
+
 			// Diagram Barang Bukti
 			$kategoriBB = array("Ganja","Tembakau Gorilla","Hashish","Opium","Morphin","Heroin/Putaw","Kokain","Exstacy/Carnophen","Sabu","GOL IV","Daftar G","Kosmetik","Jamu");
 			$dataDiagramBB = array();
@@ -283,6 +375,35 @@ class Dashboard extends CI_Controller {
 				$dataDiagramBB[$month] = $dataTempBB; 
 			}
 
+			// Diagram Khusus GOL III & IV
+			$kategoriBBGol = array("GOL III", "GOL IV");
+			$dataDiagramBBGol = array();
+			foreach ($monthArray as $month) {
+				$dataTempBBGol = array();
+				foreach($kategoriBBGol as $kategoriGol) {
+					$berat_gram = 0;
+					$berat_butir = 0;
+					$resBBGol = $this->Modelkasus->getDiagramBB($this->kode_kesatuan, $kategoriGol, date ('Y-m-d', strtotime ("first day of {$month} {$tahunDiagram}")), date ('Y-m-d', strtotime ("last day of {$month} {$tahunDiagram}r")));
+					if (!empty($resBBGol)) {
+						foreach ($resBBGol as $keybbGol) {
+							if ($keybbGol['satuan'] == 'gram') {
+								$berat_gram += (float)$keybbGol['jumlah'];
+							} else {
+								$berat_butir += (float)$keybbGol['jumlah'];
+							}
+						}
+					}else{
+						$berat_gram = 0;
+						$berat_butir = 0;
+					}
+					$dataTempBBGol[$kategoriGol] = array(
+						"Gram" => $berat_gram,
+						"Butir" => $berat_butir,
+					);
+				}
+				$dataDiagramBBGol[$month] = $dataTempBBGol; 
+			}
+
 			$data['title'] = "Dashboard";
 			$data['menuLink'] = "dashboard";
 			$data['dataDashboard'] = $dataDashboard;
@@ -292,6 +413,7 @@ class Dashboard extends CI_Controller {
 			
 			$data['dataDiagram'] = $dataDiagram;
 			$data['dataDiagramBB'] = $dataDiagramBB;
+			$data['dataDiagramBBGol'] = $dataDiagramBBGol;
 			$data['tahunDiagram'] = $tahunDiagram;
 
 			$data['btnExitSort'] = true;

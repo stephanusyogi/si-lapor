@@ -44,7 +44,7 @@
         </div><!-- /.container-fluid -->
       </div>
       <hr class="my-2">
-      
+      <div class="table-responsive">
       <table id="table-master-kasus" class="table datatable table-hover table-bordered table-striped " style="width:100%">
             <thead>
                 <tr class="text-center">
@@ -137,6 +137,7 @@
             <?php } ?>
             </tbody>
         </table>
+        </div>
       </div><!-- /.container-fluid -->
     </section>
     <!-- /.content -->

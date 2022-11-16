@@ -37,11 +37,11 @@
             <div class="col-md-10">
                 <a class="btn btn-primary btn-sm mt-1 mx-1" data-toggle="modal" data-target="#sortModal"><span><i class="fas fa-filter"></i> </span>Sort by Date</a>
                 <?php if($btnExitSort): ?>
-                <a class="btn btn-danger btn-sm mt-1 mx-1" href="<?= base_url('selra')?>">Exit From Sort View by Date</a>
+                <a class="btn btn-danger btn-sm mt-1 mx-1" href="<?= base_url('selra')?>">Exit From Sort View</a>
                 <?php endif; ?>
             </div>
             <div class="col-md-2 text-right">
-                <a class="btn btn-success btn-sm mt-1" href="<?= base_url('export-opsi/selra') ?>"><span><i class="fas fa-print"></i> </span>Export</a>
+                <!-- <a class="btn btn-success btn-sm mt-1" href="<?= base_url('export-opsi/selra') ?>"><span><i class="fas fa-print"></i> </span>Export</a> -->
             </div>
         </div>
         <!-- Modal Sort Date -->
@@ -105,462 +105,426 @@
         <hr>
         <?php if($this->session->userdata('login_data_admin')['kodekesatuan'] == 'ADMINSUPER'){ ?>
             <div style="height:20rem;overflow-y:scroll;">
+                <!-- //// -->
                 <table class="table table-bordered table-striped">
-                    <thead>
-                        <tr class="text-center">
-                        <th style="width:40%;">Kategori</th>
-                        <th>CT</th>
-                        <th>CC</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <?php if(isset($dataKasus)){ ?>
+                    <thead class="text-center">
                         <tr>
-                            <td class="text-center"><strong>Kasus</strong></td>
-                            <td class="text-center"><?= $dataKasus['CT']['Kasus'] ?></td>
-                            <td class="text-center"><?= $dataKasus['CC']['Kasus'] ?></td>
+                            <th rowspan="2">Kesatuan</th>
+                            <th rowspan="2">Crime Total (CT)</th>
+                            <th colspan="3">Crime Clearance (CC)</th>
+                            <th rowspan="2">Total CC</th>
+                            <th rowspan="2">Sedang Proses</th>
+                            <th rowspan="2">Persentase %</th>
                         </tr>
                         <tr>
-                            <td class="text-center"><strong>Tersangka</strong></td>
-                            <td class="text-center"><?= $dataKasus['CT']['Tersangka'] ?></td>
-                            <td class="text-center"><?= $dataKasus['CC']['Tersangka'] ?></td>
-                        </tr>
-                    <?php }else{?>
-                            <tr>
-                                <td colspan="3" style="text-align:center;"><p style="color:grey;font-size:18px;">Data Selra Belum Tersedia</p></td>
-                            </tr>
-                    <?php } ?>
-                    </tbody>
-                </table>
-                <hr>
-                <table class="table table-bordered table-striped">
-                    <thead>
-                        <tr class="text-center">
-                        <th style="width:40%;">Kesatuan</th>
-                        <th>SP3</th>
-                        <th>RJ</th>
-                        <th>TAHAP II</th>
-                        <th>Belum Diketahui</th>
+                            <th>SP3</th>
+                            <th>RJ</th>
+                            <th>TAHAP II</th>
                         </tr>
                     </thead>
-                    <tbody>
-                    <?php if(isset($dataKasus)){ 
-                        foreach ($matrikSelra as $keyKesatuan => $item) {
-                        ?>
-                        <tr class="text-center">
-                            <td><?php 
-                            $kesatuan = $CI->Modelkesatuan->getKesatuanByKode($keyKesatuan);
-                            echo $kesatuan[0]['nama'];?>
-                            </td>
-                            <td><?= $item['SP3'] ?></td>
-                            <td><?= $item['RJ'] ?></td>
-                            <td><?= $item['TAHAPII'] ?></td>
-                            <td><?= $item['BELUMDIKETAHUI'] ?></td>
-                        </tr>
-                    <?php } 
-                        if(!isset($orderDate)):
-                        ?> 
-                        <tr class="text-center">
-                            <td><strong>TOTAL</strong></td>
-                            <td><?= $totalMatrikSelra['SP3'] ?></td>
-                            <td><?= $totalMatrikSelra['RJ'] ?></td>
-                            <td><?= $totalMatrikSelra['TAHAPII'] ?></td>
-                            <td><?= $totalMatrikSelra['BELUMDIKETAHUI'] ?></td>
-                        </tr>
-                    <?php endif; }else{?>
+                    <tbody class="text-center">
+                        <?php if(isset($matrikSelra)){ 
+                            foreach ($matrikSelra[0] as $keyKesatuan => $item) {
+                            ?>
                             <tr>
-                                <td colspan="3" style="text-align:center;"><p style="color:grey;font-size:18px;">Data Selra Belum Tersedia</p></td>
+                                <td><?php 
+                                $kesatuan = $CI->Modelkesatuan->getKesatuanByKode($keyKesatuan);
+                                echo $kesatuan[0]['nama'];?>
+                                </td>
+                                <td><?= $item['CT'] ?></td>
+                                <td><?= $item['CC']['SP3'] ?></td>
+                                <td><?= $item['CC']['RJ'] ?></td>
+                                <td><?= $item['CC']['TAHAPII'] ?></td>
+                                <td><?= $item['CC']['Total'] ?></td>
+                                <td><?= $item['SEDANGPROSES'] ?></td>
+                                <td><?= $item['PRESENTASE'] ?></td>
                             </tr>
-                    <?php } ?>
+                            <?php } 
+                            if(!$orderDate): ?>
+                            <tr>
+                                <td><strong>TOTAL</strong></td>
+                                <td><?= $totalMatrikSelra['CT'] ?></td>
+                                <td><?= $totalMatrikSelra['CC']['SP3'] ?></td>
+                                <td><?= $totalMatrikSelra['CC']['RJ'] ?></td>
+                                <td><?= $totalMatrikSelra['CC']['TAHAPII'] ?></td>
+                                <td><?= $totalMatrikSelra['CC']['Total'] ?></td>
+                                <td><?= $totalMatrikSelra['SEDANGPROSES'] ?></td>
+                                <td><?= $totalMatrikSelra['PRESENTASE'] ?></td>
+                            </tr>
+                        <?php endif; }else{?>
+                                <tr>
+                                    <td colspan="3" style="text-align:center;"><p style="color:grey;font-size:18px;">Data Selra Belum Tersedia</p></td>
+                                </tr>
+                        <?php } ?>
                     </tbody>
                 </table>
+                <!-- //// -->
             </div>
             <hr>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="belumdiketahui-tab" data-toggle="tab" data-target="#belumdiketahui" type="button" role="tab" aria-controls="belumdiketahui" aria-selected="false">Status SELRA Belum Diketahui - <strong>CT</strong></button>
+                    <button class="nav-link active" id="belumdiketahui-tab" data-toggle="tab" data-target="#belumdiketahui" type="button" role="tab" aria-controls="belumdiketahui" aria-selected="false">Status SELRA LP <strong>Sedang Proses</strong></button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="selesai-tab" data-toggle="tab" data-target="#selesai" type="button" role="tab" aria-controls="selesai" aria-selected="true">Status SELRA Selesai (SP3/RJ/Tahap II) - <strong>CC</strong></button>
+                    <button class="nav-link" id="selesai-tab" data-toggle="tab" data-target="#selesai" type="button" role="tab" aria-controls="selesai" aria-selected="true">Status SELRA LP <strong>Selesai (SP3/RJ/Tahap II)</strong></button>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
                 <!-- Kasus Belum Diketahui -->
                 <div class="tab-pane fade show active py-3" id="belumdiketahui" role="tabpanel" aria-labelledby="belumdiketahui-tab">
-                    <table class="table-pelimpahan table datatable table-bordered table-striped" style="width:100%">
-                        <thead>
-                            <tr class="text-center">
-                            <th>No</th>
-                            <th>Kesatuan</th>
-                            <th>No Laporan Polisi</th>
-                            <th>Tanggal Input LP</th>
-                            <th>Durasi Perkara Hingga Hari Ini</th>
-                            <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <?php if(isset($dataCT)){ ?>
-                            <?php 
-                            $no = 1;
-                            foreach ($dataCT as $rowCT) { 
-                            ?>
-                            <tr>
-                                <td class="text-center"><?= $no ?></td>
-                                <td><?= $rowCT["kode_kesatuan"]; ?></td>
-                                <td><?= $rowCT["no_laporanpolisi"]; ?></td>
-                                <td><?= dateIndonesia(date('N j/n/Y', strtotime($rowCT["created_at"]))) ?></td>
-                                <td class="text-center">
-                                    <?php 
-                                        $diff = date_diff(date_create($rowCT["created_at"]), date_create(date("Y-m-d")));
-                                        echo $diff->format("%a")." Hari";
-                                    ?>
-                                </td>
-                                <td class="text-center">
-                                    <?php if(empty($rowCT["status_kasus"])){ ?>
-                                        <button class="btn btn-warning btn-sm"><strong>Belum Diketahui</strong></button>
-                                    <?php }else if ($rowCT["status_kasus"] == 'TAHAP II'){ ?>
-                                        <button class="btn btn-success btn-sm"><strong>Tahap II</strong></button>
-                                    <?php }else if($rowCT["status_kasus"] == 'SP3'){ ?>
-                                        <button class="btn btn-success btn-sm"><strong>SP3</strong></button>
-                                    <?php }else{?>
-                                        <button class="btn btn-success btn-sm"><strong>RJ</strong></button>
-                                    <?php } ?>
-                                </td>
-                            </tr>
-                            <?php $no++; } ?>
-                        <?php }else{?>
-                                <tr>
-                                    <td colspan="1" style="text-align:center;"><p style="color:grey;font-size:18px;">Data Selra Belum Tersedia</p></td>
+                    <div class="table-responsive">
+                        <table class="table-pelimpahan table datatable table-bordered table-striped" style="width:100%">
+                            <thead>
+                                <tr class="text-center">
+                                <th>No</th>
+                                <th>Kesatuan</th>
+                                <th>No Laporan Polisi</th>
+                                <th>Tanggal Input LP</th>
+                                <th>Durasi Perkara Hingga Hari Ini</th>
+                                <th>Status</th>
                                 </tr>
-                        <?php } ?>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                            <?php if(isset($dataCT)){ ?>
+                                <?php 
+                                $no = 1;
+                                foreach ($dataCT as $rowCT) { 
+                                ?>
+                                <tr>
+                                    <td class="text-center"><?= $no ?></td>
+                                    <td><?php
+                                    $result = $CI->Modelkesatuan->getKesatuanByKode($rowCT["kode_kesatuan"]);
+                                    echo $result[0]['nama']; ?></td>
+                                    <td><?= $rowCT["no_laporanpolisi"]; ?></td>
+                                    <td><?= dateIndonesia(date('N j/n/Y', strtotime($rowCT["created_at"]))) ?></td>
+                                    <td class="text-center">
+                                        <?php 
+                                            $diff = date_diff(date_create($rowCT["created_at"]), date_create(date("Y-m-d")));
+                                            echo $diff->format("%a")." Hari";
+                                        ?>
+                                    </td>
+                                    <td class="text-center">
+                                        <?php if(empty($rowCT["status_kasus"])){ ?>
+                                            <button class="btn btn-warning btn-sm"><strong>Sedang Proses</strong></button>
+                                        <?php }else if ($rowCT["status_kasus"] == 'TAHAP II'){ ?>
+                                            <button class="btn btn-success btn-sm"><strong>Tahap II</strong></button>
+                                        <?php }else if($rowCT["status_kasus"] == 'SP3'){ ?>
+                                            <button class="btn btn-success btn-sm"><strong>SP3</strong></button>
+                                        <?php }else{?>
+                                            <button class="btn btn-success btn-sm"><strong>RJ</strong></button>
+                                        <?php } ?>
+                                    </td>
+                                </tr>
+                                <?php $no++; } ?>
+                            <?php }else{?>
+                                    <tr>
+                                        <td colspan="1" style="text-align:center;"><p style="color:grey;font-size:18px;">Data Selra Belum Tersedia</p></td>
+                                    </tr>
+                            <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <!-- Kasus Selesai -->
                 <div class="tab-pane fade py-3" id="selesai" role="tabpanel" aria-labelledby="selesai-tab">
-                    <table class="table-pelimpahan table datatable table-bordered table-striped" style="width:100%">
-                        <thead>
-                            <tr class="text-center">
-                            <th>No</th>
-                            <th>Kesatuan</th>
-                            <th>No Laporan Polisi</th>
-                            <th>Tanggal Input LP</th>
-                            <th>Tanggal SELRA</th>
-                            <th>Durasi Perkara</th>
-                            <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <?php if(isset($dataCC)){ ?>
-                            <?php 
-                            $no = 1;
-                            foreach ($dataCC as $rowCC) { 
-                            ?>
-                            <tr>
-                                <td class="text-center"><?= $no ?></td>
-                                <td><?php
-                                $result = $CI->Modelkesatuan->getKesatuanByKode($rowCC["kode_kesatuan"]);
-                                echo $result[0]['nama']; ?></td>
-                                <td><?= $rowCC["no_laporanpolisi"]; ?></td>
-                                <td><?= dateIndonesia(date('N j/n/Y', strtotime($rowCC["created_at"]))) ?></td>
-                                <td><?= dateIndonesia(date('N j/n/Y', strtotime($rowCC["date_statusKasus"]))) ?></td>
-                                <td class="text-center">
-                                    <?php 
-                                        $diff = date_diff(date_create($rowCC["created_at"]), date_create($rowCC["date_statusKasus"]));
-                                        echo $diff->format("%a")." Hari";
-                                    ?>
-                                </td>
-                                <td class="text-center">
-                                    <?php if(empty($rowCC["status_kasus"])){ ?>
-                                        <button class="btn btn-warning btn-sm"><strong>Belum Diketahui</strong></button>
-                                    <?php }else if ($rowCC["status_kasus"] == 'TAHAP II'){ ?>
-                                        <button class="btn btn-success btn-sm"><strong>Tahap II</strong></button>
-                                    <?php }else if($rowCC["status_kasus"] == 'SP3'){ ?>
-                                        <button class="btn btn-success btn-sm"><strong>SP3</strong></button>
-                                    <?php }else{?>
-                                        <button class="btn btn-success btn-sm"><strong>RJ</strong></button>
-                                    <?php } ?>
-                                </td>
-                            </tr>
-                            <?php $no++; } ?>
-                        <?php }else{?>
-                                <tr>
-                                    <td colspan="1" style="text-align:center;"><p style="color:grey;font-size:18px;">Data Selra Belum Tersedia</p></td>
+                    <div class="table-responsive">
+                        <table class="table-pelimpahan table datatable table-bordered table-striped" style="width:100%">
+                            <thead>
+                                <tr class="text-center">
+                                <th>No</th>
+                                <th>Kesatuan</th>
+                                <th>No Laporan Polisi</th>
+                                <th>Tanggal Input LP</th>
+                                <th>Tanggal SELRA</th>
+                                <th>Durasi Perkara</th>
+                                <th>Status</th>
                                 </tr>
-                        <?php } ?>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                            <?php if(isset($dataCC)){ ?>
+                                <?php 
+                                $no = 1;
+                                foreach ($dataCC as $rowCC) { 
+                                ?>
+                                <tr>
+                                    <td class="text-center"><?= $no ?></td>
+                                    <td><?php
+                                    $result = $CI->Modelkesatuan->getKesatuanByKode($rowCC["kode_kesatuan"]);
+                                    echo $result[0]['nama']; ?></td>
+                                    <td><?= $rowCC["no_laporanpolisi"]; ?></td>
+                                    <td><?= dateIndonesia(date('N j/n/Y', strtotime($rowCC["created_at"]))) ?></td>
+                                    <td><?= dateIndonesia(date('N j/n/Y', strtotime($rowCC["date_statusKasus"]))) ?></td>
+                                    <td class="text-center">
+                                        <?php 
+                                            $diff = date_diff(date_create($rowCC["created_at"]), date_create($rowCC["date_statusKasus"]));
+                                            echo $diff->format("%a")." Hari";
+                                        ?>
+                                    </td>
+                                    <td class="text-center">
+                                        <?php if(empty($rowCC["status_kasus"])){ ?>
+                                            <button class="btn btn-warning btn-sm"><strong>Sedang Proses</strong></button>
+                                        <?php }else if ($rowCC["status_kasus"] == 'TAHAP II'){ ?>
+                                            <button class="btn btn-success btn-sm"><strong>Tahap II</strong></button>
+                                        <?php }else if($rowCC["status_kasus"] == 'SP3'){ ?>
+                                            <button class="btn btn-success btn-sm"><strong>SP3</strong></button>
+                                        <?php }else{?>
+                                            <button class="btn btn-success btn-sm"><strong>RJ</strong></button>
+                                        <?php } ?>
+                                    </td>
+                                </tr>
+                                <?php $no++; } ?>
+                            <?php }else{?>
+                                    <tr>
+                                        <td colspan="1" style="text-align:center;"><p style="color:grey;font-size:18px;">Data Selra Belum Tersedia</p></td>
+                                    </tr>
+                            <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         <?php }else{ ?>
+            <!-- //// -->
             <table class="table table-bordered table-striped">
-                <thead>
-                    <tr class="text-center">
-                    <th style="width:40%;">Kategori</th>
-                    <th>CT</th>
-                    <th>CC</th>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php if(isset($dataKasus)){ ?>
+                <thead class="text-center">
                     <tr>
-                        <td class="text-center"><strong>Kasus</strong></td>
-                        <td class="text-center"><?= $dataKasus['CT']['Kasus'] ?></td>
-                        <td class="text-center"><?= $dataKasus['CC']['Kasus'] ?></td>
+                        <th rowspan="2">Crime Total (CT)</th>
+                        <th colspan="3">Crime Clearance (CC)</th>
+                        <th rowspan="2">Total CC</th>
+                        <th rowspan="2">Sedang Proses</th>
+                        <th rowspan="2">Persentase %</th>
                     </tr>
                     <tr>
-                        <td class="text-center"><strong>Tersangka</strong></td>
-                        <td class="text-center"><?= $dataKasus['CT']['Tersangka'] ?></td>
-                        <td class="text-center"><?= $dataKasus['CC']['Tersangka'] ?></td>
-                    </tr>
-                <?php }else{?>
-                        <tr>
-                            <td colspan="1" style="text-align:center;"><p style="color:grey;font-size:18px;">Data Selra Belum Tersedia</p></td>
-                        </tr>
-                <?php } ?>
-                </tbody>
-            </table>
-            
-            <table class="table table-bordered table-striped mt-2">
-                <thead>
-                    <tr class="text-center">
-                        <th>Status SELRA</th>
-                        <th>Jumlah</th>
+                        <th>SP3</th>
+                        <th>RJ</th>
+                        <th>TAHAP II</th>
                     </tr>
                 </thead>
-                <tbody>
-                <?php if(isset($matrikSelra)){ ?>
-                    <tr class="text-center">
-                        <td><strong>SP3</strong></td>
-                        <td><?= $matrikSelra['SP3'] ?></td>
+                <tbody class="text-center">
+                    <tr>
+                        <td><?= $dataKasus['CT'] ?></td>
+                        <td><?= $dataKasus['CC']['SP3'] ?></td>
+                        <td><?= $dataKasus['CC']['RJ'] ?></td>
+                        <td><?= $dataKasus['CC']['TAHAPII'] ?></td>
+                        <td><?= $dataKasus['CC']['Total'] ?></td>
+                        <td><?= $dataKasus['SEDANGPROSES'] ?></td>
+                        <td><?= $dataKasus['PRESENTASE'] ?></td>
                     </tr>
-                    <tr class="text-center">
-                        <td><strong>RJ</strong></td>
-                        <td><?= $matrikSelra['RJ'] ?></td>
-                    </tr>
-                    <tr class="text-center">
-                        <td><strong>Tahap II</strong></td>
-                        <td><?= $matrikSelra['TAHAPII'] ?></td>
-                    </tr>
-                    <tr class="text-center">
-                        <td><strong>Belum Diketahui</strong></td>
-                        <td><?= $matrikSelra['BELUMDIKETAHUI'] ?></td>
-                    </tr>
-                <?php }else{?>
-                        <tr>
-                            <td colspan="1" style="text-align:center;"><p style="color:grey;font-size:18px;">Data Selra Belum Tersedia</p></td>
-                        </tr>
-                <?php } ?>
                 </tbody>
             </table>
+            <!-- //// -->
             <hr>
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="belumdiketahui-tab" data-toggle="tab" data-target="#belumdiketahui" type="button" role="tab" aria-controls="belumdiketahui" aria-selected="false">Status SELRA Belum Diketahui - <strong>CT</strong></button>
+                    <button class="nav-link active" id="belumdiketahui-tab" data-toggle="tab" data-target="#belumdiketahui" type="button" role="tab" aria-controls="belumdiketahui" aria-selected="false">Status SELRA LP <strong>Sedang Proses</strong></button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="selesai-tab" data-toggle="tab" data-target="#selesai" type="button" role="tab" aria-controls="selesai" aria-selected="true">Status SELRA Selesai (SP3/RJ/Tahap II) - <strong>CC</strong></button>
+                    <button class="nav-link" id="selesai-tab" data-toggle="tab" data-target="#selesai" type="button" role="tab" aria-controls="selesai" aria-selected="true">Status SELRA LP <strong>Selesai (SP3/RJ/Tahap II)</strong></button>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
                 <!-- Kasus Belum Diketahui -->
                 <div class="tab-pane fade show active py-3" id="belumdiketahui" role="tabpanel" aria-labelledby="belumdiketahui-tab">
-                    <table class="table-pelimpahan table datatable table-bordered table-striped" style="width:100%">
-                        <thead>
-                            <tr class="text-center">
-                            <th>No</th>
-                            <th>Action</th>
-                            <th>No Laporan Polisi</th>
-                            <th>Tanggal Input LP</th>
-                            <th>Durasi Perkara Hingga Hari Ini</th>
-                            <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <?php if(isset($dataCT)){ ?>
-                            <?php 
-                            $no = 1;
-                            foreach ($dataCT as $rowCT) { 
-                            ?>
-                            <tr>
-                                <td class="text-center"><?= $no ?></td>
-                                <td class="text-center">
-                                    <div data-toggle="tooltip" data-placement="top" title="Pilih Status SELRA">
-                                        <a class="btn btn-primary btn-sm" data-toggle="modal" data-target="#statusModal<?= $rowCT['id_kasus']; ?>"><i class="fas fa-check-square"></i></a>
-                                    </div>
-                                </td>
-                                <td><?= $rowCT["no_laporanpolisi"]; ?></td>
-                                <td><?= dateIndonesia(date('N j/n/Y', strtotime($rowCT["created_at"]))) ?></td>
-                                <td class="text-center">
-                                    <?php 
-                                        $diff = date_diff(date_create($rowCT["created_at"]), date_create(date("Y-m-d")));
-                                        echo $diff->format("%a")." Hari";
-                                    ?>
-                                </td>
-                                <td  class="text-center">
-                                    <?php if(empty($rowCT["status_kasus"])){ ?>
-                                        <button class="btn btn-warning btn-sm"><strong>Belum Diketahui</strong></button>
-                                    <?php }else if ($rowCT["status_kasus"] == 'TAHAP II'){ ?>
-                                        <button class="btn btn-success btn-sm"><strong>Tahap II</strong></button>
-                                    <?php }else if($rowCT["status_kasus"] == 'SP3'){ ?>
-                                        <button class="btn btn-success btn-sm"><strong>SP3</strong></button>
-                                    <?php }else{?>
-                                        <button class="btn btn-success btn-sm"><strong>RJ</strong></button>
-                                    <?php } ?>
-                                </td>
-                            </tr>
-                            <!-- Modal Status Kasus -->
-                            <div class="modal fade" id="statusModal<?= $rowCT['id_kasus']; ?>" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="statusModalLabel">Pilih Status SELRA</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
+                    <div class="table-responsive">
+                        <table class="table-pelimpahan table datatable table-bordered table-striped" style="width:100%">
+                            <thead>
+                                <tr class="text-center">
+                                <th>No</th>
+                                <th>Action</th>
+                                <th>No Laporan Polisi</th>
+                                <th>Tanggal Input LP</th>
+                                <th>Durasi Perkara Hingga Hari Ini</th>
+                                <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <?php if(isset($dataCT)){ ?>
+                                <?php 
+                                $no = 1;
+                                foreach ($dataCT as $rowCT) { 
+                                ?>
+                                <tr>
+                                    <td class="text-center"><?= $no ?></td>
+                                    <td class="text-center">
+                                        <div data-toggle="tooltip" data-placement="top" title="Pilih Status SELRA">
+                                            <a class="btn btn-primary btn-sm" data-toggle="modal" data-target="#statusModal<?= $rowCT['id_kasus']; ?>"><i class="fas fa-check-square"></i></a>
                                         </div>
-                                        <div class="modal-body">
-                                            <form action="<?= base_url("data/updateStatusKasus/{$rowCT['id_kasus']}/") ?>" method="post">
-                                                <div class="form-group">
-                                                    <label for="status_kasus">Status SELRA:</label>
-                                                    <select name="status_kasus" id="status_kasus" class="form-control" required>
-                                                        <option selected disabled>Pilih SELRA</option>
-                                                        <option value="SP3">SP3</option>
-                                                        <option value="RJ">RJ</option>
-                                                        <option value="TAHAP II">TAHAP II</option>
-                                                        <option value="">Belum Diketahui</option>
-                                                    </select>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="">Keterangan SELRA <small style="color:red;">*opsional</small></label>
-                                                    <textarea class="form-control" name="ket_statusKasus" rows="5" placeholder="Tulis Keterangan SELRA disini. Untuk SELRA Tahap II, mohon sertakan keterangan lokasi pelimpahan."></textarea>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="submit" class="btn btn-success">Simpan</button>
-                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
-                                                </div>
-                                            </form>
+                                    </td>
+                                    <td><?= $rowCT["no_laporanpolisi"]; ?></td>
+                                    <td><?= dateIndonesia(date('N j/n/Y', strtotime($rowCT["created_at"]))) ?></td>
+                                    <td class="text-center">
+                                        <?php 
+                                            $diff = date_diff(date_create($rowCT["created_at"]), date_create(date("Y-m-d")));
+                                            echo $diff->format("%a")." Hari";
+                                        ?>
+                                    </td>
+                                    <td  class="text-center">
+                                        <?php if(empty($rowCT["status_kasus"])){ ?>
+                                            <button class="btn btn-warning btn-sm"><strong>Sedang Proses</strong></button>
+                                        <?php }else if ($rowCT["status_kasus"] == 'TAHAP II'){ ?>
+                                            <button class="btn btn-success btn-sm"><strong>Tahap II</strong></button>
+                                        <?php }else if($rowCT["status_kasus"] == 'SP3'){ ?>
+                                            <button class="btn btn-success btn-sm"><strong>SP3</strong></button>
+                                        <?php }else{?>
+                                            <button class="btn btn-success btn-sm"><strong>RJ</strong></button>
+                                        <?php } ?>
+                                    </td>
+                                </tr>
+                                <!-- Modal Status Kasus -->
+                                <div class="modal fade" id="statusModal<?= $rowCT['id_kasus']; ?>" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="statusModalLabel">Pilih Status SELRA</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="<?= base_url("data/updateStatusKasus/{$rowCT['id_kasus']}/") ?>" method="post">
+                                                    <div class="form-group">
+                                                        <label for="status_kasus">Status SELRA:</label>
+                                                        <select name="status_kasus" id="status_kasus" class="form-control" required>
+                                                            <option selected disabled>Pilih SELRA</option>
+                                                            <option value="SP3">SP3</option>
+                                                            <option value="RJ">RJ</option>
+                                                            <option value="TAHAP II">TAHAP II</option>
+                                                            <option value="">Sedang Proses</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="">Keterangan SELRA <small style="color:red;">*opsional</small></label>
+                                                        <textarea class="form-control" name="ket_statusKasus" rows="5" placeholder="Tulis Keterangan SELRA disini. Untuk SELRA Tahap II, mohon sertakan keterangan lokasi pelimpahan."></textarea>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-success">Simpan</button>
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                                                    </div>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <?php $no++; } ?>
-                        <?php }else{?>
-                                <tr>
-                                    <td colspan="1" style="text-align:center;"><p style="color:grey;font-size:18px;">Data Selra Belum Tersedia</p></td>
-                                </tr>
-                        <?php } ?>
-                        </tbody>
-                    </table>
+                                <?php $no++; } ?>
+                            <?php }else{?>
+                                    <tr>
+                                        <td colspan="1" style="text-align:center;"><p style="color:grey;font-size:18px;">Data Selra Belum Tersedia</p></td>
+                                    </tr>
+                            <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <!-- Kasus Selesai -->
                 <div class="tab-pane fade py-3" id="selesai" role="tabpanel" aria-labelledby="selesai-tab">
-                    <table class="table-pelimpahan table datatable table-bordered table-striped" style="width:100%">
-                        <thead>
-                            <tr class="text-center">
-                            <th>No</th>
-                            <th>Action</th>
-                            <th>No Laporan Polisi</th>
-                            <th>Tanggal Input LP</th>
-                            <th>Tanggal SELRA</th>
-                            <th>Durasi Perkara</th>
-                            <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <?php if(isset($dataCC)){ ?>
-                            <?php 
-                            $no = 1;
-                            foreach ($dataCC as $rowCC) { 
-                            ?>
-                            <tr>
-                                <td class="text-center"><?= $no ?></td>
-                                <td class="text-center">
-                                    <div data-toggle="tooltip" data-placement="top" title="Ubah Status SELRA">
-                                        <a class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editModal<?= $rowCC['id_kasus']; ?>"><i class="fas fa-pen-square"></i></a>
-                                    </div>
-                                </td>
-                                <td><?= $rowCC["no_laporanpolisi"]; ?></td>
-                                <td><?= dateIndonesia(date('N j/n/Y', strtotime($rowCC["created_at"]))) ?></td>
-                                <td><?= dateIndonesia(date('N j/n/Y', strtotime($rowCC["date_statusKasus"]))) ?></td>
-                                <td class="text-center">
-                                    <?php 
-                                        $diff = date_diff(date_create($rowCC["created_at"]), date_create($rowCC["date_statusKasus"]));
-                                        echo $diff->format("%a")." Hari";
-                                    ?>
-                                </td>
-                                <td class="text-center">
-                                    <?php if(empty($rowCC["status_kasus"])){ ?>
-                                        <button class="btn btn-warning btn-sm">
-                                            <strong>Belum Diketahui</strong>
-                                        </button>
-                                    <?php }else if ($rowCC["status_kasus"] == 'TAHAP II'){ ?>
-                                        <button class="btn btn-success btn-sm">
-                                            <strong>Tahap II</strong>
-                                            <?php if(!empty($rowCC["ket_statusKasus"])): ?>
-                                                <p><strong>Keterangan :</strong>&nbsp;<?= $rowCC["ket_statusKasus"] ?></p>
-                                            <?php endif; ?>
-                                        </button>
-                                    <?php }else if($rowCC["status_kasus"] == 'SP3'){ ?>
-                                        <button class="btn btn-success btn-sm">
-                                            <strong>SP3</strong>
-                                            <?php if(!empty($rowCC["ket_statusKasus"])): ?>
-                                                <p><strong>Keterangan :</strong>&nbsp;<?= $rowCC["ket_statusKasus"] ?></p>
-                                            <?php endif; ?>
-                                        </button>
-                                    <?php }else{?>
-                                        <button class="btn btn-success btn-sm">
-                                            <strong>RJ</strong>
-                                            <?php if(!empty($rowCC["ket_statusKasus"])): ?>
-                                                <p><strong>Keterangan :</strong>&nbsp;<?= $rowCC["ket_statusKasus"] ?></p>
-                                            <?php endif; ?>
-                                        </button>
-                                    <?php } ?>
-                                </td>
-                            </tr>
-                            <!-- Modal Status Kasus -->
-                            <div class="modal fade" id="editModal<?= $rowCC['id_kasus']; ?>" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="editModalLabel">Ubah Status SELRA</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
+                    <div class="table-responsive">
+                        <table class="table-pelimpahan table datatable table-bordered table-striped" style="width:100%">
+                            <thead>
+                                <tr class="text-center">
+                                <th>No</th>
+                                <th>Action</th>
+                                <th>No Laporan Polisi</th>
+                                <th>Tanggal Input LP</th>
+                                <th>Tanggal SELRA</th>
+                                <th>Durasi Perkara</th>
+                                <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <?php if(isset($dataCC)){ ?>
+                                <?php 
+                                $no = 1;
+                                foreach ($dataCC as $rowCC) { 
+                                ?>
+                                <tr>
+                                    <td class="text-center"><?= $no ?></td>
+                                    <td class="text-center">
+                                        <div data-toggle="tooltip" data-placement="top" title="Ubah Status SELRA">
+                                            <a class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editModal<?= $rowCC['id_kasus']; ?>"><i class="fas fa-pen-square"></i></a>
                                         </div>
-                                        <div class="modal-body">
-                                            <form action="<?= base_url("data/updateStatusKasus/{$rowCC['id_kasus']}/") ?>" method="post">
-                                                <div class="form-group">
-                                                    <label for="status_kasus">Status SELRA:</label>
-                                                    <select name="status_kasus" id="status_kasus" class="form-control" required>
-                                                        <option selected value="<?= $rowCC['status_kasus'] ?>"><?= $rowCC['status_kasus'] ?></option>
-                                                        <option value="SP3">SP3</option>
-                                                        <option value="RJ">RJ</option>
-                                                        <option value="TAHAP II">TAHAP II</option>
-                                                        <option value="">Belum Diketahui</option>
-                                                    </select>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="">Keterangan SELRA <small style="color:red;">*opsional</small></label>
-                                                    <textarea class="form-control" name="ket_statusKasus" rows="5" placeholder="Tulis Keterangan SELRA disini. Untuk SELRA Tahap II, mohon sertakan keterangan lokasi pelimpahan."><?= $rowCC['ket_statusKasus'] ?></textarea>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="submit" class="btn btn-success">Simpan</button>
-                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
-                                                </div>
-                                            </form>
+                                    </td>
+                                    <td><?= $rowCC["no_laporanpolisi"]; ?></td>
+                                    <td><?= dateIndonesia(date('N j/n/Y', strtotime($rowCC["created_at"]))) ?></td>
+                                    <td><?= dateIndonesia(date('N j/n/Y', strtotime($rowCC["date_statusKasus"]))) ?></td>
+                                    <td class="text-center">
+                                        <?php 
+                                            $diff = date_diff(date_create($rowCC["created_at"]), date_create($rowCC["date_statusKasus"]));
+                                            echo $diff->format("%a")." Hari";
+                                        ?>
+                                    </td>
+                                    <td class="text-center">
+                                        <?php if(empty($rowCC["status_kasus"])){ ?>
+                                            <button class="btn btn-warning btn-sm">
+                                                <strong>Sedang Proses</strong>
+                                            </button>
+                                        <?php }else if ($rowCC["status_kasus"] == 'TAHAP II'){ ?>
+                                            <button class="btn btn-success btn-sm">
+                                                <strong>Tahap II</strong>
+                                                <?php if(!empty($rowCC["ket_statusKasus"])): ?>
+                                                    <p><strong>Keterangan :</strong>&nbsp;<?= $rowCC["ket_statusKasus"] ?></p>
+                                                <?php endif; ?>
+                                            </button>
+                                        <?php }else if($rowCC["status_kasus"] == 'SP3'){ ?>
+                                            <button class="btn btn-success btn-sm">
+                                                <strong>SP3</strong>
+                                                <?php if(!empty($rowCC["ket_statusKasus"])): ?>
+                                                    <p><strong>Keterangan :</strong>&nbsp;<?= $rowCC["ket_statusKasus"] ?></p>
+                                                <?php endif; ?>
+                                            </button>
+                                        <?php }else{?>
+                                            <button class="btn btn-success btn-sm">
+                                                <strong>RJ</strong>
+                                                <?php if(!empty($rowCC["ket_statusKasus"])): ?>
+                                                    <p><strong>Keterangan :</strong>&nbsp;<?= $rowCC["ket_statusKasus"] ?></p>
+                                                <?php endif; ?>
+                                            </button>
+                                        <?php } ?>
+                                    </td>
+                                </tr>
+                                <!-- Modal Status Kasus -->
+                                <div class="modal fade" id="editModal<?= $rowCC['id_kasus']; ?>" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-scrollable modal-md" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="editModalLabel">Ubah Status SELRA</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="<?= base_url("data/updateStatusKasus/{$rowCC['id_kasus']}/") ?>" method="post">
+                                                    <div class="form-group">
+                                                        <label for="status_kasus">Status SELRA:</label>
+                                                        <select name="status_kasus" id="status_kasus" class="form-control" required>
+                                                            <option selected value="<?= $rowCC['status_kasus'] ?>"><?= $rowCC['status_kasus'] ?></option>
+                                                            <option value="SP3">SP3</option>
+                                                            <option value="RJ">RJ</option>
+                                                            <option value="TAHAP II">TAHAP II</option>
+                                                            <option value="">Sedang Proses</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="">Keterangan SELRA <small style="color:red;">*opsional</small></label>
+                                                        <textarea class="form-control" name="ket_statusKasus" rows="5" placeholder="Tulis Keterangan SELRA disini. Untuk SELRA Tahap II, mohon sertakan keterangan lokasi pelimpahan."><?= $rowCC['ket_statusKasus'] ?></textarea>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-success">Simpan</button>
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                                                    </div>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <?php $no++; } ?>
-                        <?php }else{?>
-                                <tr>
-                                    <td colspan="1" style="text-align:center;"><p style="color:grey;font-size:18px;">Data Selra Belum Tersedia</p></td>
-                                </tr>
-                        <?php } ?>
-                        </tbody>
-                    </table>
+                                <?php $no++; } ?>
+                            <?php }else{?>
+                                    <tr>
+                                        <td colspan="1" style="text-align:center;"><p style="color:grey;font-size:18px;">Data Selra Belum Tersedia</p></td>
+                                    </tr>
+                            <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         <?php } ?>

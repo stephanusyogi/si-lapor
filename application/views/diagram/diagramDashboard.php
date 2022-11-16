@@ -563,8 +563,8 @@
       }
     });
     
-    // Diagram BB GOL IV
-    var ctxGol = document.getElementById('GolChart').getContext('2d');
+    // Diagram BB GOL IV (Gram & Butir)
+    var ctxGol = document.getElementById('GolIVGram').getContext('2d');
     var chartGol = new Chart(ctxGol, {
       type: 'bar',
       // The data for our dataset
@@ -577,8 +577,8 @@
             borderColor: '#990033',
             data: [
               <?php 
-                foreach ($dataDiagramBB as $diagramBB => $item) {
-                  echo $item["GOL IV"].",";
+                foreach ($dataDiagramBBGol as $diagramBBGol => $itemGol) {
+                  echo $itemGol["GOL IV"]['Gram'].",";
                 }
               ?>
             ],
@@ -596,6 +596,166 @@
         title: {
           display: true,
           text: 'Narkotika & Psikotropika || GOL IV || <?= $this->session->userdata('login_data_admin')['nama'] ?> - <?= $tahunDiagram ?> '
+        },
+        scales: {
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Jumlah (Gram)'
+            },
+            ticks: {
+                beginAtZero: true
+            }
+          }],
+          xAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Bulan'
+            }
+          }]
+        }
+      }
+    });
+
+    var ctxGol = document.getElementById('GolIVButir').getContext('2d');
+    var chartGol = new Chart(ctxGol, {
+      type: 'bar',
+      // The data for our dataset
+      data: {
+        labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"],
+        datasets: [
+          {
+            label: "GOL IV",
+            backgroundColor: '#780099',
+            borderColor: '#780099',
+            data: [
+              <?php 
+                foreach ($dataDiagramBBGol as $diagramBBGol => $itemGol) {
+                  echo $itemGol["GOL IV"]['Butir'].",";
+                }
+              ?>
+            ],
+          },
+      ]
+      },
+      options: {
+        maintainAspectRatio: false,
+        layout: {
+          padding: 3,
+        },
+        legend: {
+          position: 'bottom',
+        },
+        title: {
+          display: true,
+          text: 'Narkotika & Psikotropika || GOL IV || <?= $this->session->userdata('login_data_admin')['nama'] ?> - <?= $tahunDiagram ?> '
+        },
+        scales: {
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Jumlah (Butir)'
+            },
+            ticks: {
+                beginAtZero: true
+            }
+          }],
+          xAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Bulan'
+            }
+          }]
+        }
+      }
+    });
+    
+    // Diagram BB GOL III (Gram & Butir)
+    var ctxGol = document.getElementById('GolIIIGram').getContext('2d');
+    var chartGol = new Chart(ctxGol, {
+      type: 'bar',
+      // The data for our dataset
+      data: {
+        labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"],
+        datasets: [
+          {
+            label: "GOL III",
+            backgroundColor: '#005e99',
+            borderColor: '#005e99',
+            data: [
+              <?php 
+                foreach ($dataDiagramBBGol as $diagramBBGol => $itemGol) {
+                  echo $itemGol["GOL III"]['Gram'].",";
+                }
+              ?>
+            ],
+          },
+      ]
+      },
+      options: {
+        maintainAspectRatio: false,
+        layout: {
+          padding: 3,
+        },
+        legend: {
+          position: 'bottom',
+        },
+        title: {
+          display: true,
+          text: 'Narkotika & Psikotropika || GOL III || <?= $this->session->userdata('login_data_admin')['nama'] ?> - <?= $tahunDiagram ?> '
+        },
+        scales: {
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Jumlah (Gram)'
+            },
+            ticks: {
+                beginAtZero: true
+            }
+          }],
+          xAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Bulan'
+            }
+          }]
+        }
+      }
+    });
+
+    var ctxGol = document.getElementById('GolIIIButir').getContext('2d');
+    var chartGol = new Chart(ctxGol, {
+      type: 'bar',
+      // The data for our dataset
+      data: {
+        labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"],
+        datasets: [
+          {
+            label: "GOL III",
+            backgroundColor: '#009994',
+            borderColor: '#009994',
+            data: [
+              <?php 
+                foreach ($dataDiagramBBGol as $diagramBBGol => $itemGol) {
+                  echo $itemGol["GOL III"]['Butir'].",";
+                }
+              ?>
+            ],
+          },
+      ]
+      },
+      options: {
+        maintainAspectRatio: false,
+        layout: {
+          padding: 3,
+        },
+        legend: {
+          position: 'bottom',
+        },
+        title: {
+          display: true,
+          text: 'Narkotika & Psikotropika || GOL III || <?= $this->session->userdata('login_data_admin')['nama'] ?> - <?= $tahunDiagram ?> '
         },
         scales: {
           yAxes: [{

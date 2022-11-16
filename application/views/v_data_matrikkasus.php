@@ -34,11 +34,11 @@
           <div class="col-md-10">
             <a class="btn btn-primary btn-sm mt-1 mx-1" data-toggle="modal" data-target="#sortModal"><span><i class="fas fa-filter"></i> </span>Sort by Date</a>
             <?php if($btnExitSort): ?>
-              <a class="btn btn-danger btn-sm mt-1 mx-1" href="<?= base_url('matrik-kasus')?>">Exit From Sort View by Date</a>
+              <a class="btn btn-danger btn-sm mt-1 mx-1" href="<?= base_url('matrik-kasus')?>">Exit From Sort View</a>
             <?php endif; ?>
           </div>
           <div class="col-md-2 text-right">
-              <a class="btn btn-success btn-sm mt-1" href="<?= base_url('export-opsi/matrikKasus') ?>"><span><i class="fas fa-print"></i> </span>Export</a>
+              <!-- <a class="btn btn-success btn-sm mt-1" href="<?= base_url('export-opsi/matrikKasus') ?>"><span><i class="fas fa-print"></i> </span>Export</a> -->
           </div>
         </div>
         <!-- Modal Sort Date -->
@@ -103,7 +103,7 @@
                   <td colspan="6">PENDIDIKAN</td>
                   <td colspan="17">PEKERJAAN</td>
                   <td colspan="7">TEMPAT KEJADIAN PERKARA</td>
-                  <td colspan="13">BARANG BUKTI</td>
+                  <td colspan="14">BARANG BUKTI</td>
                 </tr>
                 <tr>
                     <!-- Status TSK -->
@@ -155,7 +155,7 @@
                     <th rowspan="2">Terminal/Bandara/Pelabuhan</th>
                     <th rowspan="2">Rumah Tahanan</th>
                     <!-- Barang Bukti -->
-                    <td colspan="10">Narkotika & Psikotropika</td>
+                    <td colspan="11">Narkotika & Psikotropika</td>
                     <td colspan="3">Okerbaya</td>
                 </tr>
                 <tr>
@@ -174,6 +174,7 @@
                     <th>Kokain</th>
                     <th>Exstacy/Carnophen</th>
                     <th>Sabu</th>
+                    <th>GOL III</th>
                     <th>GOL IV</th>
                     <th>Daftar G</th>
                     <th>Kosmetik</th>
@@ -259,6 +260,7 @@
                     <td><?= $item['BARANGBUKTI']['Kokain'] ?></td>
                     <td><?= $item['BARANGBUKTI']['Exstacy/Carnophen'] ?></td>
                     <td><?= $item['BARANGBUKTI']['Sabu'] ?></td>
+                    <td><?= $item['BARANGBUKTI']['GOL III'] ?></td>
                     <td><?= $item['BARANGBUKTI']['GOL IV'] ?></td>
                     <td><?= $item['BARANGBUKTI']['Daftar G'] ?></td>
                     <td><?= $item['BARANGBUKTI']['Kosmetik'] ?></td>
@@ -337,6 +339,7 @@
                       <td><?= $dataMatrik['BARANGBUKTI']['Kokain'] ?></td>
                       <td><?= $dataMatrik['BARANGBUKTI']['Exstacy/Carnophen'] ?></td>
                       <td><?= $dataMatrik['BARANGBUKTI']['Sabu'] ?></td>
+                      <td><?= $dataMatrik['BARANGBUKTI']['GOL III'] ?></td>
                       <td><?= $dataMatrik['BARANGBUKTI']['GOL IV'] ?></td>
                       <td><?= $dataMatrik['BARANGBUKTI']['Daftar G'] ?></td>
                       <td><?= $dataMatrik['BARANGBUKTI']['Kosmetik'] ?></td>
@@ -361,7 +364,7 @@
                 <td colspan="6">PENDIDIKAN</td>
                 <td colspan="17">PEKERJAAN</td>
                 <td colspan="7">TEMPAT KEJADIAN PERKARA</td>
-                <td colspan="13">BARANG BUKTI</td>
+                <td colspan="14">BARANG BUKTI</td>
               </tr>
               <tr>
                   <!-- Status TSK -->
@@ -413,7 +416,7 @@
                   <th rowspan="2">Terminal/Bandara/Pelabuhan</th>
                   <th rowspan="2">Rumah Tahanan</th>
                   <!-- Barang Bukti -->
-                  <td colspan="10">Narkotika & Psikotropika</td>
+                  <td colspan="11">Narkotika & Psikotropika</td>
                   <td colspan="3">Okerbaya</td>
               </tr>
               <tr>
@@ -432,6 +435,7 @@
                   <th>Kokain</th>
                   <th>Exstacy/Carnophen</th>
                   <th>Sabu</th>
+                  <th>GOL III</th>
                   <th>GOL IV</th>
                   <th>Daftar G</th>
                   <th>Kosmetik</th>
@@ -506,6 +510,7 @@
                     <td><?= $totalMatrik['BARANGBUKTI']['Kokain'] ?></td>
                     <td><?= $totalMatrik['BARANGBUKTI']['Exstacy/Carnophen'] ?></td>
                     <td><?= $totalMatrik['BARANGBUKTI']['Sabu'] ?></td>
+                    <td><?= $totalMatrik['BARANGBUKTI']['GOL III'] ?></td>
                     <td><?= $totalMatrik['BARANGBUKTI']['GOL IV'] ?></td>
                     <td><?= $totalMatrik['BARANGBUKTI']['Daftar G'] ?></td>
                     <td><?= $totalMatrik['BARANGBUKTI']['Kosmetik'] ?></td>
